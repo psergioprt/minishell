@@ -1,0 +1,9 @@
+git branch -> show branches
+git checkout paulo -> select branch
+
+Steps to create branches
+1 - Github ... Create new branch (based on main);
+2 - Terminal ... git pull (pull the git branches info)
+3 - Terminal ... git branch (show existing branches)
+4 - Terminal ... git checkout paulo (select branch)
+5 - 
