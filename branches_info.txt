@@ -1,9 +1,11 @@
-git branch -> show branches
-git checkout paulo -> select branch
+To create copies com main branch, so we can work independently
 
 Steps to create branches
 1 - Github ... Create new branch (based on main);
 2 - Terminal ... git pull (pull the git branches info)
 3 - Terminal ... git branch (show existing branches)
 4 - Terminal ... git checkout paulo (select branch)
-5 - 
+After confirming everything is OK in the new branch, we can merge the changes to main branch
+5 - Github ... Create pull request ... Confirm create pull request
+6 - Github ... Merge pull request ... Confirm merge request
+7 - Terminal ... git pull to update main branch
