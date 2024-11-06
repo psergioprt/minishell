@@ -9,3 +9,12 @@ After confirming everything is OK in the new branch, we can merge the changes to
 5 - Github ... Create pull request ... Confirm create pull request
 6 - Github ... Merge pull request ... Confirm merge request
 7 - Terminal ... git pull to update main branch
+
+To remove a branch
+1 - At gibhub ... Show all branches ... click trash can at the desired branch
+2 - Locally at terminal ... git -d paulo or git --delete paulo
+
+To create collaborators github
+1 - Settings
+2 - Collaborators
+3 - Invite collaborators (add people)
