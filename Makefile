@@ -6,10 +6,13 @@ INCDIR = include
 SRC = $(SRCDIR)/minishell.c
 CFLAGS = -Wall -Wextra -Werror
 LFLAGS = -lreadline
-OBJS = ${SRC/.c=.o}
+OBJS = ${SRC:.c=.o}
+
+$(SRCDIR)%.o: $(SRCDIR)/%.c $(INCDIR)/minishell.h
+	$(CC) $(CFLAGS) -c $< -o $@
 all: $(NAME)
-$(NAME): $(OBJS) $(INCDIR)/minishell.h
-	$(CC) $(CFLAGS) $(OBJS) $(SRCDIR)/minishell.c -o $(NAME) $(LFLAGS)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LFLAGS)
 clean:
 	$(RM) $(OBJS)
 fclean: clean
