@@ -15,22 +15,29 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 
 {
 	char	*read;
+	t_env_node	*command_list = NULL;
+	t_env_node	*current;
 	
 	(void)argc;
 	(void)argv;
+	//command_list = NULL;
 	print_env(env);
-	while (1)
+	while ((read = readline("minishell> ")) != NULL)
 	{
-		read = readline("minishell$> "); //readline from readline/readline.h ... allows command entry, edit and history.
-						 //readline must be installed for usage: sudo apt-get install libreadline-dev
-		if (!read)
+		if (*read)
 		{
-			printf("\n");
-			break ;
+			add_command_node(&command_list, read);
+			add_history(read); //from readline/history.h ... manages history (scrolls inputed commands)
+			printf("command: %s\n", read);
 		}
-		printf("Readline output just to verify: %s\n", read);
-		add_history(read); //from readline/history.h ... manages history (scrolls inputed commands)
 		free(read);
 	}
+	current = command_list;
+	while (current)
+	{
+		printf ("Command: %s\n", current->command);
+		current = current->next;
+	}
+	free_list(command_list);
 	return (0);
 }
