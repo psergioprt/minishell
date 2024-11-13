@@ -11,7 +11,6 @@ t_env_node *create_command_node(const char *command)
 	}
 	new_node->command = ft_strdup(command);
 	new_node->next = NULL;
-	printf("Test inside create_command_node: %s\n", command);
 	return (new_node);
 }
 
@@ -23,7 +22,6 @@ void	add_command_node(t_env_node **head, const char *command)
 	new_node = create_command_node(command);
 	if (!new_node)
 		return ;
-	printf("Point 1: %s\n", command);
 	if (!*head)
 	{
 		printf("Point 2: %s\n", command);
@@ -38,7 +36,23 @@ void	add_command_node(t_env_node **head, const char *command)
 		temp->next = new_node;
 		printf("added command to list: %s\n", command);
 	}
-	printf("Point 4: %s\n", command);
+}
+
+void	split_and_add_commands(t_env_node **head, const char *input)
+{
+	char	*token;
+	char	*input_copy = strdup(input);
+
+	free_list(*head);
+	*head = NULL;
+
+	token = strtok(input_copy, " ");
+	while (token != NULL)
+	{
+		add_command_node(head, token);
+		token = strtok(NULL, " ");
+	}
+	free(input_copy);
 }
 
 void	free_list(t_env_node *head)

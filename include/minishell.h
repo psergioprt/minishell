@@ -16,5 +16,6 @@ typedef struct s_env_node
 t_env_node *create_command_node(const char *command);
 void	add_command_node(t_env_node **head, const char *command);
 void	free_list(t_env_node *head);
+void	split_and_add_commands(t_env_node **head, const char *input);
 
 #endif
