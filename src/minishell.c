@@ -65,10 +65,16 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	current = command_list;
 	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
 	//"time to leave minishell" IS ENTERED
+	int	i = 0;
 	while (current)
 	{
-		printf ("Command while loop: %s\n", current->command);
+		if (i == 0)
+			printf ("Nodes command list: node[head]: %s\n", current->command);
+
+		else
+			printf ("Nodes command list: node[%d]: %s\n", i, current->command);
 		current = current->next;
+		i++;
 	}
 	free_list(command_list);
 	return (0);
