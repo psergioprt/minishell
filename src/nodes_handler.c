@@ -1,5 +1,6 @@
 #include "../include/minishell.h"
 
+//function created to create nodes
 t_env_node *create_command_node(const char *command)
 {
 	t_env_node	*new_node;
@@ -13,7 +14,7 @@ t_env_node *create_command_node(const char *command)
 	new_node->next = NULL;
 	return (new_node);
 }
-
+//function created to add commands to linked list
 void	add_command_node(t_env_node **head, const char *command)
 {
 	t_env_node	*new_node;
@@ -37,7 +38,7 @@ void	add_command_node(t_env_node **head, const char *command)
 		printf("added command to list: %s\n", command);
 	}
 }
-
+//function created to split each command from an input
 void	split_and_add_commands(t_env_node **head, const char *input)
 {
 	char	*token;
@@ -54,7 +55,7 @@ void	split_and_add_commands(t_env_node **head, const char *input)
 	}
 	free(input_copy);
 }
-
+//function created to free the linked list
 void	free_list(t_env_node *head)
 {
 	t_env_node	*temp;

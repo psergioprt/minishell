@@ -1,5 +1,6 @@
 #include "../include/minishell.h"
 
+//function to print enviornment variables
 void	print_env(char *env[])
 {
 	int	i;
