@@ -39,18 +39,18 @@ void	add_command_node(t_env_node **list, const char *command)
 	}
 }
 //function created to split each command from an input
-void	split_and_add_commands(t_env_node **head, const char *input)
+void	split_and_add_commands(t_env_node **list, const char *input)
 {
 	char	*token;
 	char	*input_copy = strdup(input);
 
-	free_list(*head);
-	*head = NULL;
+	free_list(*list);
+	*list = NULL;
 
 	token = strtok(input_copy, " ");
 	while (token != NULL)
 	{
-		add_command_node(head, token);
+		add_command_node(list, token);
 		token = strtok(NULL, " ");
 	}
 	free(input_copy);
