@@ -15,26 +15,26 @@ t_env_node *create_command_node(const char *command)
 	return (new_node);
 }
 //function created to add commands to linked list
-void	add_command_node(t_env_node **head, const char *command)
+void	add_command_node(t_env_node **list, const char *command)
 {
 	t_env_node	*new_node;
-	t_env_node	*temp;
+	t_env_node	*current;
 
 	new_node = create_command_node(command);
 	if (!new_node)
 		return ;
-	if (!*head)
+	if (!*list)
 	{
 		printf("Point 2: %s\n", command);
-		*head = new_node;
+		*list = new_node;
 	}
 	else
 	{
 		printf("Point 3: %s\n", command);
-		temp = *head;
-		while (temp->next)
-			temp = temp->next;
-		temp->next = new_node;
+		current = *list;
+		while (current->next)
+			current = current->next;
+		current->next = new_node;
 		printf("added command to list: %s\n", command);
 	}
 }
@@ -56,14 +56,14 @@ void	split_and_add_commands(t_env_node **head, const char *input)
 	free(input_copy);
 }
 //function created to free the linked list
-void	free_list(t_env_node *head)
+void	free_list(t_env_node *list)
 {
-	t_env_node	*temp;
-	while (head)
+	t_env_node	*current;
+	while (list)
 	{
-		temp = head;
-		head = head->next;
-		free(temp->command);
-		free(temp);
+		current = list;
+		list = list->next;
+		free(current->command);
+		free(current);
 	}
 }
