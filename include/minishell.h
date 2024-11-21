@@ -7,15 +7,18 @@
 #include <readline/history.h>
 #include "../Libft/libft.h"
 
-typedef struct s_env_node
+typedef struct s_node
 {
-	char	*command;
-	struct s_env_node *next;
-}t_env_node;
+	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um token
+	//struct s_node *prev; //E preciso??
+	struct s_node *next;
+}t_node;
 
-t_env_node *create_command_node(const char *command);
-void	add_command_node(t_env_node **head, const char *command);
-void	free_list(t_env_node *head);
-void	split_and_add_commands(t_env_node **head, const char *input);
+t_node *create_command_node(const char *command);
+void	add_command_node(t_node **head, const char *command);
+void	free_list(t_node *head);
+void	split_and_add_commands(t_node **head, const char *input);
+
+void	first_token(t_node *data);
 
 #endif

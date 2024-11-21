@@ -1,24 +1,24 @@
 #include "../include/minishell.h"
 
 //function created to create nodes
-t_env_node *create_command_node(const char *command)
+t_node *create_command_node(const char *command)
 {
-	t_env_node	*new_node;
-	new_node = malloc(sizeof(t_env_node));
+	t_node	*new_node;
+	new_node = malloc(sizeof(t_node));
 	if (!new_node)
 	{
 		perror("Error!\nFailed to allocate memory for new_node\n");
 		return (NULL);
 	}
-	new_node->command = ft_strdup(command);
+	new_node->token = ft_strdup(command);
 	new_node->next = NULL;
 	return (new_node);
 }
 //function created to add commands to linked list
-void	add_command_node(t_env_node **list, const char *command)
+void	add_command_node(t_node **list, const char *command)
 {
-	t_env_node	*new_node;
-	t_env_node	*current;
+	t_node	*new_node;
+	t_node	*current;
 
 	new_node = create_command_node(command);
 	if (!new_node)
@@ -39,7 +39,7 @@ void	add_command_node(t_env_node **list, const char *command)
 	}
 }
 //function created to split each command from an input
-void	split_and_add_commands(t_env_node **list, const char *input)
+void	split_and_add_commands(t_node **list, const char *input)
 {
 	char	*token;
 	char	*input_copy = strdup(input);
@@ -56,14 +56,14 @@ void	split_and_add_commands(t_env_node **list, const char *input)
 	free(input_copy);
 }
 //function created to free the linked list
-void	free_list(t_env_node *list)
+void	free_list(t_node *list)
 {
-	t_env_node	*current;
+	t_node	*current;
 	while (list)
 	{
 		current = list;
 		list = list->next;
-		free(current->command);
+		free(current->token);
 		free(current);
 	}
 }

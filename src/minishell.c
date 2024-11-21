@@ -29,8 +29,8 @@ int	ft_strcmp(char *str1, char *str2)
 int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ... KEY=VALUE That will be used with the entered command
 {
 	char	*read;
-	t_env_node	*command_list;
-	t_env_node	*current;
+	t_node	*command_list;
+	t_node	*current;
 	
 	
 	(void)argc;
@@ -40,12 +40,13 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
 	{
-		if (ft_strcmp(read, "time to leave minishell") == 0)
+		if (ft_strcmp(read, "exit") == 0)
 			break;
 		if (*read)
 		{
 			split_and_add_commands(&command_list, read);
 			add_history(read);
+			first_token(command_list);
 		}
 		free(read);
 	}
@@ -65,14 +66,16 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	current = command_list;
 	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
 	//"time to leave minishell" IS ENTERED
+	
+
 	int	i = 0;
 	while (current)
 	{
 		if (i == 0)
-			printf ("Nodes command list: node[head]: %s\n", current->command);
+			printf ("Nodes command list: node[head]: %s\n", current->token);
 
 		else
-			printf ("Nodes command list: node[%d]: %s\n", i, current->command);
+			printf ("Nodes command list: node[%d]: %s\n", i, current->token);
 		current = current->next;
 		i++;
 	}
