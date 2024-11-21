@@ -29,8 +29,8 @@ int	ft_strcmp(char *str1, char *str2)
 int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ... KEY=VALUE That will be used with the entered command
 {
 	char	*read;
-	t_env_node	*command_list;
-	t_env_node	*current;
+	t_node	*command_list;
+	t_node	*current;
 	
 	
 	(void)argc;
