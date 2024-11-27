@@ -49,7 +49,7 @@ static int	is_delimeter(char c, const char *delim)
 	}
 	return (0);
 }
-
+//function created to tokenize string elements
 char	*ft_strtok(char *str, const char *delim)
 {
 	static	char	*cur = NULL;
@@ -86,15 +86,15 @@ char	*ft_strtok(char *str, const char *delim)
 	token_start = cur;
 	while (*cur && !is_delimeter(*cur, delim))
 	{
-		if (*cur == '\\') // Handle escape character
-			cur += 2; // Skip escaped character
-		else if (*cur == '"' || *cur == '\'') // Handle quoted strings
+		if (*cur == '\\')
+			cur += 2;
+		else if (*cur == '"' || *cur == '\'')
 			{
 				char quote = *cur++;
 				while (*cur && *cur != quote)
 					cur++;
 				if (*cur)
-					cur++; // Skip closing quoteui
+					cur++;
 			}
 		else
 			cur++;
