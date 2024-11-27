@@ -36,7 +36,7 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	(void)argc;
 	(void)argv;
 	command_list = NULL;
-	print_env(env);
+	//print_env(env);
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
 	{
