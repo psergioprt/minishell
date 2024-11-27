@@ -60,12 +60,45 @@ char	*ft_strtok(char *str, const char *delim)
 	if (cur == NULL)
 		return (NULL);
 	while (*cur && is_delimeter(*cur, delim))
-		cur++;
+	{
+		if (*cur == '|')
+		{
+			cur++;
+			return (ft_strdup("|"));
+		}
+		else if((*cur == '>' && *(cur + 1) == '>') || (*cur == '<' && *(cur + 1) == '<'))
+		{
+			char	double_char[3] = {*cur, *(cur + 1), '\0'};
+			cur += 2;
+			return (ft_strdup(double_char));
+		}
+		else if (*cur == '>' || *cur == '<')
+		{
+			char	single_char[2] = {*cur, '\0'};
+			cur++;
+			ft_strdup(single_char);
+		}
+		else
+			cur++;
+	}
 	if (*cur == '\0')
 		return (NULL);
 	token_start = cur;
 	while (*cur && !is_delimeter(*cur, delim))
-		cur++;
+	{
+		if (*cur == '\\') // Handle escape character
+			cur += 2; // Skip escaped character
+		else if (*cur == '"' || *cur == '\'') // Handle quoted strings
+			{
+				char quote = *cur++;
+				while (*cur && *cur != quote)
+					cur++;
+				if (*cur)
+					cur++; // Skip closing quoteui
+			}
+		else
+			cur++;
+	}
 	if (*cur)
 	{
 		*cur = '\0';
@@ -75,6 +108,7 @@ char	*ft_strtok(char *str, const char *delim)
 		cur = NULL;
 	return (token_start);
 }
+
 //function created to split each command from an input
 void	split_and_add_commands(t_node **list, const char *input)
 {
