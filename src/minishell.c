@@ -41,7 +41,7 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
 	{
-		if (ft_strcmp(read, "time to leave minishell") == 0)
+		if (ft_strcmp(read, "minishell") == 0)
 			break;
 		if (*read)
 		{

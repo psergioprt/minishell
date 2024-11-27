@@ -15,6 +15,8 @@ t_node *create_command_node(const char *command)
 	return (new_node);
 }
 //function created to add commands to linked list
+//
+char	add_spaces()
 void	add_command_node(t_node **list, const char *command)
 {
 	t_node	*new_node;
@@ -35,7 +37,7 @@ void	add_command_node(t_node **list, const char *command)
 		while (current->next)
 			current = current->next;
 		current->next = new_node;
-		printf("added command to list: %s\n", command);
+	//	printf("added command to list: %s\n", command);
 	}
 }
 
@@ -54,6 +56,9 @@ char	*ft_strtok(char *str, const char *delim)
 {
 	static	char	*cur = NULL;
 	char		*token_start;
+	char		double_char[3];
+	char		single_char[2];
+	char		quote;
 
 	if (str != NULL)
 		cur = str;
@@ -68,13 +73,16 @@ char	*ft_strtok(char *str, const char *delim)
 		}
 		else if((*cur == '>' && *(cur + 1) == '>') || (*cur == '<' && *(cur + 1) == '<'))
 		{
-			char	double_char[3] = {*cur, *(cur + 1), '\0'};
+			double_char[0] = *cur;
+			double_char[1] = *(cur + 1);
+			double_char[2] = '\0';
 			cur += 2;
 			return (ft_strdup(double_char));
 		}
 		else if (*cur == '>' || *cur == '<')
 		{
-			char	single_char[2] = {*cur, '\0'};
+			single_char[0] = *cur;
+			single_char[1] = '\0';
 			cur++;
 			ft_strdup(single_char);
 		}
@@ -90,7 +98,7 @@ char	*ft_strtok(char *str, const char *delim)
 			cur += 2;
 		else if (*cur == '"' || *cur == '\'')
 			{
-				char quote = *cur++;
+				quote = *cur++;
 				while (*cur && *cur != quote)
 					cur++;
 				if (*cur)
