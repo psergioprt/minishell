@@ -15,8 +15,13 @@ t_node *create_command_node(const char *command)
 	return (new_node);
 }
 //function created to add commands to linked list
-//
-char	add_spaces()
+
+//function to add spaces
+/*char	*add_spaces(const char *input, const char *delim, size_t num)
+{
+
+}*/
+
 void	add_command_node(t_node **list, const char *command)
 {
 	t_node	*new_node;
@@ -37,10 +42,9 @@ void	add_command_node(t_node **list, const char *command)
 		while (current->next)
 			current = current->next;
 		current->next = new_node;
-	//	printf("added command to list: %s\n", command);
 	}
 }
-
+//function created to check delimeters characters
 static int	is_delimeter(char c, const char *delim)
 {
 	while(*delim)
@@ -97,13 +101,13 @@ char	*ft_strtok(char *str, const char *delim)
 		if (*cur == '\\')
 			cur += 2;
 		else if (*cur == '"' || *cur == '\'')
-			{
-				quote = *cur++;
-				while (*cur && *cur != quote)
-					cur++;
-				if (*cur)
-					cur++;
-			}
+		{
+			quote = *cur++;
+			while (*cur && *cur != quote)
+				cur++;
+			if (*cur)
+				cur++;
+		}
 		else
 			cur++;
 	}
@@ -116,7 +120,6 @@ char	*ft_strtok(char *str, const char *delim)
 		cur = NULL;
 	return (token_start);
 }
-
 //function created to split each command from an input
 void	split_and_add_commands(t_node **list, const char *input)
 {

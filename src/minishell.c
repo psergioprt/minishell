@@ -31,8 +31,6 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	char	*read;
 	t_node	*command_list;
 	t_node	*current;
-	
-	
 	(void)argc;
 	(void)argv;
 	(void)env;
@@ -50,22 +48,7 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 		}
 		free(read);
 	}
-	//LOOP TO ADD INPUT LINES TO NODES
-	/*while ((read = readline("minishell> "))!= NULL)
-	{
-		if (ft_strcmp(read, "time to leave minishell") == 0)
-			break ;
-		if (*read)
-		{
-			add_command_node(&command_list, read);
-			add_history(read); //from readline/history.h ... manages history (scrolls inputed commands)
-			printf("command: %s\n", read);
-		}
-		free(read);
-	}*/
 	current = command_list;
-	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
-	//"time to leave minishell" IS ENTERED
 	int	i = 0;
 	while (current)
 	{
