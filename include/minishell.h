@@ -21,4 +21,6 @@ void	split_and_add_commands(t_node **head, const char *input);
 
 void	first_token(t_node *data);
 
+void	custom_echo(t_node *data);
+
 #endif

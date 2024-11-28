@@ -20,7 +20,8 @@ void	first_token(t_node *data)
 	ret = 0;
 	len = ft_strlen(data->token);
 	if (!ft_strncmp(data->token, "echo", len))
-		printf("Fazer o echo\n");
+		custom_echo(data);
+		// printf("Fazer o echo\n");
 	else if (!ft_strncmp(data->token, "cd", len))
 		printf("Fazer o cd\n");
 	else if (!ft_strncmp(data->token, "pwd", len))

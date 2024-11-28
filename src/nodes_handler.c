@@ -25,17 +25,17 @@ void	add_command_node(t_node **list, const char *command)
 		return ;
 	if (!*list)
 	{
-		printf("Point 2: %s\n", command);
+		//printf("Point 2: %s\n", command);
 		*list = new_node;
 	}
 	else
 	{
-		printf("Point 3: %s\n", command);
+		//printf("Point 3: %s\n", command);
 		current = *list;
 		while (current->next)
 			current = current->next;
 		current->next = new_node;
-		printf("added command to list: %s\n", command);
+		//printf("added command to list: %s\n", command);
 	}
 }
 //function created to split each command from an input
