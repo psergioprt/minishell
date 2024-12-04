@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 13:49:08 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/11/28 16:02:03 by jcavadas         ###   ########.fr       */
+/*   Updated: 2024/12/04 02:12:55 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,111 +37,112 @@ void write_string(const char *str)
 }
 
 // Expands variables starting with `$`
-void expand_variable(const char *input, char *output) {
-    const char *src = input;
-    char *dest = output;
+void expand_variable(const char *input, char *output)
+{
+	const char *src = input;
+	char *dest = output;
 
-    while (*src) {
-        if (*src == '$') {
-            src++; // Skip the `$`
-            // Extract the variable name
-            const char *start = src;
-            while (*src && (isalnum(*src) || *src == '_')) {
-                src++;
-            }
-            size_t var_len = src - start;
-            char var_name[256];
-            strncpy(var_name, start, var_len);
-            var_name[var_len] = '\0';
+	while (*src) {
+		if (*src == '$') {
+			src++; // Skip the `$`
+			// Extract the variable name
+			const char *start = src;
+			while (*src && (isalnum(*src) || *src == '_')) {
+				src++;
+			}
+			size_t var_len = src - start;
+			char var_name[256];
+			strncpy(var_name, start, var_len);
+			var_name[var_len] = '\0';
 
-            // Get the variable value from the environment
+			// Get the variable value from the environment
 			printf("get_env is getting %s\n", var_name);
-            const char *value = getenv(var_name);
+			const char *value = getenv(var_name);
 			printf("get_env is giving %s\n", value);
-            if (value) {
-                while (*value) {
-                    *dest++ = *value++;
-                }
-            }
-        } else {
-            *dest++ = *src++; // Copy other characters as-is
-        }
-    }
-    *dest = '\0'; // Null-terminate the output string
+			if (value) {
+				while (*value) {
+					*dest++ = *value++;
+				}
+			}
+		} else {
+			*dest++ = *src++; // Copy other characters as-is
+		}
+	}
+	*dest = '\0'; // Null-terminate the output string
 }
 
 // Handles single and double quotes in arguments
 // Handles single and double quotes in arguments
 void handle_quotes(const char *input, char *output) {
-    const char *src = input;
-    char *dest = output;
+	const char *src = input;
+	char *dest = output;
 
-    while (*src) {
-        if (*src == '\'') {
-            // Single-quoted string: copy literally
-            src++; // Skip opening quote
-            while (*src && *src != '\'') {
-                *dest++ = *src++;
-            }
-            if (*src == '\'') {
-                src++; // Skip closing quote
-            }
-        } else if (*src == '"') {
-            // Double-quoted string: expand variables
-            src++; // Skip opening quote
-            while (*src && *src != '"') {
-                if (*src == '$') {
-                    char expanded[1024];
-                    expand_variable(src, expanded);
-                    size_t len = strlen(expanded);
-                    for (size_t i = 0; i < len; i++) {
-                        *dest++ = expanded[i];
-                    }
-                    while (*src && (isalnum(*src) || *src == '_')) {
-                        src++;
-                    }
-                } else {
-                    *dest++ = *src++;
-                }
-            }
-            if (*src == '"') {
-                src++; // Skip closing quote
-            }
-        } else {
-            // No quotes: expand variables
-            if (*src == '$') {
-                char expanded[1024];
-                expand_variable(src, expanded);
-                size_t len = strlen(expanded);
-                for (size_t i = 0; i < len; i++) {
-                    *dest++ = expanded[i];
-                }
-                while (*src && (isalnum(*src) || *src == '_')) {
-                    src++;
-                }
-            } else {
-                *dest++ = *src++;
-            }
-        }
-    }
-    *dest = '\0'; // Null-terminate the output string
+	while (*src) {
+		if (*src == '\'') {
+			// Single-quoted string: copy literally
+			src++; // Skip opening quote
+			while (*src && *src != '\'') {
+				*dest++ = *src++;
+			}
+			if (*src == '\'') {
+				src++; // Skip closing quote
+			}
+		} else if (*src == '"') {
+			// Double-quoted string: expand variables
+			src++; // Skip opening quote
+			while (*src && *src != '"') {
+				if (*src == '$') {
+					char expanded[1024];
+					expand_variable(src, expanded);
+					size_t len = strlen(expanded);
+					for (size_t i = 0; i < len; i++) {
+						*dest++ = expanded[i];
+					}
+					while (*src && (isalnum(*src) || *src == '_')) {
+						src++;
+					}
+				} else {
+					*dest++ = *src++;
+				}
+			}
+			if (*src == '"') {
+				src++; // Skip closing quote
+			}
+		} else {
+			// No quotes: expand variables
+			if (*src == '$') {
+				char expanded[1024];
+				expand_variable(src, expanded);
+				size_t len = strlen(expanded);
+				for (size_t i = 0; i < len; i++) {
+					*dest++ = expanded[i];
+				}
+				while (*src && (isalnum(*src) || *src == '_')) {
+					src++;
+				}
+			} else {
+				*dest++ = *src++;
+			}
+		}
+	}
+	*dest = '\0'; // Null-terminate the output string
 }
 
 // Custom echo function to handle a linked list of tokens
 void custom_echo(t_node *data) {
-    int first = 1; // Flag to manage space placement
+	int first = 1; // Flag to manage space placement
 	data = data->next;
-    while (data) {
-        char processed[1024];
-        handle_quotes(data->token, processed); // Process each token
+	while (data) {
+		char processed[1024];
+		handle_quotes(data->token, processed); // Process each token
 
-        if (!first) {
-            write(1, " ", 1); // Add space before every token except the first
-        }
-        write_string(processed);
-        first = 0;
+		if (!first) {
+			write(1, " ", 1); // Add space before every token except the first
+		}
+		write_string(processed);
+		first = 0;
 
-        data = data->next; // Move to the next node
-    }
-    write(1, "\n", 1); // Print newline at the end
+		data = data->next; // Move to the next node
+	}
+	write(1, "\n", 1); // Print newline at the end
 }

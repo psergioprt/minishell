@@ -37,6 +37,14 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	(void)argv;
 	command_list = NULL;
 	print_env(env);
+    const char *value = getenv("USER");
+    if (value) {
+        printf("USER: %s\n", value);
+    } else {
+        printf("USER variable not found.\n");
+    }
+
+
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
 	{
