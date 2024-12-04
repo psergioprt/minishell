@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/03 23:25:16 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/04 14:28:08 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,80 +69,64 @@ static int	is_delimeter(char c, const char *delim)
 }
 
 //function created to tokenize string elements
-
-/*char	*handle_signs(char *cur, const char *delim)
+char	*handle_redirectional_signs(char **cur)
 {
 	char		double_char[3];
 	char		single_char[2];
-	
-	while (*cur && is_delimeter(*cur, delim))
+
+	if ((**cur == '>' && *(*cur + 1) == '>') || \
+			(**cur == '<' && *(*cur + 1) == '<'))
 	{
-		if (*cur == '|')
+		double_char[0] = **cur;
+		double_char[1] = *(*cur +1);
+		double_char[2] = '\0';
+		(*cur) += 2;
+		return (ft_strdup(double_char));
+	}
+	else if (**cur == '>' || **cur == '<')
+	{
+		single_char[0] = **cur;
+		single_char[1] = '\0';
+		(*cur)++;
+		return (ft_strdup(single_char));
+	}
+	return (NULL);
+}
+
+char	*handle_signs(char **cur, const char *delim)
+{
+	char	*redirectional_sign;
+
+	while (**cur && is_delimeter(**cur, delim))
+	{
+		if (**cur == '|')
 		{
-			cur++;
+			(*cur)++;
 			return (ft_strdup("|"));
 		}
-		else if ((*cur == '>' && *(cur + 1) == '>') || \
-				(*cur == '<' && *(cur + 1) == '<'))
-		{
-			double_char[0] = *cur;
-			double_char[1] = *(cur + 1);
-			double_char[2] = '\0';
-			cur += 2;
-			return (ft_strdup(double_char));
-		}
-		else if (*cur == '>' || *cur == '<')
-		{
-			single_char[0] = *cur;
-			single_char[1] = '\0';
-			cur++;
-			return (ft_strdup(single_char));
-		}
+		redirectional_sign = handle_redirectional_signs(cur);
+		if (redirectional_sign != NULL)
+			return (redirectional_sign);
 		else
-			cur++;
+			(*cur)++;
 	}
-	return ("hi");
-}*/
+	return (NULL);
+}
 
 char	*ft_strtok(char *str, const char *delim)
 {
 	static char	*cur = NULL;
 	char		*token_start;
-	char		double_char[3];
-	char		single_char[2];
 	char		quote;
+	char		*sign_token;
 
 	if (str != NULL)
 		cur = str;
 	if (cur == NULL)
 		return (NULL);
-	//handle_signs(cur, delim);
-	while (*cur && is_delimeter(*cur, delim))
-	{
-		if (*cur == '|')
-		{
-			cur++;
-			return (ft_strdup("|"));
-		}
-		else if ((*cur == '>' && *(cur + 1) == '>') || \
-				(*cur == '<' && *(cur + 1) == '<'))
-		{
-			double_char[0] = *cur;
-			double_char[1] = *(cur + 1);
-			double_char[2] = '\0';
-			cur += 2;
-			return (ft_strdup(double_char));
-		}
-		else if (*cur == '>' || *cur == '<')
-		{
-			single_char[0] = *cur;
-			single_char[1] = '\0';
-			cur++;
-			return (ft_strdup(single_char));
-		}
-		else
-			cur++;
-	}
+	sign_token = handle_signs(&cur, delim);
+	if (sign_token != NULL)
+		return (sign_token);
 	if (*cur == '\0')
 		return (NULL);
 	token_start = cur;
