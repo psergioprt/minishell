@@ -1,32 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/27 13:49:08 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/04 02:12:55 by jcavadas         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../include/minishell.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
-// void    echo(t_node *data)
-// {
-//     //Dar handle a ' -> nao tem de expandir a variavel, copia literalmente o que tem la '\t', '\n', etc... incluido
-//     //Dar handle a " -> Tem de expandir variavel mas copia tambem os "\t", "\n", etc...
-//     //Detect $VARS e trocar pelo valor dela com get_env()
-//     //Dar handle a -n ou -e
-		
-// }
-
-
-// Function to write a string to standard output using `write`
 void write_string(const char *str)
 {
 	while (*str)
@@ -56,9 +29,7 @@ void expand_variable(const char *input, char *output)
 			var_name[var_len] = '\0';
 
 			// Get the variable value from the environment
-			printf("get_env is getting %s\n", var_name);
 			const char *value = getenv(var_name);
-			printf("get_env is giving %s\n", value);
 			if (value) {
 				while (*value) {
 					*dest++ = *value++;
@@ -93,11 +64,14 @@ void handle_quotes(const char *input, char *output) {
 			while (*src && *src != '"') {
 				if (*src == '$') {
 					char expanded[1024];
-					expand_variable(src, expanded);
+					//const char *start = src; // Save position in case of error
+					expand_variable(src, expanded); // Expand the variable
 					size_t len = strlen(expanded);
 					for (size_t i = 0; i < len; i++) {
 						*dest++ = expanded[i];
 					}
+					// Move `src` past the variable name
+					src++;
 					while (*src && (isalnum(*src) || *src == '_')) {
 						src++;
 					}
@@ -112,11 +86,13 @@ void handle_quotes(const char *input, char *output) {
 			// No quotes: expand variables
 			if (*src == '$') {
 				char expanded[1024];
-				expand_variable(src, expanded);
+				expand_variable(src, expanded); // Expand the variable
 				size_t len = strlen(expanded);
 				for (size_t i = 0; i < len; i++) {
 					*dest++ = expanded[i];
 				}
+				// Move `src` past the variable name
+				src++;
 				while (*src && (isalnum(*src) || *src == '_')) {
 					src++;
 				}
@@ -128,10 +104,23 @@ void handle_quotes(const char *input, char *output) {
 	*dest = '\0'; // Null-terminate the output string
 }
 
+//TODO: mudar a logica para o novo metodo de parsing que vamos ter
+
 // Custom echo function to handle a linked list of tokens
 void custom_echo(t_node *data) {
-	int first = 1; // Flag to manage space placement
+	int 	first; // Flag to manage space placement
+	int		i;
+	bool	has_flag;
+
+	first = 1;
+	i = 0;
+	has_flag = false;
 	data = data->next;
+	while (data->token[i] == '-' && data->token[i + 1] == 'n' && !(data->token[i + 2]))
+	{
+		has_flag = true;
+		data = data->next;
+	}
 	while (data) {
 		char processed[1024];
 		handle_quotes(data->token, processed); // Process each token
@@ -144,5 +133,6 @@ void custom_echo(t_node *data) {
 
 		data = data->next; // Move to the next node
 	}
-	write(1, "\n", 1); // Print newline at the end
+	if (!has_flag)
+		write(1, "\n", 1); // Print newline at the end
 }

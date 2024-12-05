@@ -3,13 +3,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "../Libft/libft.h"
 
 typedef struct s_node
 {
-	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um token
+	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um command
 	//struct s_node *prev; //E preciso??
 	struct s_node *next;
 }t_node;
