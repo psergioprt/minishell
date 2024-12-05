@@ -15,7 +15,7 @@ typedef struct s_node
 	struct s_node *next;
 }t_node;
 
-t_node *create_command_node(const char *command);
+t_node	*create_command_node(const char *command);
 void	add_command_node(t_node **head, const char *command);
 void	free_list(t_node *head);
 void	split_and_add_commands(t_node **head, const char *input);
