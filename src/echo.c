@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/05 22:36:38 by jcavadas         ###   ########.fr       */
+/*   Updated: 2024/12/08 12:17:48 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,12 +128,13 @@ void custom_echo(t_node *data) {
 	i = 0;
 	has_flag = false;
 	data = data->next;
-	while (data->token[i] == '-' && data->token[i + 1] == 'n' && !(data->token[i + 2]))
+	while (data && data->token[i] == '-' && data->token[i + 1] == 'n' && !(data->token[i + 2]))
 	{
 		has_flag = true;
 		data = data->next;
 	}
-	while (data) {
+	while (data)
+	{
 		char processed[1024];
 		handle_quotes(data->token, processed); // Process each token
 
