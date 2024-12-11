@@ -1,17 +1,50 @@
 #include "../include/minishell.h"
 
 //function to print enviornment variables
-void	print_env(char *env[])
+void print_env(char *env[], t_node *data)
 {
 	int	i;
+	int	env_count;
 
-	i = 0;
-	while (env[i] != NULL)
+	// Count the number of environment variables
+	env_count = 0;
+	while (env[env_count] != NULL)
+		env_count++;
+
+	// Allocate memory for envp
+	data->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
+	if (!data->envp)
 	{
-		printf("%s\n", env[i]);
+		perror("Malloc failed for envp");
+		return;
+	}
+
+	// Copy each environment variable
+	i = 0;
+	while (i < env_count)
+	{
+		data->envp[i] = strdup(env[i]); // Allocate and copy the string
+		if (!data->envp[i])
+		{
+			perror("Malloc failed for envp string");
+			while (--i >= 0)
+				free(data->envp[i]); //TODO: error free function
+			free(data->envp);
+			return;
+		}
 		i++;
 	}
+
+	// Null-terminate the array
+	data->envp[env_count] = NULL;
+	//TODO: separar em key e value
+	// Debug print to verify copying
+	for (i = 0; i < env_count; i++)
+	{
+		printf("Copied env[%d]: %s\n", i, data->envp[i]);
+	}
 }
+
 //function created to handle readline exit
 int	ft_strcmp(char *str1, char *str2)
 {
@@ -29,21 +62,17 @@ int	ft_strcmp(char *str1, char *str2)
 int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ... KEY=VALUE That will be used with the entered command
 {
 	char	*read;
-	t_node	*command_list;
+	t_node	*data;
 	t_node	*current;
 	
 	
 	(void)argc;
 	(void)argv;
-	command_list = NULL;
-	print_env(env);
-    const char *value = getenv("USER");
-    if (value) {
-        printf("USER: %s\n", value);
-    } else {
-        printf("USER variable not found.\n");
-    }
-
+	data = NULL;
+	//TODO: Tem de inicializar antes de fazer isto - falar com paulo 
+	//data = create_command_node("dummy_command");
+	data = malloc(sizeof(t_node));
+	print_env(env, data);
 
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
@@ -52,9 +81,9 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 			break;
 		if (*read)
 		{
-			split_and_add_commands(&command_list, read);
+			split_and_add_commands(&data, read);
 			add_history(read);
-			first_token(command_list);
+			first_token(data);
 		}
 		free(read);
 	}
@@ -64,14 +93,14 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 		if (ft_strcmp(read, "time to leave minishell") == 0)
 			break ;
 		if (*read)
-		{
-			add_command_node(&command_list, read);
+		{                                                                                                                                                                                                                                                                     
+			add_command_node(&minishell, read);
 			add_history(read); //from readline/history.h ... manages history (scrolls inputed commands)
 			printf("command: %s\n", read);
 		}
 		free(read);
 	}*/
-	current = command_list;
+	current = data;
 	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
 	//"time to leave minishell" IS ENTERED
 	
@@ -87,6 +116,6 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 		current = current->next;
 		i++;
 	}
-	free_list(command_list);
+	free_list(data);
 	return (0);
 }

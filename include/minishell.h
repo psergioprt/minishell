@@ -8,10 +8,20 @@
 #include <readline/history.h>
 #include "../Libft/libft.h"
 
+typedef struct s_env
+{
+	char	*key;
+	char	*value;
+	bool	print; //Quando e so key, so imprime no export sem mais nada, se nao so imprime o que tiver pelo menos key=
+}t_env;
+
+
 typedef struct s_node
 {
 	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um command
 	//struct s_node *prev; //E preciso??
+	char	**envp; //so copia o que tem para usar no execve
+	t_env	*envvars;
 	struct s_node *next;
 }t_node;
 

@@ -13,6 +13,8 @@ t_node	*create_command_node(const char *command)
 	}
 	new_node->token = ft_strdup(command);
 	new_node->next = NULL;
+	new_node->envp = NULL;
+	new_node->envvars = NULL;
 	return (new_node);
 }
 
@@ -181,6 +183,8 @@ void	free_list(t_node *list)
 		current = list;
 		list = list->next;
 		free(current->token);
+		free(current->envp);
+		free(current->envvars);
 		free(current);
 	}
 }
