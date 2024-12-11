@@ -12,11 +12,11 @@ typedef struct s_env
 {
 	char	*key;
 	char	*value;
-	bool	print; //Quando e so key, so imprime no export sem mais nada, se nao so imprime o que tiver pelo menos key=
+	bool	print; //Quando e so key, so imprime no export sem mais nada, se nao so imprime o que tiver pelo menos key= 1-PRINT, 2-NOT
 }t_env;
 
 
-typedef struct s_node
+typedef struct s_node 
 {
 	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um command
 	//struct s_node *prev; //E preciso??
@@ -33,5 +33,8 @@ void	split_and_add_commands(t_node **head, const char *input);
 void	first_token(t_node *data);
 
 void	custom_echo(t_node *data);
+
+//Splitting and saving env vars
+void parse_env(t_node *node, char *env[]);
 
 #endif

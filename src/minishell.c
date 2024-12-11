@@ -37,12 +37,14 @@ void print_env(char *env[], t_node *data)
 
 	// Null-terminate the array
 	data->envp[env_count] = NULL;
-	//TODO: separar em key e value
+	// separar em key e value - DONE
 	// Debug print to verify copying
+	//TODO: DELETE TESTES COPY ENV
 	for (i = 0; i < env_count; i++)
 	{
 		printf("Copied env[%d]: %s\n", i, data->envp[i]);
 	}
+	//TODO: DELETE TESTES COPY ENV
 }
 
 //function created to handle readline exit
@@ -73,7 +75,27 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	//data = create_command_node("dummy_command");
 	data = malloc(sizeof(t_node));
 	print_env(env, data);
+	parse_env(data, env);
 
+	//TODO: DELETE TESTES SPLIT PARSE ENV
+	 // Print the parsed environment variables
+	if (data->envvars) {
+		for (int i = 0; data->envvars[i].key != NULL; i++) {
+			printf("Key: %s, Value: %s, Print: %d\n",
+				   data->envvars[i].key,
+				   data->envvars[i].value ? data->envvars[i].value : "(null)",
+				   data->envvars[i].print);
+		}
+		//JA PASSOU AQUI SEG FAULT
+		// Free the allocated memory
+		for (int i = 0; data->envvars[i].key != NULL; i++) {
+			//free(data->envvars[i].key);
+			//free(data->envvars[i].value);
+		} 
+		//JA PASSOU AQUI SEG FAULT
+		//free(data->envvars);
+	}
+	//TODO: DELETE TESTES SPLIT PARSE ENV 
 	//LOOP TO ADD EACH COMMAND TO NODES
 	while ((read = readline("minishell> ")) != NULL)
 	{
@@ -87,6 +109,8 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 		}
 		free(read);
 	}
+	
+
 	//LOOP TO ADD INPUT LINES TO NODES
 	/*while ((read = readline("minishell> "))!= NULL)
 	{
