@@ -6,13 +6,14 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 23:00:32 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/11 23:28:10 by jcavadas         ###   ########.fr       */
+/*   Updated: 2024/12/12 19:34:45 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void parse_env(t_node *node, char *env[]) {
+void parse_env(t_node *node, char *env[])
+{
 	int count = 0;
 
 	// Count the number of environment variables
@@ -63,9 +64,52 @@ void parse_env(t_node *node, char *env[]) {
 	node->envvars[count].key = NULL;
 	node->envvars[count].value = NULL;
 	node->envvars[count].print = false;
-
-
-
-	// Optional: Null-terminate the envvars array if needed
-	// You can track the count in another field in t_node if necessary
 }
+
+void copy_env(char *env[], t_node *data)
+{
+	int	i;
+	int	env_count;
+
+	// Count the number of environment variables
+	env_count = 0;
+	while (env[env_count] != NULL)
+		env_count++;
+
+	// Allocate memory for envp
+	data->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
+	if (!data->envp)
+	{
+		perror("Malloc failed for envp");
+		return;
+	}
+
+	// Copy each environment variable
+	i = 0;
+	while (i < env_count)
+	{
+		data->envp[i] = strdup(env[i]); // Allocate and copy the string
+		if (!data->envp[i])
+		{
+			perror("Malloc failed for envp string");
+			while (--i >= 0)
+				free(data->envp[i]); //TODO: error free function
+			free(data->envp);
+			return;
+		}
+		i++;
+	}
+
+	// Null-terminate the array
+	data->envp[env_count] = NULL;
+	// separar em key e value - DONE
+	// Debug print to verify copying
+	//TODO: DELETE TESTES COPY ENV
+	for (i = 0; i < env_count; i++)
+	{
+		printf("Copied env[%d]: %s\n", i, data->envp[i]);
+	}
+	//TODO: DELETE TESTES COPY ENV
+}
+
+

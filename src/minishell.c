@@ -1,51 +1,7 @@
 #include "../include/minishell.h"
 
 //function to print enviornment variables
-void print_env(char *env[], t_node *data)
-{
-	int	i;
-	int	env_count;
 
-	// Count the number of environment variables
-	env_count = 0;
-	while (env[env_count] != NULL)
-		env_count++;
-
-	// Allocate memory for envp
-	data->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
-	if (!data->envp)
-	{
-		perror("Malloc failed for envp");
-		return;
-	}
-
-	// Copy each environment variable
-	i = 0;
-	while (i < env_count)
-	{
-		data->envp[i] = strdup(env[i]); // Allocate and copy the string
-		if (!data->envp[i])
-		{
-			perror("Malloc failed for envp string");
-			while (--i >= 0)
-				free(data->envp[i]); //TODO: error free function
-			free(data->envp);
-			return;
-		}
-		i++;
-	}
-
-	// Null-terminate the array
-	data->envp[env_count] = NULL;
-	// separar em key e value - DONE
-	// Debug print to verify copying
-	//TODO: DELETE TESTES COPY ENV
-	for (i = 0; i < env_count; i++)
-	{
-		printf("Copied env[%d]: %s\n", i, data->envp[i]);
-	}
-	//TODO: DELETE TESTES COPY ENV
-}
 
 //function created to handle readline exit
 int	ft_strcmp(char *str1, char *str2)
@@ -74,17 +30,16 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	//TODO: Tem de inicializar antes de fazer isto - falar com paulo 
 	//data = create_command_node("dummy_command");
 	data = malloc(sizeof(t_node));
-	print_env(env, data);
+	copy_env(env, data);
 	parse_env(data, env);
-
 	//TODO: DELETE TESTES SPLIT PARSE ENV
 	 // Print the parsed environment variables
 	if (data->envvars) {
 		for (int i = 0; data->envvars[i].key != NULL; i++) {
 			printf("Key: %s, Value: %s, Print: %d\n",
-				   data->envvars[i].key,
-				   data->envvars[i].value ? data->envvars[i].value : "(null)",
-				   data->envvars[i].print);
+				data->envvars[i].key,
+				data->envvars[i].value ? data->envvars[i].value : "(null)",
+				data->envvars[i].print);
 		}
 		//JA PASSOU AQUI SEG FAULT
 		// Free the allocated memory

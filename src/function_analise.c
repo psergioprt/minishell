@@ -35,7 +35,7 @@ void	first_token(t_node *data)
 	else if (!ft_strncmp(data->token, "exit", len))
 		printf("Fazer o exit\n");
 	else
-		ret = printf("Fazer o execve\n");
+		ret = execute_execve(data);
 	if (ret <= 0)
 		printf("Error, command not found!\n");
 }

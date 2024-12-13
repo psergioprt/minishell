@@ -18,7 +18,8 @@ typedef struct s_env
 
 typedef struct s_node 
 {
-	char	*token; //Acho que fica mais certo que command porque nao e obrigatoriamente um command
+	char	*token;	 //Acho que fica mais certo que command porque nao e obrigatoriamente um command
+	char	*command;
 	//struct s_node *prev; //E preciso??
 	char	**envp; //so copia o que tem para usar no execve
 	t_env	*envvars;
@@ -34,7 +35,12 @@ void	first_token(t_node *data);
 
 void	custom_echo(t_node *data);
 
-//Splitting and saving env vars
-void parse_env(t_node *node, char *env[]);
+//Splits
+void	parse_env(t_node *node, char *env[]);
+void	copy_env(char *env[], t_node *data);
+
+
+//EXEC
+int		execute_execve(t_node *data);
 
 #endif
