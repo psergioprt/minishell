@@ -1,3 +1,4 @@
 $?
 SHLVL
 FORK
+check echo"abc" -> should output command echoabc

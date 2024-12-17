@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/03 22:48:20 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/17 20:03:44 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -66,9 +66,9 @@ void	print_nodes(t_node *command_list)
 	while (current)
 	{
 		if (i == 0)
-			printf("Exiting...Node[head]: %s\n", current->command);
+			printf("Node[head]: %s\n", current->command);
 		else
-			printf("Exiting...Node[%d]: %s\n", i, current->command);
+			printf("Node[%d]: %s\n", i, current->command);
 		current = current->next;
 		i++;
 	}
@@ -87,6 +87,9 @@ void	read_lines(t_node **command_list)
 		{
 			split_and_add_commands(command_list, read);
 			add_history(read);
+			print_nodes(*command_list);
+			free_list(*command_list);
+			*command_list = NULL;
 		}
 		free(read);
 		read = readline("minishell> ");
@@ -102,7 +105,6 @@ int	main(int argc, char *argv[], char *env[])
 	(void)env;
 	command_list = NULL;
 	read_lines(&command_list);
-	print_nodes(command_list);
-	free_list(command_list);
+	printf("Exiting program...\n");
 	return (0);
 }
