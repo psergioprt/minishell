@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/17 14:23:16 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/18 07:59:43 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@ typedef struct s_node
 	char			*command;
 	struct s_node	*next;
 }	t_node;
+
+typedef struct s_parse_context
+{
+	char	*current_token;
+	const char *input;
+	char	quote;
+} t_parse_context;
 
 t_node	*create_command_node(const char *command);
 void	add_command_node(t_node **head, const char *command);

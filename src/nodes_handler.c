@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/18 05:36:10 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/18 08:59:06 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,48 @@ static int	is_delimeter(char c, const char *delim)
 	return (0);
 }
 
+//function created to handle pipes delimeter
+void	handle_pipes(t_node **list, t_parse_context *ctx, int *i, int *j)
+{
+	char	delimeter[2];
+
+	if (*j > 0)
+	{
+		ctx->current_token[*j] = '\0';
+		add_command_node(list, ctx->current_token);
+		*j = 0;
+	}
+	delimeter[0] = ctx->input[*i];
+	delimeter[1] = '\0';
+	add_command_node(list, delimeter);
+}
+
+//function created to handle quotes, if opened and closed
+void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
+{
+	if (!ctx->quote)
+	{
+		ctx->quote = ctx->input[*i];
+		(*i)++;
+		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+			ctx->current_token[(*j)++] = ctx->input[(*i)++];
+		if (ctx->input[*i] == ctx->quote)
+			ctx->quote = 0;
+		else
+		{
+			printf("Error: Unclosed quote detected!\n");
+			return ;
+		}
+	}
+}
+
 void	split_and_add_commands(t_node **list, const char *input)
 {
 	int			i;
 	int			j;
 	char		current_token[1024];
 	char		quote;
+	t_parse_context ctx = {current_token, input, 0};
 
 	i = 0;
 	j = 0;
@@ -111,33 +147,9 @@ void	split_and_add_commands(t_node **list, const char *input)
 			}
 		}
 		else if (!quote && input[i] == '|')
-		{
-			if (j > 0)
-			{
-				current_token[j] = '\0';
-				add_command_node(list, current_token);
-				j = 0;
-			}
-			char	delimiter[2] = {input[i], '\0'};
-			add_command_node(list, delimiter);
-		}
+			handle_pipes(list, &ctx, &i, &j);
 		else if (input[i] == '"' || input[i] == '\'')
-		{
-			if (!quote)
-			{
-				quote = input[i];
-				i++;
-				while (input[i] && input[i] != quote)
-					current_token[j++] = input[i++];
-				if (input[i] == quote)
-					quote = 0;
-				else
-				{
-					printf("Error: Unclosed quote detected!\n");
-					return ;
-				}
-			}
-		}
+			handle_open_close_quotes(&ctx, &i, &j);
 		else
 			current_token[j++] = input[i];
 		i++;
@@ -149,6 +161,7 @@ void	split_and_add_commands(t_node **list, const char *input)
 	}
 }
 
+//function created to tokenize
 char	*ft_strtok(char *str, const char *delim)
 {
 	static char	*cur = NULL;
