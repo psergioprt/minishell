@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/17 20:03:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:51:22 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -22,11 +22,6 @@
  *
  * LOOP TO ADD EACH COMMAND TO NODES
  *	while ((read = readline("minishell> ")) != NULL)
- *
- *
- *
- *
- *
  */
 #include "../include/minishell.h"
 
@@ -66,15 +61,15 @@ void	print_nodes(t_node *command_list)
 	while (current)
 	{
 		if (i == 0)
-			printf("Node[head]: %s\n", current->command);
+			printf("Node[head]: %s\n", current->token);
 		else
-			printf("Node[%d]: %s\n", i, current->command);
+			printf("Node[%d]: %s\n", i, current->token);
 		current = current->next;
 		i++;
 	}
 }
 
-void	read_lines(t_node **command_list)
+void	read_lines(t_minishell *mini)
 {
 	char	*read;
 
@@ -85,26 +80,26 @@ void	read_lines(t_node **command_list)
 			break ;
 		if (*read)
 		{
-			split_and_add_commands(command_list, read);
+			split_and_add_commands(mini, read);
 			add_history(read);
-			print_nodes(*command_list);
-			free_list(*command_list);
-			*command_list = NULL;
+			print_nodes(mini->tokelst);
+			free_list(mini);
 		}
 		free(read);
 		read = readline("minishell> ");
 	}
+	free_list(mini);
 }
 
 int	main(int argc, char *argv[], char *env[])
 {
-	t_node	*command_list;
+	t_minishell	mini;
 
 	(void)argc;
 	(void)argv;
 	(void)env;
-	command_list = NULL;
-	read_lines(&command_list);
+	mini.tokelst = NULL;
+	read_lines(&mini);
 	printf("Exiting program...\n");
 	return (0);
 }

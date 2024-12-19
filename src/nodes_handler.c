@@ -6,48 +6,56 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/18 08:59:06 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/18 23:51:28 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-t_node	*create_command_node(const char *command)
+t_node	*create_command_node(const char *token)
 {
 	t_node	*new_node;
 
 	new_node = malloc(sizeof(t_node));
 	if (!new_node)
 	{
-		perror("Error!\nFailed to allocate memory for new_node\n");
+		perror("Error! Failed to allocate memory for new_node\n");
 		return (NULL);
 	}
-	new_node->command = ft_strdup(command);
+	new_node->token = ft_strdup(token);
+	if (!new_node->token)
+	{
+		perror("Error! Failed to duplicate command\n");
+		free(new_node);
+		return (NULL);
+	}
 	new_node->next = NULL;
 	return (new_node);
 }
 
-//function created to add commands to linked list
-void	add_command_node(t_node **list, const char *command)
+void	add_command_node(t_minishell *mini, const char *token)
 {
-	t_node		*new_node;
-	t_node		*current;
-	static int	node_index = 0;
+	t_node	*new_node;
+	t_node	*current;
 
-	node_index = 1;
-	new_node = create_command_node(command);
-	if (!new_node)
+	if (!mini || !token)
+	{
+		perror("Error: add_command_node called with NULL mini or command\n");
 		return ;
-	if (!*list)
-		*list = new_node;
+	}
+	new_node = create_command_node(token);
+	if (!new_node)
+	{
+		perror("Error: Failed to create new node\n");
+		return ;
+	}
+	if (!mini->tokelst)
+		mini->tokelst = new_node;
 	else
 	{
-		current = *list;
+		current = mini->tokelst;
 		while (current->next)
-		{
 			current = current->next;
-			node_index++;
-		}
 		current->next = new_node;
 	}
 }
@@ -64,20 +72,49 @@ static int	is_delimeter(char c, const char *delim)
 	return (0);
 }
 
+//function created to handle redirectinal signs
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, \
+		int *j)
+{
+	char	double_op[3];
+	char	single_op[2];
+
+	if (*j > 0)
+	{
+		ctx->current_token[*j] = '\0';
+		add_command_node(mini, ctx->current_token);
+		*j = 0;
+	}
+	if (ctx->input[(*i) + 1] == ctx->input[*i])
+	{
+		double_op[0] = ctx->input[*i];
+		double_op[1] = ctx->input[(*i) + 1];
+		double_op[2] = '\0';
+		add_command_node(mini, double_op);
+		(*i)++;
+	}
+	else
+	{
+		single_op[0] = ctx->input[*i];
+		single_op[1] = '\0';
+		add_command_node(mini, single_op);
+	}
+}
+
 //function created to handle pipes delimeter
-void	handle_pipes(t_node **list, t_parse_context *ctx, int *i, int *j)
+void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	delimeter[2];
 
 	if (*j > 0)
 	{
 		ctx->current_token[*j] = '\0';
-		add_command_node(list, ctx->current_token);
+		add_command_node(mini, ctx->current_token);
 		*j = 0;
 	}
 	delimeter[0] = ctx->input[*i];
 	delimeter[1] = '\0';
-	add_command_node(list, delimeter);
+	add_command_node(mini, delimeter);
 }
 
 //function created to handle quotes, if opened and closed
@@ -99,14 +136,19 @@ void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
 	}
 }
 
-void	split_and_add_commands(t_node **list, const char *input)
+void	split_and_add_commands(t_minishell *mini, const char *input)
 {
 	int			i;
 	int			j;
 	char		current_token[1024];
 	char		quote;
-	t_parse_context ctx = {current_token, input, 0};
-
+	t_parse_context	ctx = {current_token, input, 0};
+	/*ctx.current_token = current_token;
+	ctx.current_token = malloc(1024);
+	if (!ctx.current_token)
+		return ;
+	ctx.input = input;
+	ctx.index = 0;*/
 	i = 0;
 	j = 0;
 	quote = 0;
@@ -114,7 +156,8 @@ void	split_and_add_commands(t_node **list, const char *input)
 	{
 		if (!quote && input[i] == ' ')
 		{
-			if (input[i + 1] == ' ' || input[i + 1] == '"' || input[i + 1] == '\'')
+			if (input[i + 1] == ' ' || input[i + 1] == '"' || \
+					input[i + 1] == '\'')
 			{
 				i++;
 				continue ;
@@ -122,32 +165,14 @@ void	split_and_add_commands(t_node **list, const char *input)
 			if (j > 0)
 			{
 				current_token[j] = '\0';
-				add_command_node(list, current_token);
+				add_command_node(mini, current_token);
 				j = 0;
 			}
 		}
 		else if (!quote && (input[i] == '>' || input[i] == '<'))
-		{
-			if (j > 0)
-			{
-				current_token[j] = '\0';
-				add_command_node(list, current_token);
-				j = 0;
-			}
-			if (input[i + 1] == input[i])
-			{
-				char	double_op[3] = {input[i], input[i + 1], '\0'};
-				add_command_node(list, double_op);
-				i++;
-			}
-			else
-			{
-				char	single_op[2] = {input[i], '\0'};
-				add_command_node(list, single_op);
-			}
-		}
+			handle_redirectional(mini, &ctx, &i, &j);
 		else if (!quote && input[i] == '|')
-			handle_pipes(list, &ctx, &i, &j);
+			handle_pipes(mini, &ctx, &i, &j);
 		else if (input[i] == '"' || input[i] == '\'')
 			handle_open_close_quotes(&ctx, &i, &j);
 		else
@@ -157,7 +182,7 @@ void	split_and_add_commands(t_node **list, const char *input)
 	if (j > 0)
 	{
 		current_token[j] = '\0';
-		add_command_node(list, current_token);
+		add_command_node(mini, current_token);
 	}
 }
 
@@ -186,15 +211,18 @@ char	*ft_strtok(char *str, const char *delim)
 }
 
 //function created to free the linked list
-void	free_list(t_node *list)
+void	free_list(t_minishell *mini)
 {
 	t_node	*current;
+	t_node	*next;
 
-	while (list)
+	current = mini->tokelst;
+	while (current)
 	{
-		current = list;
-		list = list->next;
-		free(current->command);
+		next = current->next;
+		free(current->token);
 		free(current);
+		current = next;
 	}
+	mini->tokelst = NULL;
 }
