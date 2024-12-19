@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/18 23:51:28 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/19 09:27:33 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,7 @@ static int	is_delimeter(char c, const char *delim)
 }
 
 //function created to handle redirectinal signs
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, \
-		int *j)
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	double_op[3];
 	char	single_op[2];
@@ -143,6 +142,7 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	char		current_token[1024];
 	char		quote;
 	t_parse_context	ctx = {current_token, input, 0};
+	mini->has_pipe = false;
 	/*ctx.current_token = current_token;
 	ctx.current_token = malloc(1024);
 	if (!ctx.current_token)
@@ -172,7 +172,10 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 		else if (!quote && (input[i] == '>' || input[i] == '<'))
 			handle_redirectional(mini, &ctx, &i, &j);
 		else if (!quote && input[i] == '|')
+		{
+			mini->has_pipe = true;
 			handle_pipes(mini, &ctx, &i, &j);
+		}
 		else if (input[i] == '"' || input[i] == '\'')
 			handle_open_close_quotes(&ctx, &i, &j);
 		else
