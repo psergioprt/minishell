@@ -1,9 +1,17 @@
 #include "../include/minishell.h"
 
-//function to print enviornment variables
+void	print_env(char *env[])
+{
+	int	i;
 
+	i = 0;
+	while (env[i] != NULL)
+	{
+		printf("%s\n", env[i]);
+		i++;
+	}
+}
 
-//function created to handle readline exit
 int	ft_strcmp(char *str1, char *str2)
 {
 	while (*str1 && *str2)
@@ -17,10 +25,69 @@ int	ft_strcmp(char *str1, char *str2)
 	}
 	return (0);
 }
-int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ... KEY=VALUE That will be used with the entered command
+
+void	print_nodes(t_node *command_list)
+{
+	int		i;
+	t_node	*current;
+
+	i = 0;
+	current = command_list;
+	while (current)
+	{
+		if (i == 0)
+			printf("Node[head]: %s\n", current->token);
+		else
+			printf("Node[%d]: %s\n", i, current->token);
+		current = current->next;
+		i++;
+	}
+}
+
+void	read_lines(t_minishell *mini)
 {
 	char	*read;
-	t_node	*data;
+
+	read = readline("minishell> ");
+	while (read != NULL)
+	{
+		if (ft_strcmp(read, "minishell") == 0)
+			break ;
+		if (*read)
+		{
+			split_and_add_commands(mini, read);
+			add_history(read);
+			first_token(mini);
+			print_nodes(mini->tokenlst);
+			free_list(mini);
+		}
+		free(read);
+		read = readline("minishell> ");
+	}
+	free_list(mini);
+}
+
+int	main(int argc, char *argv[], char *env[])
+{
+	t_minishell	mini;
+
+	(void)argc;
+	(void)argv;
+	(void)env;
+	mini.tokenlst = NULL;
+	read_lines(&mini);
+	printf("Exiting program...\n");
+	return (0);
+}
+
+
+
+
+//TODO: Apagar main antiga
+/* int	main(int argc, char *argv[], char *env[]) //env[]: Environment variables ... KEY=VALUE That will be used with the entered command
+{
+	char	*read;
+	t_minishell	*data;
 	t_node	*current;
 	
 	
@@ -67,7 +134,7 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	
 
 	//LOOP TO ADD INPUT LINES TO NODES
-	/*while ((read = readline("minishell> "))!= NULL)
+	while ((read = readline("minishell> "))!= NULL)
 	{
 		if (ft_strcmp(read, "time to leave minishell") == 0)
 			break ;
@@ -78,7 +145,7 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 			printf("command: %s\n", read);
 		}
 		free(read);
-	}*/
+	}
 	current = data;
 	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
 	//"time to leave minishell" IS ENTERED
@@ -98,3 +165,4 @@ int	main(int argc, char *argv[], char *env[]) //*env[]: Environment variables ..
 	free_list(data);
 	return (0);
 }
+ */

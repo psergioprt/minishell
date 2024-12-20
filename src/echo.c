@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/08 12:17:48 by jcavadas         ###   ########.fr       */
+/*   Updated: 2024/12/19 14:51:47 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,24 +119,27 @@ void handle_quotes(const char *input, char *output) {
 //TODO: mudar a logica para o novo metodo de parsing que vamos ter
 
 // Custom echo function to handle a linked list of tokens
-void custom_echo(t_node *data) {
+void custom_echo(t_minishell *data)
+{
 	int 	first; // Flag to manage space placement
 	int		i;
+	t_node	*node;
 	bool	has_flag;
 
 	first = 1;
 	i = 0;
 	has_flag = false;
-	data = data->next;
-	while (data && data->token[i] == '-' && data->token[i + 1] == 'n' && !(data->token[i + 2]))
+	node = data->tokenlst;
+	node = node->next;
+	while (node && node->token[i] == '-' && node->token[i + 1] == 'n' && !(node->token[i + 2]))
 	{
 		has_flag = true;
-		data = data->next;
+		node = node->next;
 	}
-	while (data)
+	while (node)
 	{
 		char processed[1024];
-		handle_quotes(data->token, processed); // Process each token
+		handle_quotes(node->token, processed); // Process each token
 
 		if (!first) {
 			write(1, " ", 1); // Add space before every token except the first
@@ -144,7 +147,7 @@ void custom_echo(t_node *data) {
 		write_string(processed);
 		first = 0;
 
-		data = data->next; // Move to the next node
+		node = node->next; // Move to the next node
 	}
 	if (!has_flag)
 		write(1, "\n", 1); // Print newline at the end
