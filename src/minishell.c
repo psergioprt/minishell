@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/18 18:51:22 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/28 01:06:34 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -73,11 +73,16 @@ void	read_lines(t_minishell *mini)
 {
 	char	*read;
 
+	read = NULL;
 	read = readline("minishell> ");
 	while (read != NULL)
 	{
 		if (ft_strcmp(read, "minishell") == 0)
+		{
+			free(read);
+			free_list(mini);
 			break ;
+		}
 		if (*read)
 		{
 			split_and_add_commands(mini, read);
@@ -101,5 +106,6 @@ int	main(int argc, char *argv[], char *env[])
 	mini.tokelst = NULL;
 	read_lines(&mini);
 	printf("Exiting program...\n");
+	cleanup_readline();
 	return (0);
 }

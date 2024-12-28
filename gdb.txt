@@ -1,0 +1,94 @@
+Breakpoint 1 at 0x141a: file src/minishell.c, line 112.
+Breakpoint 2 at 0x1878: file src/nodes_handler.c, line 146.
+Starting program: /home/paulo/Programming/42/git/minishell/minishell 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffe6c8, env=0x7fffffffe6d8) at src/minishell.c:112
+read_lines (mini=0x7fffffffe580) at src/minishell.c:76
+ft_strcmp (str1=0x555555578ce0 "HI!", str2=0x55555555602e "minishell") at src/minishell.c:42
+read_lines (mini=0x7fffffffe580) at src/minishell.c:79
+
+Breakpoint 2, split_and_add_commands (mini=0x7fffffffe580, input=0x555555578ce0 "HI!") at src/nodes_handler.c:146
+$1 = 72 'H'
+$2 = 73 'I'
+$3 = 33 '!'
+$4 = 0 '\000'
+add_command_node (mini=0x7fffffffe580, token=0x7fffffffe110 "HI!") at src/nodes_handler.c:43
+create_command_node (token=0x7fffffffe110 "HI!") at src/nodes_handler.c:19
+__GI___libc_malloc (bytes=16) at ./malloc/malloc.c:3288
+checked_request2size (req=16) at ./malloc/malloc.c:1338
+_int_malloc (av=av@entry=0x7ffff7f47c60 <main_arena>, bytes=16) at ./malloc/malloc.c:3798
+checked_request2size (req=16, req@entry=140737353383008) at ./malloc/malloc.c:1338
+0x00007ffff7e0c349 in checked_request2size (req=16, req@entry=140737353383008) at ./malloc/malloc.c:1357
+0x00007ffff7e0c351 in checked_request2size (req=16, req@entry=140737353383008) at ./malloc/malloc.c:1357
+_int_malloc (av=av@entry=0x7ffff7f47c60 <main_arena>, bytes=16) at ./malloc/malloc.c:3807
+Undefined command: "ss".  Try "help".
+alloc_perturb (p=0x555555578b80 "\300|\364\367\377\177", n=16) at ./malloc/malloc.c:1999
+__GI___libc_malloc (bytes=<optimized out>) at ./malloc/malloc.c:3316
+arena_for_chunk (ptr=0x555555578b70) at ./malloc/arena.c:162
+create_command_node (token=0x7fffffffe110 "HI!") at src/nodes_handler.c:20
+__printf (format=0x555555556050 "Allocated %zu bytes at %p\n") at ./stdio-common/printf.c:28
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-internal.c:684
+0x00007ffff7dd147d in __find_specmb (format=<optimized out>) at ./stdio-common/printf-parse.h:82
+__find_specmb (format=0x555555556050 "Allocated %zu bytes at %p\n") at ./stdio-common/printf-parse.h:82
+__strchrnul_avx2 () at ../sysdeps/x86_64/multiarch/strchr-avx2.S:55
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-internal.c:759
+0x00007ffff7dd14ab in __find_specmb (format=0x555555556050 "Allocated %zu bytes at %p\n") at ./stdio-common/printf-parse.h:82
+__GI___libc_cleanup_push_defer (buffer=buffer@entry=0x7fffffffdb20) at ./nptl/libc-cleanup.c:25
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-internal.c:764
+outstring_func (done=<optimized out>, length=<optimized out>, string=<optimized out>, s=<optimized out>) at ./stdio-common/vfprintf-internal.c:239
+0x00007ffff7dd14cf in IO_validate_vtable (vtable=<optimized out>) at ../libio/libioP.h:940
+outstring_func (done=0, length=10, string=0x555555556050 "Allocated %zu bytes at %p\n", s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:239
+IO_validate_vtable (vtable=0x7ffff7f445e0 <_IO_file_jumps>) at ../libio/libioP.h:940
+outstring_func (done=0, length=10, string=0x555555556050 "Allocated %zu bytes at %p\n", s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ../libio/libioP.h:947
+_IO_new_file_xsputn (f=0x7ffff7f48760 <_IO_2_1_stdout_>, data=0x555555556050, n=10) at ./libio/fileops.c:1203
+0x00007ffff7df6552 in _IO_new_file_xsputn (n=10, data=0x555555556050, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1210
+_IO_new_file_xsputn (f=0x7ffff7f48760 <_IO_2_1_stdout_>, data=0x555555556050, n=10) at ./libio/fileops.c:1196
+_IO_new_file_xsputn (n=10, data=0x555555556050, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1212
+__mempcpy_avx_unaligned () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:206
+__memcpy_avx_unaligned () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:225
+__memcpy_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:313
+_IO_new_file_xsputn (n=10, data=<optimized out>, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1239
+outstring_func (done=0, length=10, string=0x555555556050 "Allocated %zu bytes at %p\n", s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:241
+done_add_func (done=0, length=10) at ./stdio-common/vfprintf-internal.c:127
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-internal.c:767
+_itoa_word (value=value@entry=16, buflim=buflim@entry=0x7fffffffdf58 "", base=base@entry=10, upper_case=upper_case@entry=0) at ./stdio-common/_itoa.c:164
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-process-arg.c:166
+pad_func (done=10, width=-2, padchar=32 ' ', s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:192
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-process-arg.c:199
+pad_func (done=10, width=0, padchar=48 '0', s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:192
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-process-arg.c:213
+outstring_func (done=10, length=<optimized out>, string=0x7fffffffdf56 "16", s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:239
+IO_validate_vtable (vtable=0x7ffff7f445e0 <_IO_file_jumps>) at ../libio/libioP.h:943
+outstring_func (done=10, length=<optimized out>, string=<optimized out>, s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ../libio/libioP.h:947
+_IO_new_file_xsputn (f=0x7ffff7f48760 <_IO_2_1_stdout_>, data=0x7fffffffdf56, n=2) at ./libio/fileops.c:1203
+0x00007ffff7df6552 in _IO_new_file_xsputn (n=2, data=0x7fffffffdf56, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1210
+_IO_new_file_xsputn (f=0x7ffff7f48760 <_IO_2_1_stdout_>, data=0x7fffffffdf56, n=2) at ./libio/fileops.c:1196
+_IO_new_file_xsputn (n=2, data=0x7fffffffdf56, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1212
+__mempcpy_avx_unaligned () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:206
+__memcpy_avx_unaligned () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:225
+__memcpy_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:313
+_IO_new_file_xsputn (n=2, data=<optimized out>, f=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./libio/fileops.c:1239
+outstring_func (done=10, length=<optimized out>, string=<optimized out>, s=0x7ffff7f48760 <_IO_2_1_stdout_>) at ./stdio-common/vfprintf-internal.c:241
+done_add_func (done=10, length=2) at ./stdio-common/vfprintf-internal.c:127
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-process-arg.c:213
+0x00007ffff7dd1988 in __find_specmb (format=<optimized out>) at ./stdio-common/printf-parse.h:82
+__find_specmb (format=0x55555555605d " bytes at %p\n") at ./stdio-common/printf-parse.h:82
+__strchrnul_avx2 () at ../sysdeps/x86_64/multiarch/strchr-avx2.S:55
+__vfprintf_internal (s=0x7ffff7f48760 <_IO_2_1_stdout_>, format=0x555555556050 "Allocated %zu bytes at %p\n", ap=ap@entry=0x7fffffffdfa0, mode_flags=mode_flags@entry=0) at ./stdio-common/vfprintf-internal.c:1092
+__printf (format=<optimized out>) at ./stdio-common/printf.c:36
+create_command_node (token=0x7fffffffe110 "HI!") at src/nodes_handler.c:22
+add_command_node (mini=0x7fffffffe580, token=0x7fffffffe110 "HI!") at src/nodes_handler.c:49
+split_and_add_commands (mini=0x7fffffffe580, input=0x555555578ce0 "HI!") at src/nodes_handler.c:192
+read_lines (mini=0x7fffffffe580) at src/minishell.c:87
+
+Breakpoint 2, split_and_add_commands (mini=0x7fffffffe580, input=0x5555555784d0 "n") at src/nodes_handler.c:146
+read_lines (mini=0x7fffffffe580) at src/minishell.c:87
+
+Breakpoint 2, split_and_add_commands (mini=0x7fffffffe580, input=0x555555578ce0 "n") at src/nodes_handler.c:146
+$5 = 0 '\000'
+read_lines (mini=0x7fffffffe580) at src/minishell.c:87
+
+Program received signal SIGINT, Interrupt.
+pselect64_syscall (sigmask=0x7ffff7fac960 <_rl_orig_sigset>, timeout=<optimized out>, exceptfds=0x0, writefds=0x0, readfds=0x7fffffffe400, nfds=1) at ../sysdeps/unix/sysv/linux/pselect.c:34

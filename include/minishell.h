@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/18 23:43:49 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/28 01:07:16 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,16 @@ typedef struct s_parse_context
 {
 	char		*current_token;
 	const char	*input;
+	int			index;
 	char		quote;
-	//int			index;
 }	t_parse_context;
 
 t_node	*create_command_node(const char *command);
 void	add_command_node(t_minishell *mini, const char *command);
 void	free_list(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
+void	init_variables(t_minishell *mini, t_parse_context *ctx, \
+		const char *input, char *current_token);
+void	cleanup_readline(void);
 
 #endif

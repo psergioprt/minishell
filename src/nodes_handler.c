@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/19 09:27:33 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/28 01:24:18 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@ t_node	*create_command_node(const char *token)
 	t_node	*new_node;
 
 	new_node = malloc(sizeof(t_node));
+	new_node->token = NULL;
+	new_node->next = NULL;
+	if (new_node)
+		printf("Allocated %zu bytes at %p\n", sizeof(t_node), new_node);
 	if (!new_node)
 	{
 		perror("Error! Failed to allocate memory for new_node\n");
@@ -60,20 +64,9 @@ void	add_command_node(t_minishell *mini, const char *token)
 	}
 }
 
-//function created to check delimeters characters
-static int	is_delimeter(char c, const char *delim)
-{
-	while (*delim)
-	{
-		if (c == *delim)
-			return (1);
-		delim++;
-	}
-	return (0);
-}
-
 //function created to handle redirectinal signs
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j)
 {
 	char	double_op[3];
 	char	single_op[2];
@@ -130,31 +123,25 @@ void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
 		else
 		{
 			printf("Error: Unclosed quote detected!\n");
-			return ;
+			exit(1);
 		}
 	}
 }
 
+//function created for tokenize input (still has to be shortened)
 void	split_and_add_commands(t_minishell *mini, const char *input)
 {
-	int			i;
-	int			j;
-	char		current_token[1024];
-	char		quote;
-	t_parse_context	ctx = {current_token, input, 0};
-	mini->has_pipe = false;
-	/*ctx.current_token = current_token;
-	ctx.current_token = malloc(1024);
-	if (!ctx.current_token)
-		return ;
-	ctx.input = input;
-	ctx.index = 0;*/
+	int				i;
+	int				j;
+	char			current_token[1024];
+	t_parse_context	ctx;
+
 	i = 0;
 	j = 0;
-	quote = 0;
+	init_variables(mini, &ctx, input, current_token);
 	while (input[i])
 	{
-		if (!quote && input[i] == ' ')
+		if (!ctx.quote && input[i] == ' ')
 		{
 			if (input[i + 1] == ' ' || input[i + 1] == '"' || \
 					input[i + 1] == '\'')
@@ -169,9 +156,9 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 				j = 0;
 			}
 		}
-		else if (!quote && (input[i] == '>' || input[i] == '<'))
+		else if (!ctx.quote && (input[i] == '>' || input[i] == '<'))
 			handle_redirectional(mini, &ctx, &i, &j);
-		else if (!quote && input[i] == '|')
+		else if (!ctx.quote && input[i] == '|')
 		{
 			mini->has_pipe = true;
 			handle_pipes(mini, &ctx, &i, &j);
@@ -187,45 +174,4 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 		current_token[j] = '\0';
 		add_command_node(mini, current_token);
 	}
-}
-
-//function created to tokenize
-char	*ft_strtok(char *str, const char *delim)
-{
-	static char	*cur = NULL;
-	char		*token_start;
-	char		*result;
-
-	if (str != NULL)
-		cur = str;
-	if (cur == NULL || *cur == '\0')
-		return (NULL);
-	while (*cur && is_delimeter(*cur, delim))
-		cur++;
-	if (*cur == '\0')
-		return (NULL);
-	token_start = cur;
-	while (*cur && !is_delimeter(*cur, delim))
-		cur++;
-	if (*cur)
-		*cur++ = '\0';
-	result = ft_strdup(token_start);
-	return (result);
-}
-
-//function created to free the linked list
-void	free_list(t_minishell *mini)
-{
-	t_node	*current;
-	t_node	*next;
-
-	current = mini->tokelst;
-	while (current)
-	{
-		next = current->next;
-		free(current->token);
-		free(current);
-		current = next;
-	}
-	mini->tokelst = NULL;
 }
