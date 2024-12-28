@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/28 01:24:18 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/28 02:01:46 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ t_node	*create_command_node(const char *token)
 	new_node = malloc(sizeof(t_node));
 	new_node->token = NULL;
 	new_node->next = NULL;
-	if (new_node)
-		printf("Allocated %zu bytes at %p\n", sizeof(t_node), new_node);
 	if (!new_node)
 	{
 		perror("Error! Failed to allocate memory for new_node\n");
