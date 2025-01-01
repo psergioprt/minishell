@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/28 02:01:46 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/01 19:27:04 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,14 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	add_command_node(mini, delimeter);
 }
 
-//function created to handle quotes, if opened and closed
 void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
 {
+	char	quote_char;
+
+	quote_char = ctx->input[*i];
 	if (!ctx->quote)
 	{
-		ctx->quote = ctx->input[*i];
+		ctx->quote = quote_char;
 		(*i)++;
 		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
 			ctx->current_token[(*j)++] = ctx->input[(*i)++];
@@ -126,45 +128,68 @@ void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
 	}
 }
 
-//function created for tokenize input (still has to be shortened)
+void	handle_spaces_quotes(t_minishell *mini, const char *input, \
+		t_token_context *tok_ctx)
+{
+	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+	{
+		while (input[*tok_ctx->i + 1] == ' ')
+			(*tok_ctx->i)++;
+		if (input[*tok_ctx->i + 1] == '"' || input[*tok_ctx->i + 1] == '\'')
+			return ;
+		if (*tok_ctx->j > 0)
+		{
+			tok_ctx->current_token[*tok_ctx->j] = '\0';
+			add_command_node(mini, tok_ctx->current_token);
+			*tok_ctx->j = 0;
+		}
+	}
+	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
+		handle_open_close_quotes(tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	else
+	{
+		tok_ctx->current_token[*tok_ctx->j] = input[*tok_ctx->i];
+		(*tok_ctx->j)++;
+	}
+}
+
+void	handle_loop_parsers(t_minishell *mini, const char *input, \
+		t_token_context *tok_ctx)
+{
+	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+		handle_spaces_quotes(mini, input, tok_ctx);
+	else if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == '>' || \
+				input[*tok_ctx->i] == '<'))
+		handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
+	{
+		mini->has_pipe = true;
+		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	}
+	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
+		handle_open_close_quotes(tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	else
+		tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
+}
+
 void	split_and_add_commands(t_minishell *mini, const char *input)
 {
 	int				i;
 	int				j;
 	char			current_token[1024];
 	t_parse_context	ctx;
+	t_token_context	tok_ctx;
 
 	i = 0;
 	j = 0;
+	tok_ctx.current_token = current_token;
+	tok_ctx.i = &i;
+	tok_ctx.j = &j;
+	tok_ctx.ctx = &ctx;
 	init_variables(mini, &ctx, input, current_token);
 	while (input[i])
 	{
-		if (!ctx.quote && input[i] == ' ')
-		{
-			if (input[i + 1] == ' ' || input[i + 1] == '"' || \
-					input[i + 1] == '\'')
-			{
-				i++;
-				continue ;
-			}
-			if (j > 0)
-			{
-				current_token[j] = '\0';
-				add_command_node(mini, current_token);
-				j = 0;
-			}
-		}
-		else if (!ctx.quote && (input[i] == '>' || input[i] == '<'))
-			handle_redirectional(mini, &ctx, &i, &j);
-		else if (!ctx.quote && input[i] == '|')
-		{
-			mini->has_pipe = true;
-			handle_pipes(mini, &ctx, &i, &j);
-		}
-		else if (input[i] == '"' || input[i] == '\'')
-			handle_open_close_quotes(&ctx, &i, &j);
-		else
-			current_token[j++] = input[i];
+		handle_loop_parsers(mini, input, &tok_ctx);
 		i++;
 	}
 	if (j > 0)

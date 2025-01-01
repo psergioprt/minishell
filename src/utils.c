@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 23:31:33 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/28 01:10:50 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/12/28 09:52:07 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,5 @@ void	cleanup_readline(void)
 	rl_clear_history();
 	rl_free_line_state();
 	rl_deprep_terminal();
+	rl_cleanup_after_signal();
 }

@@ -6,14 +6,14 @@ INCDIR = include
 LIBFTDIR = Libft
 SRC = $(SRCDIR)/minishell.c $(SRCDIR)/nodes_handler.c $(SRCDIR)/utils.c
 LIBFT = $(LIBFTDIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror -g -O0
-LFLAGS = -lreadline -L$(LIBFTDIR) -lft
+CFLAGS = -Wall -Wextra -Werror -g -O0 -fsanitize=address
+LFLAGS = -lreadline -L$(LIBFTDIR) -lft -fsanitize=address
 OBJS = ${SRC:.c=.o}
 
 #.SILENT:
 
 $(SRCDIR)%.o: $(SRCDIR)/%.c $(INCDIR)/minishell.h
-	$(CC) $(CFLAGS) -g -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 all: $(NAME)
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LFLAGS)

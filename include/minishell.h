@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/28 01:07:16 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/01 19:29:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,14 @@ typedef struct s_parse_context
 	int			index;
 	char		quote;
 }	t_parse_context;
+
+typedef struct s_token_context
+{
+	char			*current_token;
+	int				*i;
+	int				*j;
+	t_parse_context	*ctx;
+}	t_token_context;
 
 t_node	*create_command_node(const char *command);
 void	add_command_node(t_minishell *mini, const char *command);

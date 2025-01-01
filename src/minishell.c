@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2024/12/28 01:06:34 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/01 19:58:56 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -103,6 +103,11 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argc;
 	(void)argv;
 	(void)env;
+	if (argc != 1 || argv[1])
+	{
+		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
+		exit (1);
+	}
 	mini.tokelst = NULL;
 	read_lines(&mini);
 	printf("Exiting program...\n");
