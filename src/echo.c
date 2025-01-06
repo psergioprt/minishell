@@ -119,7 +119,7 @@ void handle_quotes(const char *input, char *output) {
 //TODO: mudar a logica para o novo metodo de parsing que vamos ter
 
 // Custom echo function to handle a linked list of tokens
-void custom_echo(t_minishell *data)
+void custom_echo(t_minishell *mini)
 {
 	int 	first; // Flag to manage space placement
 	int		i;
@@ -129,7 +129,7 @@ void custom_echo(t_minishell *data)
 	first = 1;
 	i = 0;
 	has_flag = false;
-	node = data->tokenlst;
+	node = mini->tokenlst;
 	node = node->next;
 	while (node && node->token[i] == '-' && node->token[i + 1] == 'n' && !(node->token[i + 2]))
 	{

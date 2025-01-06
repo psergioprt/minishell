@@ -46,16 +46,16 @@ void	add_command_node(t_minishell *mini, const char *command);
 void	free_list(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
 
-void	first_token(t_minishell *data);
+void	first_token(t_minishell *mini);
 
-void	custom_echo(t_minishell *data);
+void	custom_echo(t_minishell *mini);
 
 //Splits
 void	parse_env(t_minishell *node, char *env[]);
-void	copy_env(char *env[], t_minishell *data);
+void	copy_env(char *env[], t_minishell *mini);
 
 
 //EXEC
-int		execute_execve(t_minishell *data);
+int		execute_execve(t_minishell *mini);
 
 #endif

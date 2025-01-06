@@ -12,30 +12,30 @@
 
 #include "../include/minishell.h"
 
-void	first_token(t_minishell *data)
+void	first_token(t_minishell *mini)
 {
 	int		ret;
 	size_t	len;
 
 	ret = 0;
-	len = ft_strlen(data->tokenlst->token);
-	if (!ft_strncmp(data->tokenlst->token, "echo", len))
-		custom_echo(data);
+	len = ft_strlen(mini->tokenlst->token);
+	if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+		custom_echo(mini);
 		// printf("Fazer o echo\n");
-	else if (!ft_strncmp(data->tokenlst->token, "cd", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
 		printf("Fazer o cd\n");
-	else if (!ft_strncmp(data->tokenlst->token, "pwd", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
 		printf("Fazer o pwd\n");
-	else if (!ft_strncmp(data->tokenlst->token, "export", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
 		printf("Fazer o export\n");
-	else if (!ft_strncmp(data->tokenlst->token, "unset", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
 		printf("Fazer o unset\n");
-	else if (!ft_strncmp(data->tokenlst->token, "env", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "env", len))
 		printf("Fazer o env\n");
-	else if (!ft_strncmp(data->tokenlst->token, "exit", len))
+	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
 		printf("Fazer o exit\n");
 	else
-		ret = execute_execve(data);
+		ret = execute_execve(mini);
 	if (ret <= 0)
 		printf("Error, command not found!\n");
 }

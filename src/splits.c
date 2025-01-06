@@ -12,7 +12,7 @@
 
 #include "../include/minishell.h"
 
-void parse_env(t_minishell *data, char *env[])
+void parse_env(t_minishell *mini, char *env[])
 {
 	int count = 0;
 
@@ -22,12 +22,12 @@ void parse_env(t_minishell *data, char *env[])
 	}
 
 	// Allocate memory for the envvars array in the node
-	data->envvars = malloc(sizeof(t_env) * count);
-	if (!data->envvars) {
+	mini->envvars = malloc(sizeof(t_env) * count);
+	if (!mini->envvars) {
 		perror("Failed to allocate memory for envvars");
 		return;
 	}
-
+	//TODO trocar de for
 	for (int i = 0; i < count; i++) {
 		char *delimiter = strchr(env[i], '=');
 		if (delimiter) {
@@ -35,38 +35,38 @@ void parse_env(t_minishell *data, char *env[])
 			size_t key_len = delimiter - env[i];
 			size_t value_len = strlen(delimiter + 1);
 
-			data->envvars[i].key = malloc(key_len + 1);
-			data->envvars[i].value = malloc(value_len + 1);
+			mini->envvars[i].key = malloc(key_len + 1);
+			mini->envvars[i].value = malloc(value_len + 1);
 
-			if (!data->envvars[i].key || !data->envvars[i].value) {
+			if (!mini->envvars[i].key || !mini->envvars[i].value) {
 				perror("Failed to allocate memory for key or value");
 				// Free previously allocated memory
 				for (int j = 0; j < i; j++) {
-					free(data->envvars[j].key);
-					free(data->envvars[j].value);
+					free(mini->envvars[j].key);
+					free(mini->envvars[j].value);
 				}
-				free(data->envvars);
-				data->envvars = NULL;
+				free(mini->envvars);
+				mini->envvars = NULL;
 				return;
 			}
 
-			strncpy(data->envvars[i].key, env[i], key_len);
-			data->envvars[i].key[key_len] = '\0';
-			strcpy(data->envvars[i].value, delimiter + 1);
-			data->envvars[i].print = true; // Default to print being true
+			strncpy(mini->envvars[i].key, env[i], key_len);
+			mini->envvars[i].key[key_len] = '\0';
+			strcpy(mini->envvars[i].value, delimiter + 1);
+			mini->envvars[i].print = true; // Default to print being true
 		} else {
 			// Handle the case where there's no '='
-			data->envvars[i].key = strdup(env[i]);
-			data->envvars[i].value = NULL;
-			data->envvars[i].print = false;
+			mini->envvars[i].key = strdup(env[i]);
+			mini->envvars[i].value = NULL;
+			mini->envvars[i].print = false;
 		}
 	}
-	data->envvars[count].key = NULL;
-	data->envvars[count].value = NULL;
-	data->envvars[count].print = false;
+	mini->envvars[count].key = NULL;
+	mini->envvars[count].value = NULL;
+	mini->envvars[count].print = false;
 }
 
-void copy_env(char *env[], t_minishell *data)
+void copy_env(char *env[], t_minishell *mini)
 {
 	int	i;
 	int	env_count;
@@ -77,8 +77,8 @@ void copy_env(char *env[], t_minishell *data)
 		env_count++;
 
 	// Allocate memory for envp
-	data->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
-	if (!data->envp)
+	mini->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
+	if (!mini->envp)
 	{
 		perror("Malloc failed for envp");
 		return;
@@ -88,26 +88,26 @@ void copy_env(char *env[], t_minishell *data)
 	i = 0;
 	while (i < env_count)
 	{
-		data->envp[i] = strdup(env[i]); // Allocate and copy the string
-		if (!data->envp[i])
+		mini->envp[i] = strdup(env[i]); // Allocate and copy the string
+		if (!mini->envp[i])
 		{
 			perror("Malloc failed for envp string");
 			while (--i >= 0)
-				free(data->envp[i]); //TODO: error free function
-			free(data->envp);
+				free(mini->envp[i]); //TODO: error free function
+			free(mini->envp);
 			return;
 		}
 		i++;
 	}
 
 	// Null-terminate the array
-	data->envp[env_count] = NULL;
+	mini->envp[env_count] = NULL;
 	// separar em key e value - DONE
 	// Debug print to verify copying
 	//TODO: DELETE TESTES COPY ENV
 	for (i = 0; i < env_count; i++)
 	{
-		printf("Copied env[%d]: %s\n", i, data->envp[i]);
+		printf("Copied env[%d]: %s\n", i, mini->envp[i]);
 	}
 	//TODO: DELETE TESTES COPY ENV
 }
