@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/01 19:29:48 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/07 12:51:52 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_minishell
 	t_env	*envvars;
 	bool	has_pipe;
 	char	*last_command_out;
+	int		env_count;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -67,5 +68,7 @@ void	split_and_add_commands(t_minishell *mini, const char *input);
 void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 		const char *input, char *current_token);
 void	cleanup_readline(void);
+void	free_envvars(t_minishell *mini);
+void	parse_env(t_minishell *mini, char *env[]);
 
 #endif

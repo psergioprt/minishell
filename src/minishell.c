@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/01 19:58:56 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/07 12:49:55 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -33,6 +33,19 @@ void	print_env(char *env[])
 	while (env[i] != NULL)
 	{
 		printf("%s\n", env[i]);
+		i++;
+	}
+}
+
+void	print_envvar(t_minishell *mini)
+{
+	int	i;
+
+	i = 0;
+	while (mini->envvars[i].key != NULL)
+	{
+		printf("Key: %s, Value: %s, Print: %d\n", mini->envvars[i].key, \
+				mini->envvars[i].value, mini->envvars[i].print);
 		i++;
 	}
 }
@@ -77,7 +90,7 @@ void	read_lines(t_minishell *mini)
 	read = readline("minishell> ");
 	while (read != NULL)
 	{
-		if (ft_strcmp(read, "minishell") == 0)
+		if (ft_strcmp(read, "exit") == 0)
 		{
 			free(read);
 			free_list(mini);
@@ -102,15 +115,19 @@ int	main(int argc, char *argv[], char *env[])
 
 	(void)argc;
 	(void)argv;
-	(void)env;
+//	(void)env;
 	if (argc != 1 || argv[1])
 	{
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
 		exit (1);
 	}
 	mini.tokelst = NULL;
+	parse_env(&mini, env);
+	print_envvar(&mini);
+	//copy_env(env, &mini);
 	read_lines(&mini);
 	printf("Exiting program...\n");
 	cleanup_readline();
+	free_envvars(&mini);
 	return (0);
 }
