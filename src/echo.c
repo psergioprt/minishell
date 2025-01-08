@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/19 14:51:47 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:09:05 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void handle_quotes(const char *input, char *output) {
 //TODO: mudar a logica para o novo metodo de parsing que vamos ter
 
 // Custom echo function to handle a linked list of tokens
-void custom_echo(t_minishell *mini)
+int custom_echo(t_minishell *mini)
 {
 	int 	first; // Flag to manage space placement
 	int		i;
@@ -151,4 +151,5 @@ void custom_echo(t_minishell *mini)
 	}
 	if (!has_flag)
 		write(1, "\n", 1); // Print newline at the end
+	return (1);
 }

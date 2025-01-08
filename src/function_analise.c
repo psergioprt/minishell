@@ -20,12 +20,14 @@ void	first_token(t_minishell *mini)
 	ret = 0;
 	len = ft_strlen(mini->tokenlst->token);
 	if (!ft_strncmp(mini->tokenlst->token, "echo", len))
-		custom_echo(mini);
+		ret = custom_echo(mini);
 		// printf("Fazer o echo\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
-		printf("Fazer o cd\n");
+		ret = custom_cd(mini);
+		//printf("Fazer o cd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		printf("Fazer o pwd\n");
+		ret = execute_execve(mini);
+		//printf("Fazer o pwd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
 		printf("Fazer o export\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))

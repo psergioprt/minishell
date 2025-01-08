@@ -48,7 +48,7 @@ void	split_and_add_commands(t_minishell *mini, const char *input);
 
 void	first_token(t_minishell *mini);
 
-void	custom_echo(t_minishell *mini);
+int		custom_echo(t_minishell *mini);
 
 //Splits
 void	parse_env(t_minishell *node, char *env[]);
@@ -57,5 +57,11 @@ void	copy_env(char *env[], t_minishell *mini);
 
 //EXEC
 int		execute_execve(t_minishell *mini);
+
+//ERROR
+void	ft_error(char *error_msg, t_minishell *mini);
+
+//CD
+int 	custom_cd(t_minishell *mini);
 
 #endif
