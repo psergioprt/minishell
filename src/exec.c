@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/08 10:53:05 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/08 23:52:47 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,22 @@
 
 char	*find_path(t_minishell *mini)
 {
-	int		i;
+	t_env	*envvars;
 	char	*pathname;
 	char	**paths;
+	int		i;
 	
 	i = 0;
-	while (ft_strncmp(mini->envvars[i].key, "PATH", 4) != 0)
-		i++;
-	paths = ft_split(mini->envvars[i].value, ':');
-	i = 0;
+	envvars = mini->envvars;
+	while (envvars != NULL)
+	{
+		if (ft_strncmp(envvars->key, "PATH", 4) == 0)
+			break;
+		envvars = envvars->next;
+	}
+	if (envvars == NULL || envvars->value == NULL)
+		return (NULL);
+	paths = ft_split(envvars->value, ':');
 	while (paths[i])
 	{	
   		pathname = ft_strjoin(paths[i], "/");
@@ -31,7 +38,7 @@ char	*find_path(t_minishell *mini)
 			return (pathname);
 		i++;
 	}
-	return ("error");
+	return (NULL);
 }
 
 int	count_node(t_minishell *mini)
@@ -116,7 +123,10 @@ int	execute_execve(t_minishell *mini)
 		ft_error("Couldnt get argv!", mini);
 	pathname = find_path(mini);
 	if (!pathname)
+	{
 		ft_error("Couldn't find path!", mini);
+		return (-1);
+	}
 	printf("Pathname: %s\n", pathname); //TODO: Apagar teste find_path
 	printf("Command: %s\n", mini->command); //TODO: Apagar teste find_path
 	if (execve(pathname, argv, mini->envp) == -1) //TODO: Fazer o fork

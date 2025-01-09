@@ -16,10 +16,10 @@ int custom_cd(t_minishell *mini)
 {
 	char *path;
 	t_node *node;
-	//TODO: tem de ir buscar o path, relative ou absolute
 	//TODO: como no subject diz so absolute ou relative path, so fazer esses
+	//TODO: trocar coiso que esta a espera de input para dizer o cwd? (Current Working Directory)
 	node = mini->tokenlst;
-	if (!node->next)
+	if (!node->next)  //TODO se vai receber ja tudo numa string so vai ter de mudar isto
 	{
 		ft_error("cd: missing argument", mini);
 		return (-1);

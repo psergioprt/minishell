@@ -29,11 +29,13 @@ void	first_token(t_minishell *mini)
 		ret = execute_execve(mini);
 		//printf("Fazer o pwd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
-		printf("Fazer o export\n");
+		custom_export(mini);
+		//printf("Fazer o export\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
 		printf("Fazer o unset\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "env", len))
-		printf("Fazer o env\n");
+		ret = custom_env(mini);	
+		//printf("Fazer o env\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
 		printf("Fazer o exit\n");
 	else

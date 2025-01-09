@@ -64,4 +64,10 @@ void	ft_error(char *error_msg, t_minishell *mini);
 //CD
 int 	custom_cd(t_minishell *mini);
 
+//ENV
+int		custom_env(t_minishell *mini);
+
+//EXPORT
+int		custom_export(t_minishell *mini);
+
 #endif
