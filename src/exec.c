@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/08 23:52:47 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:35:35 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,27 @@ char	*find_path(t_minishell *mini)
 	return (NULL);
 }
 
-int	count_node(t_minishell *mini)
+char	*fallback_path(t_minishell *mini)
 {
-	int		i;
-	t_node	*temp;
+	char	*cwd;
+	char	*full_path;
 
-	i = 0;
-	temp = mini->tokenlst; // Temporary pointer for counting
-	while (temp) {
-		i++;
-		temp = temp->next;
+	if (mini->command[0] == '.' && mini->command[1] == '/')
+	{
+		cwd = getcwd(NULL, 0); // Get the current working directory
+		if (!cwd)
+		{
+			perror("getcwd failed");
+			return (NULL);
+		}
+		full_path = ft_strjoin(cwd, "/");
+		free(cwd); // Free the allocated cwd after use
+		full_path = ft_strjoin(full_path, mini->command + 2); // Skip "./"
+		if (access(full_path, F_OK) == 0)
+			return (full_path);
+		free(full_path); // Free if the path is invalid
 	}
-	return (i);
+	return (NULL);
 }
 
 char	**get_argv(t_minishell *mini, int i, t_node *node)
@@ -104,8 +113,8 @@ void	get_command(t_minishell *mini)
 	}
 	ft_strlcpy(mini->command, node->token, len + 1);
 }
-
-int	execute_execve(t_minishell *mini)
+//TODO: 25 linhas
+int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -124,8 +133,12 @@ int	execute_execve(t_minishell *mini)
 	pathname = find_path(mini);
 	if (!pathname)
 	{
-		ft_error("Couldn't find path!", mini);
-		return (-1);
+		pathname = fallback_path(mini);
+		if (!pathname)
+		{
+			ft_error("Couldn't find path!", mini);
+			return (-1);
+		}
 	}
 	printf("Pathname: %s\n", pathname); //TODO: Apagar teste find_path
 	printf("Command: %s\n", mini->command); //TODO: Apagar teste find_path
@@ -139,4 +152,3 @@ int	execute_execve(t_minishell *mini)
 	//free(mini->command);
 	return (1);
 }
-

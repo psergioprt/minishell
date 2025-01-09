@@ -70,4 +70,10 @@ int		custom_env(t_minishell *mini);
 //EXPORT
 int		custom_export(t_minishell *mini);
 
+//UNSET
+int		custom_unset(t_minishell *mini);
+
+//UTILS
+int		count_node(t_minishell *mini);
+
 #endif

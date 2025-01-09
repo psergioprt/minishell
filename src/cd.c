@@ -18,6 +18,7 @@ int custom_cd(t_minishell *mini)
 	t_node *node;
 	//TODO: como no subject diz so absolute ou relative path, so fazer esses
 	//TODO: trocar coiso que esta a espera de input para dizer o cwd? (Current Working Directory)
+	//TODO: ja recebe as env vars expandidas certo?
 	node = mini->tokenlst;
 	if (!node->next)  //TODO se vai receber ja tudo numa string so vai ter de mudar isto
 	{

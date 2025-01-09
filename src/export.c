@@ -27,27 +27,20 @@ int	export_no_args(t_minishell *mini)
 		}
 		printf("\n");
 		envvars = envvars->next;
-	}
+	}	
 	return (1);
 }
 
-
-int	export_args(t_minishell *mini)
+int	export_args(t_minishell *mini, char *var) //TODO 25 linhas, passar algo para a argumentate()?
 {
 	t_env		*envvars;
 	t_env		*new_env;
-	char		*var;
 	size_t		i;
 
 	envvars = mini->envvars;
-	var = mini->tokenlst->next->token;
 	i = 0;
 	new_env = malloc(sizeof(t_env));
 	printf("var: %s\n", var); //TODO apagar testes
-	while (envvars->next)
-	{
-		envvars = envvars->next; //Ir ate ao ultimo dos envvars para adicionar o novo
-	}
 	while (var[i] != '=' && var[i] != '\0')
 		i++;
 	new_env->key = malloc(i + 1);
@@ -62,6 +55,10 @@ int	export_args(t_minishell *mini)
 		new_env->print = false;
 		new_env->value = ft_strdup("");
 	}
+	while (envvars->next)
+	{
+		envvars = envvars->next; //Ir ate ao ultimo dos envvars para adicionar o novo
+	}
 	envvars->next = new_env;
 	new_env->next = NULL;
 
@@ -75,6 +72,21 @@ int	export_args(t_minishell *mini)
 	return (1);
 }
  
+//tem que adicionar mais que uma se tiver mais que uma
+int	argumentate(t_minishell *mini) //TODO: testar bem isto
+{
+	t_node	*varlst;
+
+	varlst = mini->tokenlst;
+	varlst = varlst->next; //Passar o comando em si a frente
+	while (varlst)
+	{
+		export_args(mini, varlst->token);
+		varlst = varlst->next;
+	}
+	return (1);
+}
+
 int	custom_export(t_minishell *mini)
 {
 	t_node	*node;
@@ -83,5 +95,5 @@ int	custom_export(t_minishell *mini)
 	if (!node->next)
 		return (export_no_args(mini));
 	else
-		return (export_args(mini));
+		return (argumentate(mini));
 }
