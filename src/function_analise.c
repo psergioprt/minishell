@@ -26,8 +26,8 @@ void	first_token(t_minishell *mini)
 		ret = custom_cd(mini);
 		//printf("Fazer o cd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		ret = execute_execve(mini);
-		//printf("Fazer o pwd\n");
+		printf("Fazer o pwd\n");
+		//ret = execute_execve(mini);
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
 		ret = custom_export(mini);
 		//printf("Fazer o export\n");

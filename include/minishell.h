@@ -24,11 +24,12 @@ typedef struct s_node
 
 typedef struct s_minishell 
 {
-	char			*command; //TODO: tem de criar uma estrutura nova que fica dentro de esta que guarda os tokens com a mesma logica
-	char			**envp; //so copia o que tem para usar no execve
+	char			*command;
 	t_node			*tokenlst;
+	char			**envp; //so copia o que tem para usar no execve
 	t_env			*envvars;
-	bool			has_pipe; //TODO: Inicializar a falso
+	bool			has_pipe; //TODO: Inicializar a falso e ver logica de como vamos fazer se tiver pipe.
+	//Talvez fazer int, sempre que encontra um guarda o last command out e tira um do numero de pipes, so imprime (Se for o caso) so has_pipe for 0
 	char			*last_command_out; //TODO: fazer logica de se tem pipe nao imprimir e guardar aqui
 }t_minishell;
 
@@ -44,6 +45,7 @@ typedef struct s_parse_context
 t_node	*create_command_node(const char *command);
 void	add_command_node(t_minishell *mini, const char *command);
 void	free_list(t_minishell *mini);
+void	free_envvars(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
 
 void	first_token(t_minishell *mini);

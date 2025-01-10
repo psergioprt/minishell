@@ -64,6 +64,7 @@ void	read_lines(t_minishell *mini)
 		free(read);
 		read = readline("minishell> ");
 	}
+	free_envvars(mini);
 	free_list(mini);
 }
 

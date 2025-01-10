@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   splits.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 23:00:32 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/08 22:58:40 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:42:15 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,50 +14,50 @@
 
 void parse_env(t_minishell *mini, char *env[])
 {
-    t_env *head = NULL;
-    t_env *tail = NULL;
+	t_env *head = NULL;
+	t_env *tail = NULL;
 
-    for (int i = 0; env[i] != NULL; i++) {
-        // Allocate a new node
-        t_env *new_node = malloc(sizeof(t_env));
-        if (!new_node) {
-            perror("Failed to allocate memory for envvars node");
-            // Free already allocated nodes
-            while (head) {
-                t_env *temp = head;
-                head = head->next;
-                free(temp->key);
-                free(temp->value);
-                free(temp);
-            }
-            mini->envvars = NULL;
-            return;
-        }
+	for (int i = 0; env[i] != NULL; i++) {
+		// Allocate a new node
+		t_env *new_node = malloc(sizeof(t_env));
+		if (!new_node) {
+			perror("Failed to allocate memory for envvars node");
+			// Free already allocated nodes
+			while (head) {
+				t_env *temp = head;
+				head = head->next;
+				free(temp->key);
+				free(temp->value);
+				free(temp);
+			}
+			mini->envvars = NULL;
+			return;
+		}
 
-        // Populate the node
-        char *delimiter = strchr(env[i], '=');
-        if (delimiter) {
-            size_t key_len = delimiter - env[i];
-            new_node->key = strndup(env[i], key_len);
-            new_node->value = strdup(delimiter + 1);
-            new_node->print = true;
-        } else {
-            new_node->key = strdup(env[i]);
-            new_node->value = NULL;
-            new_node->print = false;
-        }
-        new_node->next = NULL;
+		// Populate the node
+		char *delimiter = strchr(env[i], '=');
+		if (delimiter) {
+			size_t key_len = delimiter - env[i];
+			new_node->key = strndup(env[i], key_len);
+			new_node->value = strdup(delimiter + 1);
+			new_node->print = true;
+		} else {
+			new_node->key = strdup(env[i]);
+			new_node->value = NULL;
+			new_node->print = false;
+		}
+		new_node->next = NULL;
 
-        // Append to the linked list
-        if (!head) {
-            head = new_node;
-        } else {
-            tail->next = new_node;
-        }
-        tail = new_node;
-    }
+		// Append to the linked list
+		if (!head) {
+			head = new_node;
+		} else {
+			tail->next = new_node;
+		}
+		tail = new_node;
+	}
 
-    mini->envvars = head;
+	mini->envvars = head;
 }
 
 void copy_env(char *env[], t_minishell *mini)
