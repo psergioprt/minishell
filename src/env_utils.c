@@ -6,13 +6,13 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 07:49:34 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/07 12:18:29 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/09 22:14:27 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	free_envvars(t_minishell *mini)
+/*void	free_envvars(t_minishell *mini)
 {
 	int	j;
 
@@ -26,9 +26,9 @@ void	free_envvars(t_minishell *mini)
 	free(mini->envvars);
 	mini->envvars = NULL;
 	return ;
-}
+}*/
 
-void	parse_env(t_minishell *mini, char *env[])
+/*void	parse_env(t_minishell *mini, char *env[])
 {
 	char	*delimiter;
 	int		i;
@@ -79,4 +79,98 @@ void	parse_env(t_minishell *mini, char *env[])
 	mini->envvars[mini->env_count].key = NULL;
 	mini->envvars[mini->env_count].value = NULL;
 	mini->envvars[mini->env_count].print = false;
+}*/
+
+void parse_env(t_minishell *mini, char *env[])
+{
+    t_env *head = NULL;
+    t_env *tail = NULL;
+
+    for (int i = 0; env[i] != NULL; i++) {
+        // Allocate a new node
+        t_env *new_node = malloc(sizeof(t_env));
+        if (!new_node) {
+            perror("Failed to allocate memory for envvars node");
+            // Free already allocated nodes
+            while (head) {
+                t_env *temp = head;
+                head = head->next;
+                free(temp->key);
+                free(temp->value);
+                free(temp);
+            }
+            mini->envvars = NULL;
+            return;
+        }
+
+        // Populate the node
+        char *delimiter = strchr(env[i], '=');
+        if (delimiter) {
+            size_t key_len = delimiter - env[i];
+            new_node->key = strndup(env[i], key_len);
+            new_node->value = strdup(delimiter + 1);
+            new_node->print = true;
+        } else {
+            new_node->key = strdup(env[i]);
+            new_node->value = NULL;
+            new_node->print = false;
+        }
+        new_node->next = NULL;
+
+        // Append to the linked list
+        if (!head) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    mini->envvars = head;
+}
+
+void copy_env(char *env[], t_minishell *mini)
+{
+	int	i;
+	int	env_count;
+
+	// Count the number of environment variables
+	env_count = 0;
+	while (env[env_count] != NULL)
+		env_count++;
+
+	// Allocate memory for envp
+	mini->envp = (char **)malloc(sizeof(char *) * (env_count + 1)); // +1 for NULL terminator
+	if (!mini->envp)
+	{
+		perror("Malloc failed for envp");
+		return;
+	}
+
+	// Copy each environment variable
+	i = 0;
+	while (i < env_count)
+	{
+		mini->envp[i] = strdup(env[i]); // Allocate and copy the string
+		if (!mini->envp[i])
+		{
+			perror("Malloc failed for envp string");
+			while (--i >= 0)
+				free(mini->envp[i]); //TODO: error free function
+			free(mini->envp);
+			return;
+		}
+		i++;
+	}
+
+	// Null-terminate the array
+	mini->envp[env_count] = NULL;
+	// separar em key e value - DONE
+	// Debug print to verify copying
+	//TODO: DELETE TESTES COPY ENV
+	for (i = 0; i < env_count; i++)
+	{
+		printf("Copied env[%d]: %s\n", i, mini->envp[i]);
+	}
+	//TODO: DELETE TESTES COPY ENV
 }

@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/07 12:49:55 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/09 22:17:55 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -36,8 +36,8 @@ void	print_env(char *env[])
 		i++;
 	}
 }
-
-void	print_envvar(t_minishell *mini)
+//MY ORIGINAL print_ennvar function prints system envvars
+/*void	print_envvar(t_minishell *mini)
 {
 	int	i;
 
@@ -48,21 +48,7 @@ void	print_envvar(t_minishell *mini)
 				mini->envvars[i].value, mini->envvars[i].print);
 		i++;
 	}
-}
-
-int	ft_strcmp(char *str1, char *str2)
-{
-	while (*str1 && *str2)
-	{
-		if (*str1 - *str2 < 0)
-			return (-1);
-		else if (*str1 - *str2 > 0)
-			return (1);
-		str1++;
-		str2++;
-	}
-	return (0);
-}
+}*/
 
 void	print_nodes(t_node *command_list)
 {
@@ -109,6 +95,31 @@ void	read_lines(t_minishell *mini)
 	free_list(mini);
 }
 
+/*int	main(int argc, char *argv[], char *env[])
+{
+	t_minishell	mini;
+
+	(void)argc;
+	(void)argv;
+	(void)env;
+	if (argc != 1 || argv[1])
+	{
+		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
+		exit(1);
+	}
+	mini.tokelst = NULL;
+	mini.envvars = NULL;
+	mini.env_count = 0;
+	create_custom_envvars(&mini);
+	print_envvar(&mini);
+	read_lines(&mini);
+	printf("Exiting program...\n");
+	cleanup_readline();
+	free_envvars(&mini);
+	return (0);
+}*/
+
+//MY ORIGINAL MAIN
 int	main(int argc, char *argv[], char *env[])
 {
 	t_minishell	mini;
@@ -123,8 +134,9 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokelst = NULL;
 	parse_env(&mini, env);
+//	create_custom_envvars(&mini);
 	print_envvar(&mini);
-	//copy_env(env, &mini);
+	copy_env(env, &mini);
 	read_lines(&mini);
 	printf("Exiting program...\n");
 	cleanup_readline();

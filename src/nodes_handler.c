@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/01 19:27:04 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/10 01:09:42 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,34 @@ void	add_command_node(t_minishell *mini, const char *token)
 	}
 }
 
+void	handle_env_var(t_token_context *tok_ctx, t_minishell *mini)
+{
+	char	env_var_name[256];
+	char	*env_value;
+	int		k;
+	int		m;
+
+	k = 0;
+	m = 0;
+	(*tok_ctx->i)++;
+	while (ft_isalnum(tok_ctx->ctx->input[*tok_ctx->i]) || tok_ctx->ctx->input[*tok_ctx->i] == '_')
+	{
+		env_var_name[k++] = tok_ctx->ctx->input[*tok_ctx->i];
+		(*tok_ctx->i)++;
+	}
+	env_var_name[k] = '\0';
+	(*tok_ctx->i)--;
+	env_value = get_env_value(env_var_name, mini);
+	if (env_value)
+	{
+		while (env_value[m])
+		{
+			tok_ctx->current_token[(*tok_ctx->j)++] = env_value[m];
+			m++;
+		}
+	}
+}
+
 //function created to handle redirectinal signs
 void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j)
@@ -107,17 +135,49 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	add_command_node(mini, delimeter);
 }
 
-void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
+void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	quote_char;
+	char	env_var_name[256];
+	char	*env_value;
+	int		k;
+	int		m;
 
+	k = 0;
+	m = 0;
 	quote_char = ctx->input[*i];
 	if (!ctx->quote)
 	{
 		ctx->quote = quote_char;
 		(*i)++;
 		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
-			ctx->current_token[(*j)++] = ctx->input[(*i)++];
+		{
+			if (ctx->quote == '"' && ctx->input[*i] == '$')
+			{
+				(*i)++;
+				k = 0;
+				while (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
+				{
+					env_var_name[k++] = ctx->input[(*i)];
+					(*i)++;
+				}
+				env_var_name[k] = '\0';
+				(*i)--;
+				env_value = get_env_value(env_var_name, mini);
+				if (env_value)
+				{
+					m = 0;
+					while (env_value[m])
+					{
+						ctx->current_token[(*j)++] = env_value[m];
+						m++;
+					}
+				}
+			}
+			else
+				ctx->current_token[(*j)++] = ctx->input[*i];
+			(*i)++;
+		}
 		if (ctx->input[*i] == ctx->quote)
 			ctx->quote = 0;
 		else
@@ -131,6 +191,8 @@ void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
 void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 		t_token_context *tok_ctx)
 {
+	char	*expanded_token;
+
 	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
 	{
 		while (input[*tok_ctx->i + 1] == ' ')
@@ -140,12 +202,15 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 		if (*tok_ctx->j > 0)
 		{
 			tok_ctx->current_token[*tok_ctx->j] = '\0';
-			add_command_node(mini, tok_ctx->current_token);
+			expanded_token = expand_env_var(tok_ctx->current_token, mini);
+			add_command_node(mini, expanded_token);
+			if (expanded_token != tok_ctx->current_token)
+				free(expanded_token);
 			*tok_ctx->j = 0;
 		}
 	}
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
-		handle_open_close_quotes(tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else
 	{
 		tok_ctx->current_token[*tok_ctx->j] = input[*tok_ctx->i];
@@ -167,7 +232,9 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	}
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
-		handle_open_close_quotes(tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$')
+		handle_env_var(tok_ctx, mini);
 	else
 		tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
 }
@@ -177,24 +244,25 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	int				i;
 	int				j;
 	char			current_token[1024];
+	char			*expanded_token;
 	t_parse_context	ctx;
 	t_token_context	tok_ctx;
 
-	i = 0;
+	i = -1;
 	j = 0;
 	tok_ctx.current_token = current_token;
 	tok_ctx.i = &i;
 	tok_ctx.j = &j;
 	tok_ctx.ctx = &ctx;
 	init_variables(mini, &ctx, input, current_token);
-	while (input[i])
-	{
+	while (input[++i])
 		handle_loop_parsers(mini, input, &tok_ctx);
-		i++;
-	}
 	if (j > 0)
 	{
 		current_token[j] = '\0';
-		add_command_node(mini, current_token);
+		expanded_token = expand_env_var(current_token, mini);
+		add_command_node(mini, expanded_token);
+		if (expanded_token != current_token)
+			free(expanded_token);
 	}
 }

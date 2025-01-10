@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/07 12:51:52 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/10 00:10:44 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,12 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 void	cleanup_readline(void);
 void	free_envvars(t_minishell *mini);
 void	parse_env(t_minishell *mini, char *env[]);
+char	*expand_env_var(char *token, t_minishell *mini);
+void	copy_env(char *env[], t_minishell *mini);
+char	*get_env_value(char *env_name, t_minishell *mini);
 
+// Custom environment variable functions for testing purposes
+void    add_env_var(t_env **envvars, const char *key, const char *value);
+void    print_envvar(t_minishell *mini);
+void    create_custom_envvars(t_minishell *mini);
 #endif
