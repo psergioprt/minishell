@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/10 00:10:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/11 23:20:33 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ typedef struct s_minishell
 	char	**envp;
 	t_node	*tokelst;
 	t_env	*envvars;
-	bool	has_pipe;
+	int		has_pipe;
+	bool	is_single_quote;
+	bool	has_error;
 	char	*last_command_out;
 	int		env_count;
 }	t_minishell;
@@ -51,6 +53,7 @@ typedef struct s_parse_context
 	const char	*input;
 	int			index;
 	char		quote;
+	const char	*exit_status;
 }	t_parse_context;
 
 typedef struct s_token_context
@@ -73,9 +76,5 @@ void	parse_env(t_minishell *mini, char *env[]);
 char	*expand_env_var(char *token, t_minishell *mini);
 void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
-
-// Custom environment variable functions for testing purposes
-void    add_env_var(t_env **envvars, const char *key, const char *value);
 void    print_envvar(t_minishell *mini);
-void    create_custom_envvars(t_minishell *mini);
 #endif

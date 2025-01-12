@@ -6,23 +6,10 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/09 22:17:55 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/11 23:10:04 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-/*
- * Function to print environment variables
- * 	void	print_env(char *env[])
- * 
- * Function created to handle readline exit
- * 	ft_strcmp(char *str1, char *str2)
- * 
- * *env[]: Environment variables ... 
- * 	KEY=VALUE will be used with the entered command
- * 	add in main -> print_env(env); to print the environment variables
- *
- * LOOP TO ADD EACH COMMAND TO NODES
- *	while ((read = readline("minishell> ")) != NULL)
- */
+
 #include "../include/minishell.h"
 
 void	print_env(char *env[])
@@ -36,19 +23,6 @@ void	print_env(char *env[])
 		i++;
 	}
 }
-//MY ORIGINAL print_ennvar function prints system envvars
-/*void	print_envvar(t_minishell *mini)
-{
-	int	i;
-
-	i = 0;
-	while (mini->envvars[i].key != NULL)
-	{
-		printf("Key: %s, Value: %s, Print: %d\n", mini->envvars[i].key, \
-				mini->envvars[i].value, mini->envvars[i].print);
-		i++;
-	}
-}*/
 
 void	print_nodes(t_node *command_list)
 {
@@ -60,9 +34,9 @@ void	print_nodes(t_node *command_list)
 	while (current)
 	{
 		if (i == 0)
-			printf("Node[head]: %s\n", current->token);
+			printf("\033[1;33mNode[0]: %s\033[0m\n", current->token);
 		else
-			printf("Node[%d]: %s\n", i, current->token);
+			printf("\033[1;33mNode[%d]: %s\033[0m\n", i, current->token);
 		current = current->next;
 		i++;
 	}
@@ -70,10 +44,12 @@ void	print_nodes(t_node *command_list)
 
 void	read_lines(t_minishell *mini)
 {
-	char	*read;
+	char	*read ;
+	char	*prompt;
 
+	prompt = "\033[1;31mminishell>\033[0m ";
 	read = NULL;
-	read = readline("minishell> ");
+	read = readline(prompt);
 	while (read != NULL)
 	{
 		if (ft_strcmp(read, "exit") == 0)
@@ -86,47 +62,22 @@ void	read_lines(t_minishell *mini)
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
-			print_nodes(mini->tokelst);
+			if (!mini->has_error)
+				print_nodes(mini->tokelst);
 			free_list(mini);
 		}
 		free(read);
-		read = readline("minishell> ");
+		read = readline(prompt);
 	}
 	free_list(mini);
 }
 
-/*int	main(int argc, char *argv[], char *env[])
-{
-	t_minishell	mini;
-
-	(void)argc;
-	(void)argv;
-	(void)env;
-	if (argc != 1 || argv[1])
-	{
-		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
-		exit(1);
-	}
-	mini.tokelst = NULL;
-	mini.envvars = NULL;
-	mini.env_count = 0;
-	create_custom_envvars(&mini);
-	print_envvar(&mini);
-	read_lines(&mini);
-	printf("Exiting program...\n");
-	cleanup_readline();
-	free_envvars(&mini);
-	return (0);
-}*/
-
-//MY ORIGINAL MAIN
 int	main(int argc, char *argv[], char *env[])
 {
 	t_minishell	mini;
 
 	(void)argc;
 	(void)argv;
-//	(void)env;
 	if (argc != 1 || argv[1])
 	{
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
@@ -134,8 +85,7 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokelst = NULL;
 	parse_env(&mini, env);
-//	create_custom_envvars(&mini);
-	print_envvar(&mini);
+//	print_envvar(&mini);
 	copy_env(env, &mini);
 	read_lines(&mini);
 	printf("Exiting program...\n");

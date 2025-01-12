@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/10 01:09:42 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/11 23:35:21 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,31 +62,45 @@ void	add_command_node(t_minishell *mini, const char *token)
 	}
 }
 
-void	handle_env_var(t_token_context *tok_ctx, t_minishell *mini)
+void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	env_var_name[256];
 	char	*env_value;
 	int		k;
 	int		m;
 
-	k = 0;
-	m = 0;
-	(*tok_ctx->i)++;
-	while (ft_isalnum(tok_ctx->ctx->input[*tok_ctx->i]) || tok_ctx->ctx->input[*tok_ctx->i] == '_')
+	(*i)++;
+	if (ctx->input[*i] == '?')
 	{
-		env_var_name[k++] = tok_ctx->ctx->input[*tok_ctx->i];
-		(*tok_ctx->i)++;
+		ctx->exit_status = "EXIT_STATUS";
+		m = 0;
+		while (ctx->exit_status[m])
+			ctx->current_token[(*j)++] = ctx->exit_status[m++];
 	}
-	env_var_name[k] = '\0';
-	(*tok_ctx->i)--;
-	env_value = get_env_value(env_var_name, mini);
-	if (env_value)
+	else if (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
 	{
-		while (env_value[m])
+		k = 0;
+		while (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
+			env_var_name[k++] = ctx->input[(*i)++];
+		env_var_name[k] = '\0';
+		(*i)--;
+		env_value = get_env_value(env_var_name, mini);
+		if (env_value)
 		{
-			tok_ctx->current_token[(*tok_ctx->j)++] = env_value[m];
-			m++;
+			m = 0;
+			while (env_value[m])
+				ctx->current_token[(*j)++] = env_value[m++];
 		}
+	}
+	else if (ctx->input[*i] == ' ' || ctx->input[*i] == '\0')
+	{
+		ctx->current_token[(*j)++] = '$';
+		(*i)--;
+	}
+	else if (ctx->input[*i] == '"')
+	{
+		(*i)--;
+		ctx->current_token[(*j)++] = '$';
 	}
 }
 
@@ -137,43 +151,17 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 
 void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
-	char	quote_char;
-	char	env_var_name[256];
-	char	*env_value;
-	int		k;
-	int		m;
-
-	k = 0;
-	m = 0;
-	quote_char = ctx->input[*i];
 	if (!ctx->quote)
 	{
-		ctx->quote = quote_char;
+		ctx->quote = ctx->input[*i];
+		(*i)++;
+		if (ctx->input[--(*i)] == '\'')
+			mini->is_single_quote = true;
 		(*i)++;
 		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
 		{
 			if (ctx->quote == '"' && ctx->input[*i] == '$')
-			{
-				(*i)++;
-				k = 0;
-				while (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
-				{
-					env_var_name[k++] = ctx->input[(*i)];
-					(*i)++;
-				}
-				env_var_name[k] = '\0';
-				(*i)--;
-				env_value = get_env_value(env_var_name, mini);
-				if (env_value)
-				{
-					m = 0;
-					while (env_value[m])
-					{
-						ctx->current_token[(*j)++] = env_value[m];
-						m++;
-					}
-				}
-			}
+				handle_env_var(mini, ctx, i, j);
 			else
 				ctx->current_token[(*j)++] = ctx->input[*i];
 			(*i)++;
@@ -183,7 +171,8 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 		else
 		{
 			printf("Error: Unclosed quote detected!\n");
-			exit(1);
+			mini->has_error = true;
+			ctx->current_token[0] = '\0';
 		}
 	}
 }
@@ -197,8 +186,6 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 	{
 		while (input[*tok_ctx->i + 1] == ' ')
 			(*tok_ctx->i)++;
-		if (input[*tok_ctx->i + 1] == '"' || input[*tok_ctx->i + 1] == '\'')
-			return ;
 		if (*tok_ctx->j > 0)
 		{
 			tok_ctx->current_token[*tok_ctx->j] = '\0';
@@ -228,13 +215,13 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 		handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
 	{
-		mini->has_pipe = true;
+		mini->has_pipe += 1;
 		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	}
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
 		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$')
-		handle_env_var(tok_ctx, mini);
+		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else
 		tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
 }
@@ -257,12 +244,16 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	init_variables(mini, &ctx, input, current_token);
 	while (input[++i])
 		handle_loop_parsers(mini, input, &tok_ctx);
-	if (j > 0)
+	if (j > 0 && !mini->has_error)
 	{
 		current_token[j] = '\0';
 		expanded_token = expand_env_var(current_token, mini);
-		add_command_node(mini, expanded_token);
+		if (mini->is_single_quote)
+			add_command_node(mini, current_token);
+		else
+			add_command_node(mini, expanded_token);
 		if (expanded_token != current_token)
 			free(expanded_token);
+		mini->is_single_quote = false;
 	}
 }

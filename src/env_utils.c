@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 07:49:34 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/09 22:14:27 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/10 22:13:39 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,9 +168,10 @@ void copy_env(char *env[], t_minishell *mini)
 	// separar em key e value - DONE
 	// Debug print to verify copying
 	//TODO: DELETE TESTES COPY ENV
-	for (i = 0; i < env_count; i++)
+/*	for (i = 0; i < env_count; i++)
 	{
 		printf("Copied env[%d]: %s\n", i, mini->envp[i]);
 	}
 	//TODO: DELETE TESTES COPY ENV
+*/
 }

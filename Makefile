@@ -5,10 +5,10 @@ SRCDIR = src
 INCDIR = include
 LIBFTDIR = Libft
 SRC = $(SRCDIR)/minishell.c $(SRCDIR)/nodes_handler.c $(SRCDIR)/utils.c $(SRCDIR)/env_utils.c \
-      $(SRCDIR)/env_handler.c $(SRCDIR)/custom_envvar_functions.c
+      $(SRCDIR)/env_handler.c
 LIBFT = $(LIBFTDIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror -g -O0 -fsanitize=address
-LFLAGS = -lreadline -L$(LIBFTDIR) -lft -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g -O0 #-fsanitize=address
+LFLAGS = -lreadline -L$(LIBFTDIR) -lft #-fsanitize=address
 OBJS = ${SRC:.c=.o}
 
 #.SILENT:
@@ -23,6 +23,9 @@ $(LIBFT):
 clean:
 	$(RM) $(OBJS)
 	@$(MAKE) -C $(LIBFTDIR) clean
+
+valgrind: ${NAME}
+	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all ./minishell
 
 fclean: clean
 	$(RM) $(NAME)
