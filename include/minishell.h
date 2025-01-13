@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/11 23:20:33 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:52:38 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_minishell
 	bool	has_error;
 	char	*last_command_out;
 	int		env_count;
+	char	*prompt;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -76,5 +77,5 @@ void	parse_env(t_minishell *mini, char *env[]);
 char	*expand_env_var(char *token, t_minishell *mini);
 void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
-void    print_envvar(t_minishell *mini);
+void	print_envvar(t_minishell *mini);
 #endif

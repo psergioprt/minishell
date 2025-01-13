@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/11 23:35:21 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:22:43 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,6 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 		{
 			printf("Error: Unclosed quote detected!\n");
 			mini->has_error = true;
-			ctx->current_token[0] = '\0';
 		}
 	}
 }
@@ -235,15 +234,19 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	t_parse_context	ctx;
 	t_token_context	tok_ctx;
 
-	i = -1;
+	i = 0;
 	j = 0;
 	tok_ctx.current_token = current_token;
 	tok_ctx.i = &i;
 	tok_ctx.j = &j;
 	tok_ctx.ctx = &ctx;
 	init_variables(mini, &ctx, input, current_token);
-	while (input[++i])
+	while (input[i])
+	{
 		handle_loop_parsers(mini, input, &tok_ctx);
+		if (!mini->has_error)
+			i++;
+	}
 	if (j > 0 && !mini->has_error)
 	{
 		current_token[j] = '\0';

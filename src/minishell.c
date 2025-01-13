@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/11 23:10:04 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:50:53 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,10 @@ void	print_nodes(t_node *command_list)
 void	read_lines(t_minishell *mini)
 {
 	char	*read ;
-	char	*prompt;
 
-	prompt = "\033[1;31mminishell>\033[0m ";
+	mini->prompt = "\033[1;31mminishell>\033[0m ";
 	read = NULL;
-	read = readline(prompt);
+	read = readline(mini->prompt);
 	while (read != NULL)
 	{
 		if (ft_strcmp(read, "exit") == 0)
@@ -67,7 +66,7 @@ void	read_lines(t_minishell *mini)
 			free_list(mini);
 		}
 		free(read);
-		read = readline(prompt);
+		read = readline(mini->prompt);
 	}
 	free_list(mini);
 }
