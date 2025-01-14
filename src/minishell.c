@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/13 13:50:53 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:09:59 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,18 @@ void	read_lines(t_minishell *mini)
 
 	mini->prompt = "\033[1;31mminishell>\033[0m ";
 	read = NULL;
-	read = readline(mini->prompt);
-	while (read != NULL)
+	while (1)
 	{
+		read = readline(mini->prompt);
+		if (read == NULL)
+		{
+			write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
+			free_list(mini);
+			exit (0);
+		}
 		if (ft_strcmp(read, "exit") == 0)
 		{
+			write(STDOUT_FILENO, "exit\n", 5);
 			free(read);
 			free_list(mini);
 			break ;
@@ -66,7 +73,6 @@ void	read_lines(t_minishell *mini)
 			free_list(mini);
 		}
 		free(read);
-		read = readline(mini->prompt);
 	}
 	free_list(mini);
 }
@@ -75,6 +81,7 @@ int	main(int argc, char *argv[], char *env[])
 {
 	t_minishell	mini;
 
+	init_sigaction();
 	(void)argc;
 	(void)argv;
 	if (argc != 1 || argv[1])
@@ -84,10 +91,9 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokelst = NULL;
 	parse_env(&mini, env);
-//	print_envvar(&mini);
+	print_envvar(&mini);
 	copy_env(env, &mini);
 	read_lines(&mini);
-	printf("Exiting program...\n");
 	cleanup_readline();
 	free_envvars(&mini);
 	return (0);

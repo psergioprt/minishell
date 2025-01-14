@@ -92,3 +92,221 @@ read_lines (mini=0x7fffffffe580) at src/minishell.c:87
 
 Program received signal SIGINT, Interrupt.
 pselect64_syscall (sigmask=0x7ffff7fac960 <_rl_orig_sigset>, timeout=<optimized out>, exceptfds=0x0, writefds=0x0, readfds=0x7fffffffe400, nfds=1) at ../sysdeps/unix/sysv/linux/pselect.c:34
+Breakpoint 1 at 0x149a: file src/minishell.c, line 106.
+Starting program: /home/paulo/Programming/42/git/minishell/minishell 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, read_lines (mini=0x7fffffffe570) at src/minishell.c:106
+__GI___libc_write (fd=1, buf=0x55555555703d, nbytes=5) at ../sysdeps/unix/sysv/linux/write.c:26
+read_lines (mini=0x7fffffffe570) at src/minishell.c:119
+free_list (mini=0x7fffffffe570) at src/utils.c:21
+read_lines (mini=0x7fffffffe570) at src/minishell.c:123
+free_list (mini=0x7fffffffe570) at src/utils.c:21
+read_lines (mini=0x7fffffffe570) at src/minishell.c:145
+main (argc=1, argv=0x7fffffffe6c8, env=0x7fffffffe6d8) at src/minishell.c:172
+cleanup_readline () at src/utils.c:62
+main (argc=1, argv=0x7fffffffe6c8, env=0x7fffffffe6d8) at src/minishell.c:173
+free_envvars (mini=0x7fffffffe570) at src/utils.c:37
+__GI___libc_free (mem=0x55555555a2d0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a2c0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a2c0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a2c0) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a2c0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+Undefined command: "ss".  Try "help".
+__GI___libc_free (mem=0x55555555a2f0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a2e0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a2e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a2e0) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a2e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a2a0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a290) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a290, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a290) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a290, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a340) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a330) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a330, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a330) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a330, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a360) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a350) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a350, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=4, chunk=0x55555555a350) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a350, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a310) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a300) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a300, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a300) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a300, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a3f0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a3e0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a3e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a3e0) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a3e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a410) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a400) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a400, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a400) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a400, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a3c0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a3b0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a3b0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a3b0) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a3b0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a460) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a450) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a450, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=0, chunk=0x55555555a450) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a450, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a480) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a470) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a470, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a480 "truecolor") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a470, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a430) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a420) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a420, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a420) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a420, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a4d0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a4c0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a4c0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a4d0 "SSH_AGENT_LAUNCHER") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a4c0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a4f0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a4e0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a4e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a4f0 "openssh") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a4e0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a4a0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a490) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a490, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a490) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a490, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a540) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a530) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a530, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a540 "XDG_MENU_PREFIX") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a530, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a560) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a550) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a550, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a560 "gnome-") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a550, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a510) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a500) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a500, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+tcache_put (tc_idx=1, chunk=0x55555555a500) at ./malloc/malloc.c:3175
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a500, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4478
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a5b0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a5a0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5a0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=32, p=0x55555555a5b0 "GNOME_DESKTOP_SESSION_ID") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5a0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a5e0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a5d0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5d0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a5e0 "this-is-deprecated") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5d0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a580) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a570) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a570, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=32, p=0x55555555a580 "\260\245UUUU") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a570, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a630) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a620) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a620, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a630 "GNOME_KEYRING_CONTROL") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a620, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a650) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a640) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a640, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a650 "/run/user/1000/keyring") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a640, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:43
+__GI___libc_free (mem=0x55555555a600) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a5f0) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5f0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=32, p=0x55555555a600 "0\246UUUU") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a5f0, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:44
+__GI___libc_free (mem=0x55555555a6a0) at ./malloc/malloc.c:3350
+arena_for_chunk (ptr=0x55555555a690) at ./malloc/arena.c:162
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3385
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a690, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4417
+free_perturb (n=16, p=0x55555555a6a0 "LANGUAGE") at ./malloc/malloc.c:2006
+_int_free (av=0x7ffff7f47c60 <main_arena>, p=0x55555555a690, have_lock=have_lock@entry=0) at ./malloc/malloc.c:4523
+__GI___libc_free (mem=<optimized out>) at ./malloc/malloc.c:3388
+free_envvars (mini=0x7fffffffe570) at src/utils.c:42
+__GI___libc_free (mem=0x55555555a6c0) at ./malloc/malloc.c:3350

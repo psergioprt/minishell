@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/13 13:52:38 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/14 14:37:13 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../Libft/libft.h"
+# include <unistd.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 typedef struct s_env
 {
@@ -78,4 +81,5 @@ char	*expand_env_var(char *token, t_minishell *mini);
 void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
 void	print_envvar(t_minishell *mini);
+void	init_sigaction(void);
 #endif
