@@ -25,3 +25,36 @@ int	count_node(t_minishell *mini)
 	}
 	return (i);
 }
+
+t_env	*find_key(t_minishell *mini, char *key)
+{
+	t_env	*envvars;
+
+	envvars = mini->envvars;
+	printf("Key: %s\n", key); //TODO apagar testes
+ 	while (envvars)
+	{
+		if (ft_strcmp(key, envvars->key) == 0)
+			return(envvars);
+		envvars = envvars->next;
+	} 
+	return(NULL);
+}
+
+int	check_valid_key(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str || !str[i])
+		return (1);
+	if (str[i] == '=' || ft_isdigit(str[i]))
+		return (1);
+	while (str[i] != '=' && str[i])
+	{
+		if(!ft_isalnum(str[i]) && str[i] != '_')
+			return (1);
+		i++;
+	}
+	return (0);
+}

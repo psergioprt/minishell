@@ -77,5 +77,8 @@ int		custom_unset(t_minishell *mini);
 
 //UTILS
 int		count_node(t_minishell *mini);
+t_env	*find_key(t_minishell *mini, char *key);
+int		check_valid_key(char *str);
+
 
 #endif

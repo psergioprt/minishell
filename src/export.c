@@ -73,16 +73,30 @@ int	export_args(t_minishell *mini, char *var) //TODO 25 linhas, passar algo para
 }
  
 //tem que adicionar mais que uma se tiver mais que uma
-int	argumentate(t_minishell *mini) //TODO: testar bem isto
+int	argumentate(t_minishell *mini, t_node *node)
 {
-	t_node	*varlst;
+	export_args(mini, node->token);
+	return (1);
+}
 
-	varlst = mini->tokenlst;
-	varlst = varlst->next; //Passar o comando em si a frente
-	while (varlst)
+int	replace_value(t_env *found_env, char *value)
+{
+	int	i;
+
+	i = 0;
+	while (value[i] != '=' && value[i] != '\0')
+		i++;
+	if (value[i] == '=' && value[i + 1] != '\0')
 	{
-		export_args(mini, varlst->token);
-		varlst = varlst->next;
+		free(found_env->value);
+		found_env->value = ft_strdup(value + i + 1);
+		found_env->print = true;
+	}
+	else if (value[i] == '=')
+	{
+		free(found_env->value);
+		found_env->value = ft_strdup("");
+		found_env->print = true;
 	}
 	return (1);
 }
@@ -90,10 +104,34 @@ int	argumentate(t_minishell *mini) //TODO: testar bem isto
 int	custom_export(t_minishell *mini)
 {
 	t_node	*node;
+	t_env	*found_env;
 
 	node = mini->tokenlst;
 	if (!node->next)
 		return (export_no_args(mini));
-	else
-		return (argumentate(mini));
+
+	node = node->next; //Passar o comando em si a frente
+	while (node)
+	{
+		found_env = find_key(mini, node->token);
+		//TODO se tiver espacos com \ antes tem de considerar espaco no value - Parsing?
+		if (check_valid_key(node->token) == 0) //analisar chars especiais - Key nao pode ter
+		{
+			if (found_env != NULL) //key ja existe, fazer troca de valor
+			{
+				printf("found_env->key: %s\n", found_env->key); //TODO apagar
+				replace_value(found_env, node->token);
+				//TODO apagar
+				//se ja existir a key, e o novo tiver um = so, troca o value para ""
+				//Se ja existir a key e o novo tiver um = e value, troca o value para o novo
+				//Se ja existir mas a key nao tiver =, nao muda nada
+			}
+			else
+				argumentate(mini, node);
+		}
+		else
+			printf("export: %s is not a valid identifier\n", node->token);
+		node = node->next;
+	}
+	return (1);
 }
