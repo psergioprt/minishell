@@ -12,6 +12,51 @@
 
 #include "../include/minishell.h"
 
+int	custom_fork(t_minishell *mini)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		printf("Fork error");
+		exit(EXIT_FAILURE);
+/* 		perror("fork");*/
+	}
+	else if (pid == 0) {
+		// Child process
+		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
+
+		// Execute the command using execve
+		if (execute_execve(mini) == -1) {
+			printf("execve error");
+			exit(EXIT_FAILURE); // Exit the child process if execve fails
+		}
+	} else {
+		// Parent process
+		printf("Parent process waiting for child (PID: %d)\n", pid);
+
+		// Wait for the child process to finish
+		if (waitpid(pid, &status, 0) == -1) {
+			printf("waitpid error");
+			exit(EXIT_FAILURE);
+		}
+
+		 // Check child's exit status
+		if (WIFEXITED(status))
+		{
+			mini->exit_status = WEXITSTATUS(status);
+			printf("mini->exit_status: %d\n", mini->exit_status);
+		}
+		else if (WIFSIGNALED(status))
+		{
+			printf("Child process terminated by signal: %d\n", WTERMSIG(status));
+		}
+	}
+	return (1);
+}
+
 void	first_token(t_minishell *mini)
 {
 	int		ret;
@@ -26,8 +71,8 @@ void	first_token(t_minishell *mini)
 		ret = custom_cd(mini);
 		//printf("Fazer o cd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		printf("Fazer o pwd\n");
-		//ret = execute_execve(mini);
+		ret = custom_fork(mini);
+		//printf("Fazer o pwd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
 		ret = custom_export(mini);
 		//printf("Fazer o export\n");
@@ -40,7 +85,7 @@ void	first_token(t_minishell *mini)
 	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
 		printf("Fazer o exit\n");
 	else
-		ret = execute_execve(mini);
+		ret = custom_fork(mini);
 	if (ret <= 0)
 		printf("Error, command not found!\n");
 }

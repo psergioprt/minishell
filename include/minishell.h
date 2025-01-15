@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 #include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -28,6 +30,7 @@ typedef struct s_minishell
 	t_node			*tokenlst;
 	char			**envp; //so copia o que tem para usar no execve
 	t_env			*envvars;
+	int				exit_status; //TODO init
 	bool			has_pipe; //TODO: Inicializar a falso e ver logica de como vamos fazer se tiver pipe.
 	//Talvez fazer int, sempre que encontra um guarda o last command out e tira um do numero de pipes, so imprime (Se for o caso) so has_pipe for 0
 	char			*last_command_out; //TODO: fazer logica de se tem pipe nao imprimir e guardar aqui
@@ -50,12 +53,12 @@ void	split_and_add_commands(t_minishell *mini, const char *input);
 
 void	first_token(t_minishell *mini);
 
+//ECHO
 int		custom_echo(t_minishell *mini);
 
 //Splits
 void	parse_env(t_minishell *node, char *env[]);
 void	copy_env(char *env[], t_minishell *mini);
-
 
 //EXEC
 int		execute_execve(t_minishell *mini);
@@ -71,6 +74,7 @@ int		custom_env(t_minishell *mini);
 
 //EXPORT
 int		custom_export(t_minishell *mini);
+int		replace_value(t_env *found_env, char *value);
 
 //UNSET
 int		custom_unset(t_minishell *mini);
@@ -80,5 +84,7 @@ int		count_node(t_minishell *mini);
 t_env	*find_key(t_minishell *mini, char *key);
 int		check_valid_key(char *str);
 
+//PWD
+int		custom_pwd(t_minishell *mini)
 
 #endif

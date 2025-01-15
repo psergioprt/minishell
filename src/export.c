@@ -119,7 +119,7 @@ int	custom_export(t_minishell *mini)
 		{
 			if (found_env != NULL) //key ja existe, fazer troca de valor
 			{
-				printf("found_env->key: %s\n", found_env->key); //TODO apagar
+				printf("found_env->key: %s\n", found_env->key);//TODO apagar
 				replace_value(found_env, node->token);
 				//TODO apagar
 				//se ja existir a key, e o novo tiver um = so, troca o value para ""

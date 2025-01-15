@@ -76,6 +76,7 @@ int	main(int argc, char *argv[], char *env[])
 	(void)argv;
 	(void)env;
 	mini.tokenlst = NULL;
+	mini.exit_status = 0;
 	copy_env(env, &mini);
 	parse_env(&mini, env);
 	read_lines(&mini);
