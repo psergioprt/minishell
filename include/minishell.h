@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/14 14:37:13 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/15 13:56:20 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct s_minishell
 	t_node	*tokelst;
 	t_env	*envvars;
 	int		has_pipe;
-	bool	is_single_quote;
+	bool	disable_expand;
 	bool	has_error;
 	char	*last_command_out;
 	int		env_count;

@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/13 13:22:43 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/16 16:45:35 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,13 +155,30 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 	{
 		ctx->quote = ctx->input[*i];
 		(*i)++;
-		if (ctx->input[--(*i)] == '\'')
-			mini->is_single_quote = true;
-		(*i)++;
+		if (ctx->input[*i - 1] == '\'')
+			mini->disable_expand = true;
 		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
 		{
-			if (ctx->quote == '"' && ctx->input[*i] == '$')
-				handle_env_var(mini, ctx, i, j);
+			if (ctx->quote == '"' && ctx->input[*i] == '$' && ctx->input[*i + 1] == '\\')
+				ctx->current_token[(*j)++] = ctx->input[*i];
+			else if (ctx->quote == '"' && ctx->input[*i] == '\\')
+			{
+				if (ctx->input[*i + 1] == '$' || ctx->input[*i + 1] == '"' || ctx->input[*i + 1] == '\\')
+				{
+					mini->disable_expand = true;
+					(*i)++;
+					ctx->current_token[(*j)++] = ctx->input[*i];
+				}
+				else
+					ctx->current_token[(*j)++] = ctx->input[*i];
+			}
+			else if (ctx->quote == '"' && ctx->input[*i] == '$')
+			{
+				if (*i > 0 && ctx->input[*i - 1] == '\\')
+					ctx->current_token[(*j)++] = ctx->input[*i];
+				else
+					handle_env_var(mini, ctx, i, j);
+			}
 			else
 				ctx->current_token[(*j)++] = ctx->input[*i];
 			(*i)++;
@@ -189,10 +206,14 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 		{
 			tok_ctx->current_token[*tok_ctx->j] = '\0';
 			expanded_token = expand_env_var(tok_ctx->current_token, mini);
-			add_command_node(mini, expanded_token);
+			if (mini->disable_expand == true)
+				add_command_node(mini, tok_ctx->current_token);
+			else
+				add_command_node(mini, expanded_token);
 			if (expanded_token != tok_ctx->current_token)
 				free(expanded_token);
 			*tok_ctx->j = 0;
+			mini->disable_expand = false;
 		}
 	}
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
@@ -204,21 +225,30 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 	}
 }
 
-void	handle_loop_parsers(t_minishell *mini, const char *input, \
-		t_token_context *tok_ctx)
+void	handle_loop_parsers(t_minishell *mini, const char *input, t_token_context *tok_ctx)
 {
 	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
 		handle_spaces_quotes(mini, input, tok_ctx);
-	else if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == '>' || \
-				input[*tok_ctx->i] == '<'))
+	else if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == '>' || input[*tok_ctx->i] == '<'))
 		handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
 	{
 		mini->has_pipe += 1;
 		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	}
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ';')
+		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
 		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
+	{
+		if (input[*tok_ctx->i + 1] && (input[*tok_ctx->i + 1] == '$' || input[*tok_ctx->i + 1] == '\\' || input[*tok_ctx->i + 1] == ' ' || input[*tok_ctx->i + 1] == '\t'))
+		{
+			(*tok_ctx->i)++;
+			mini->disable_expand = true;
+			tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
+		}
+	}
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$')
 		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else
@@ -251,12 +281,12 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	{
 		current_token[j] = '\0';
 		expanded_token = expand_env_var(current_token, mini);
-		if (mini->is_single_quote)
+		if (mini->disable_expand)
 			add_command_node(mini, current_token);
 		else
 			add_command_node(mini, expanded_token);
 		if (expanded_token != current_token)
 			free(expanded_token);
-		mini->is_single_quote = false;
+		mini->disable_expand = false;
 	}
 }

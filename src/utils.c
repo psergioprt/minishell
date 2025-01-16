@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 23:31:33 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/11 23:21:08 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:01:11 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	ctx->index = 0;
 	ctx->quote = 0;
 	mini->has_pipe = 0;
-	mini->is_single_quote = false;
+	mini->disable_expand = false;
 	mini->has_error = false;
 }
 
