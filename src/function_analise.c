@@ -57,7 +57,7 @@ int	custom_fork(t_minishell *mini)
 	return (1);
 }
 
-void	first_token(t_minishell *mini)
+int	first_token(t_minishell *mini)
 {
 	int		ret;
 	size_t	len;
@@ -71,7 +71,7 @@ void	first_token(t_minishell *mini)
 		ret = custom_cd(mini);
 		//printf("Fazer o cd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		ret = custom_fork(mini);
+		ret = custom_pwd(mini);
 		//printf("Fazer o pwd\n");
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
 		ret = custom_export(mini);
@@ -88,4 +88,5 @@ void	first_token(t_minishell *mini)
 		ret = custom_fork(mini);
 	if (ret <= 0)
 		printf("Error, command not found!\n");
+	return (ret);
 }

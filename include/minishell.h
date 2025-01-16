@@ -51,7 +51,7 @@ void	free_list(t_minishell *mini);
 void	free_envvars(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
 
-void	first_token(t_minishell *mini);
+int		first_token(t_minishell *mini);
 
 //ECHO
 int		custom_echo(t_minishell *mini);
@@ -85,6 +85,9 @@ t_env	*find_key(t_minishell *mini, char *key);
 int		check_valid_key(char *str);
 
 //PWD
-int		custom_pwd(t_minishell *mini)
+int		custom_pwd(t_minishell *mini);
+
+//PIPES
+
 
 #endif
