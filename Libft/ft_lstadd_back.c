@@ -6,7 +6,7 @@
 /*   By: pauldos- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/30 11:11:31 by pauldos-          #+#    #+#             */
-/*   Updated: 2023/11/03 13:33:52 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/11/12 16:36:14 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ Adds the node ’new’ at the end of the list.
 
 #include "libft.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_list **lst, t_list *newa)
 {
 	t_list	*temp;
 
 	if (*lst == NULL)
 	{
-		*lst = new;
+		*lst = newa;
 		return ;
 	}
 	temp = *lst;
 	while (temp->next)
 		temp = temp->next;
-	temp->next = new;
+	temp->next = newa;
 }
 /*
 void    print_list(t_list *lst)
