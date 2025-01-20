@@ -12,49 +12,67 @@
 
 #include "../include/minishell.h"
 
-int	count_node(t_minishell *mini)
+//function created to free the linked list
+void	free_list(t_minishell *mini)
 {
-	int		i;
-	t_node	*temp;
+	t_node	*current;
+	t_node	*next;
 
-	i = 0;
-	temp = mini->tokenlst; // Temporary pointer for counting
-	while (temp) {
-		i++;
-		temp = temp->next;
+	current = mini->tokenlst;
+	while (current)
+	{
+		next = current->next;
+		free(current->token);
+		free(current);
+		current = next;
 	}
-	return (i);
+	mini->tokenlst = NULL;
 }
 
-t_env	*find_key(t_minishell *mini, char *key)
+void	free_envvars(t_minishell *mini)
 {
-	t_env	*envvars;
+	t_env	*current;
+	t_env	*next;
 
-	envvars = mini->envvars;
-	printf("Key: %s\n", key); //TODO apagar testes
- 	while (envvars)
+	current = mini->envvars;
+	while (current)
 	{
-		if (ft_strcmp(key, envvars->key) == 0)
-			return(envvars);
-		envvars = envvars->next;
-	} 
-	return(NULL);
+		next = current->next;
+		free(current->key);
+		free(current->value);
+		free(current);
+		current = next;
+	}
 }
 
-int	check_valid_key(char *str)
+void	init_variables(t_minishell *mini, t_parse_context *ctx, \
+		const char *input, char *current_token)
 {
-	int	i;
+	ctx->current_token = current_token;
+	ctx->input = input;
+	ctx->index = 0;
+	ctx->quote = 0;
+	mini->has_pipe = 0;
+	mini->disable_expand = false;
+	mini->has_error = false;
+}
 
-	i = 0;
-	if (!str || !str[i])
-		return (1);
-	if (str[i] == '=' || ft_isdigit(str[i]))
-		return (1);
-	while (str[i] != '=' && str[i])
+void	cleanup_readline(void)
+{
+	rl_clear_history();
+	rl_free_line_state();
+	rl_deprep_terminal();
+	rl_cleanup_after_signal();
+}
+
+void	print_envvar(t_minishell *mini)
+{
+	t_env	*current;
+
+	current = mini->envvars;
+	while (current)
 	{
-		if(!ft_isalnum(str[i]) && str[i] != '_')
-			return (1);
-		i++;
+		printf("Key: %s, Value: %s\n", current->key, current->value);
+		current = current->next;
 	}
-	return (0);
 }

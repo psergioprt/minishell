@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nodes_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/19 12:36:28 by jcavadas          #+#    #+#             */
-/*   Updated: 2024/12/20 12:34:18 by jcavadas         ###   ########.fr       */
+/*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/20 10:53:01 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ t_node	*create_command_node(const char *token)
 	t_node	*new_node;
 
 	new_node = malloc(sizeof(t_node));
+	new_node->token = NULL;
+	new_node->next = NULL;
 	if (!new_node)
 	{
 		perror("Error! Failed to allocate memory for new_node\n");
@@ -60,155 +62,44 @@ void	add_command_node(t_minishell *mini, const char *token)
 	}
 }
 
-//function created to check delimeters characters
-static int	is_delimeter(char c, const char *delim)
+void	handle_command_addition(t_minishell *mini, int *j)
 {
-	while (*delim)
-	{
-		if (c == *delim)
-			return (1);
-		delim++;
-	}
-	return (0);
-}
+	char	*expanded_token;
 
-//function created to handle redirectinal signs
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
-{
-	char	double_op[3];
-	char	single_op[2];
-
-	if (*j > 0)
+	expanded_token = NULL;
+	if (*j > 0 && !mini->has_error)
 	{
-		ctx->current_token[*j] = '\0';
-		add_command_node(mini, ctx->current_token);
-		*j = 0;
-	}
-	if (ctx->input[(*i) + 1] == ctx->input[*i])
-	{
-		double_op[0] = ctx->input[*i];
-		double_op[1] = ctx->input[(*i) + 1];
-		double_op[2] = '\0';
-		add_command_node(mini, double_op);
-		(*i)++;
-	}
-	else
-	{
-		single_op[0] = ctx->input[*i];
-		single_op[1] = '\0';
-		add_command_node(mini, single_op);
-	}
-}
-
-//function created to handle pipes delimeter
-void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
-{
-	char	delimeter[2];
-
-	if (*j > 0)
-	{
-		ctx->current_token[*j] = '\0';
-		add_command_node(mini, ctx->current_token);
-		*j = 0;
-	}
-	delimeter[0] = ctx->input[*i];
-	delimeter[1] = '\0';
-	add_command_node(mini, delimeter);
-}
-
-//function created to handle quotes, if opened and closed
-void	handle_open_close_quotes(t_parse_context *ctx, int *i, int *j)
-{
-	if (!ctx->quote)
-	{
-		ctx->quote = ctx->input[*i];
-		(*i)++;
-		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
-			ctx->current_token[(*j)++] = ctx->input[(*i)++];
-		if (ctx->input[*i] == ctx->quote)
-			ctx->quote = 0;
+		mini->current_token[*j] = '\0';
+		expanded_token = expand_env_var(mini->current_token, mini);
+		if (mini->disable_expand)
+			add_command_node(mini, mini->current_token);
 		else
-		{
-			printf("Error: Unclosed quote detected!\n");
-			return ;
-		}
+			add_command_node(mini, expanded_token);
+		if (expanded_token != mini->current_token)
+			free(expanded_token);
+		mini->disable_expand = false;
 	}
 }
 
 void	split_and_add_commands(t_minishell *mini, const char *input)
 {
-	int			i;
-	int			j;
-	char		current_token[1024];
-	char		quote;
-	t_parse_context	ctx = {current_token, input, 0};
-	mini->has_pipe = false;
-	/*ctx.current_token = current_token;
-	ctx.current_token = malloc(1024);
-	if (!ctx.current_token)
-		return ;
-	ctx.input = input;
-	ctx.index = 0;*/
+	int				i;
+	int				j;
+	t_parse_context	ctx;
+	t_token_context	tok_ctx;
+
 	i = 0;
 	j = 0;
-	quote = 0;
+	tok_ctx.current_token = mini->current_token;
+	tok_ctx.i = &i;
+	tok_ctx.j = &j;
+	tok_ctx.ctx = &ctx;
+	init_variables(mini, &ctx, input, mini->current_token);
 	while (input[i])
 	{
-		if (!quote && input[i] == ' ')
-		{
-			if (input[i + 1] == ' ' || input[i + 1] == '"' || \
-					input[i + 1] == '\'')
-			{
-				i++;
-				continue ;
-			}
-			if (j > 0)
-			{
-				current_token[j] = '\0';
-				add_command_node(mini, current_token);
-				j = 0;
-			}
-		}
-		else if (!quote && (input[i] == '>' || input[i] == '<'))
-			handle_redirectional(mini, &ctx, &i, &j);
-		else if (!quote && input[i] == '|')
-		{
-			mini->has_pipe = true;
-			handle_pipes(mini, &ctx, &i, &j);
-		}
-		else if (input[i] == '"' || input[i] == '\'')
-			handle_open_close_quotes(&ctx, &i, &j);
-		else
-			current_token[j++] = input[i];
-		i++;
+		handle_loop_parsers(mini, input, &tok_ctx);
+		if (!mini->has_error)
+			i++;
 	}
-	if (j > 0)
-	{
-		current_token[j] = '\0';
-		add_command_node(mini, current_token);
-	}
-}
-
-//function created to tokenize
-char	*ft_strtok(char *str, const char *delim)
-{
-	static char	*cur = NULL;
-	char		*token_start;
-	char		*result;
-
-	if (str != NULL)
-		cur = str;
-	if (cur == NULL || *cur == '\0')
-		return (NULL);
-	while (*cur && is_delimeter(*cur, delim))
-		cur++;
-	if (*cur == '\0')
-		return (NULL);
-	token_start = cur;
-	while (*cur && !is_delimeter(*cur, delim))
-		cur++;
-	if (*cur)
-		*cur++ = '\0';
-	result = ft_strdup(token_start);
-	return (result);
+	handle_command_addition(mini, &j);
 }

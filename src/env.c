@@ -14,6 +14,8 @@
 
 //TODO: falar paulo env with no options or arguments, so ignora se tem algo a frente?
 
+void	print_env()
+
 int custom_env(t_minishell *mini)
 {
 	t_env	*envvars;

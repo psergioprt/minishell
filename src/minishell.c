@@ -12,20 +12,6 @@ void	print_env(char *env[])
 	}
 }
 
-int	ft_strcmp(char *str1, char *str2)
-{
-	while (*str1 && *str2)
-	{
-		if (*str1 - *str2 < 0)
-			return (-1);
-		else if (*str1 - *str2 > 0)
-			return (1);
-		str1++;
-		str2++;
-	}
-	return (0);
-}
-
 void	print_nodes(t_node *command_list)
 {
 	int		i;
@@ -36,35 +22,74 @@ void	print_nodes(t_node *command_list)
 	while (current)
 	{
 		if (i == 0)
-			printf("Node[head]: %s\n", current->token);
+			printf("\033[1;33mNode[0]: %s\033[0m\n", current->token);
 		else
-			printf("Node[%d]: %s\n", i, current->token);
+			printf("\033[1;33mNode[%d]: %s\033[0m\n", i, current->token);
 		current = current->next;
 		i++;
 	}
 }
+//TODO isto e desnecessario com o comando exit
+void	read_lines_exit(t_minishell *mini, char *read)
+{
+	if (read == NULL)
+	{
+		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
+		free_list(mini);
+		exit (0);
+	}
+	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
+	{
+		write(STDOUT_FILENO, "exit\n", 5);
+		free(read);
+		free_list(mini);
+		exit (0);
+	}
+}
+
+bool	is_space(char *read)
+{
+	int	i;
+
+	i = 0;
+	while(read[i])
+	{
+		if (read[i] != ' ' && !(read[i] >= 9 && read[i] <= 13))
+			return (true);
+		i++;
+	}
+	return (false);
+}
 
 void	read_lines(t_minishell *mini)
 {
-	char	*read;
+	char	*read ;
+	bool	is_ok;
 
-	read = readline("minishell> ");
-	while (read != NULL)
+	mini->prompt = "\033[1;31mminishell>\033[0m ";
+	read = NULL;
+	while (1)
 	{
-		if (ft_strcmp(read, "minishell") == 0)
-			break ;
-		if (*read)
+		read = readline(mini->prompt);
+		read_lines_exit(mini, read);
+		is_ok = is_space(read);
+		if (*read && is_ok == true)
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
+			if (!mini->has_error)
+				print_nodes(mini->tokenlst);
+			if (mini->has_error)
+			{
+				free(read);
+				free_list(mini);
+				continue ;
+			}
 			first_token(mini);
-			print_nodes(mini->tokenlst);
 			free_list(mini);
 		}
 		free(read);
-		read = readline("minishell> ");
 	}
-	free_envvars(mini);
 	free_list(mini);
 }
 
@@ -72,19 +97,23 @@ int	main(int argc, char *argv[], char *env[])
 {
 	t_minishell	mini;
 
+	init_sigaction();
 	(void)argc;
 	(void)argv;
-	(void)env;
+	if (argc != 1 || argv[1])
+	{
+		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
+		exit (1);
+	}
 	mini.tokenlst = NULL;
 	mini.exit_status = 0;
-	copy_env(env, &mini);
 	parse_env(&mini, env);
+	copy_env(env, &mini);
 	read_lines(&mini);
-	printf("Exiting program...\n");
+	cleanup_readline();
+	free_envvars(&mini);
 	return (0);
 }
-
-
 
 
 //TODO: Apagar main antiga
