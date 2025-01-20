@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/15 13:56:20 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 00:29:15 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_minishell
 	char	*last_command_out;
 	int		env_count;
 	char	*prompt;
+	char	current_token[1024];
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -58,6 +59,7 @@ typedef struct s_parse_context
 	int			index;
 	char		quote;
 	const char	*exit_status;
+	int			m;
 }	t_parse_context;
 
 typedef struct s_token_context
@@ -82,4 +84,11 @@ void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
 void	print_envvar(t_minishell *mini);
 void	init_sigaction(void);
+void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void	handle_loop_parsers(t_minishell *mini, const char *input, t_token_context *tok_ctx);
+void	handle_spaces_quotes(t_minishell *mini, const char *input, t_token_context *tok_ctx);
+void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/15 16:06:53 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 00:32:25 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,23 @@ void	print_nodes(t_node *command_list)
 	}
 }
 
+void	read_lines_exit(t_minishell *mini, char *read)
+{
+	if (read == NULL)
+	{
+		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
+		free_list(mini);
+		exit (0);
+	}
+	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
+	{
+		write(STDOUT_FILENO, "exit\n", 5);
+		free(read);
+		free_list(mini);
+		exit (0);
+	}
+}
+
 void	read_lines(t_minishell *mini)
 {
 	char	*read ;
@@ -51,19 +68,7 @@ void	read_lines(t_minishell *mini)
 	while (1)
 	{
 		read = readline(mini->prompt);
-		if (read == NULL)
-		{
-			write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
-			free_list(mini);
-			exit (0);
-		}
-		if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
-		{
-			write(STDOUT_FILENO, "exit\n", 5);
-			free(read);
-			free_list(mini);
-			break ;
-		}
+		read_lines_exit(mini, read);
 		if (*read)
 		{
 			split_and_add_commands(mini, read);
@@ -91,7 +96,6 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokelst = NULL;
 	parse_env(&mini, env);
-//	print_envvar(&mini);
 	copy_env(env, &mini);
 	read_lines(&mini);
 	cleanup_readline();

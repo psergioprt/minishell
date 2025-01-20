@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/16 16:10:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 00:11:38 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,49 @@ char	*expand_env_var(char *token, t_minishell *mini)
 		return (expanded_token);
 	}
 	return (token);
+}
+
+void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+{
+	int		k;
+	char	*env_value;
+	char	env_var_name[256];
+
+	k = 0;
+	env_value = NULL;
+	while (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
+		env_var_name[k++] = ctx->input[(*i)++];
+	env_var_name[k] = '\0';
+	(*i)--;
+	env_value = get_env_value(env_var_name, mini);
+	if (env_value)
+	{
+		ctx->m = 0;
+		while (env_value[ctx->m])
+			ctx->current_token[(*j)++] = env_value[(ctx->m)++];
+	}
+}
+
+void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+{
+	(*i)++;
+	if (ctx->input[*i] == '?')
+	{
+		ctx->exit_status = "EXIT_STATUS";
+		ctx->m = 0;
+		while (ctx->exit_status[ctx->m])
+			ctx->current_token[(*j)++] = ctx->exit_status[ctx->m++];
+	}
+	else if (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
+		parse_env_name(mini, ctx, i, j);
+	else if (ctx->input[*i] == ' ' || ctx->input[*i] == '\0')
+	{
+		ctx->current_token[(*j)++] = '$';
+		(*i)--;
+	}
+	else if (ctx->input[*i] == '"')
+	{
+		(*i)--;
+		ctx->current_token[(*j)++] = '$';
+	}
 }
