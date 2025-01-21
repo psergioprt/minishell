@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 23:31:33 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/15 14:01:11 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 19:46:06 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	free_list(t_minishell *mini)
 	t_node	*current;
 	t_node	*next;
 
-	current = mini->tokelst;
+	current = mini->tokenlst;
 	while (current)
 	{
 		next = current->next;
@@ -26,7 +26,7 @@ void	free_list(t_minishell *mini)
 		free(current);
 		current = next;
 	}
-	mini->tokelst = NULL;
+	mini->tokenlst = NULL;
 }
 
 void	free_envvars(t_minishell *mini)

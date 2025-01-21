@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nodes_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/20 00:12:55 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 10:53:01 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,11 @@ void	add_command_node(t_minishell *mini, const char *token)
 		perror("Error: Failed to create new node\n");
 		return ;
 	}
-	if (!mini->tokelst)
-		mini->tokelst = new_node;
+	if (!mini->tokenlst)
+		mini->tokenlst = new_node;
 	else
 	{
-		current = mini->tokelst;
+		current = mini->tokenlst;
 		while (current->next)
 			current = current->next;
 		current->next = new_node;

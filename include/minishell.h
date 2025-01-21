@@ -1,56 +1,45 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 21:08:38 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/20 00:29:15 by pauldos-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <sys/wait.h>
+# include <signal.h>
 # include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../Libft/libft.h"
-# include <unistd.h>
-# include <signal.h>
-# include <sys/wait.h>
 
 typedef struct s_env
 {
 	char			*key;
 	char			*value;
-	bool			print;
+	bool			print; //Quando e so key, so imprime no export sem mais nada, se nao so imprime o que tiver pelo menos key= 1-PRINT, 2-NOT
 	struct s_env	*next;
-}	t_env;
+}t_env;
 
 typedef struct s_node
 {
-	char			*token;
-	struct s_node	*next;
-}	t_node;
+	char			*token; //TODO: temos de mudar para a logica agora ir ver os tokens e adicionar nos tokens
+	struct s_node	*next;	
+}t_node;
 
-typedef struct s_minishell
+typedef struct s_minishell 
 {
-	char	*command;
-	char	**envp;
-	t_node	*tokelst;
-	t_env	*envvars;
-	int		has_pipe;
-	bool	disable_expand;
-	bool	has_error;
-	char	*last_command_out;
-	int		env_count;
-	char	*prompt;
-	char	current_token[1024];
-}	t_minishell;
+	char			*command;
+	char			**envp; //so copia o que tem para usar no execve
+	t_node			*tokenlst;
+	t_env			*envvars;
+	int				exit_status; //TODO init
+	int				has_pipe; //TODO: Inicializar a falso e ver logica de como vamos fazer se tiver pipe.
+	bool			disable_expand;
+	bool			has_error;
+	char			*last_command_out; //TODO: fazer logica de se tem pipe nao imprimir e guardar aqui
+	int				env_count;
+	char			*prompt;
+	char			current_token[1024];
+}t_minishell;
 
 typedef struct s_parse_context
 {
@@ -90,5 +79,45 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, t_token_context 
 void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
 void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
 void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+
+
+int		first_token(t_minishell *mini);
+
+//ECHO
+int		custom_echo(t_minishell *mini);
+
+//Splits
+void	parse_env(t_minishell *node, char *env[]);
+void	copy_env(char *env[], t_minishell *mini);
+
+//EXEC
+int		execute_execve(t_minishell *mini);
+
+//ERROR
+void	ft_error(char *error_msg, t_minishell *mini);
+
+//CD
+int 	custom_cd(t_minishell *mini);
+
+//ENV
+int		custom_env(t_minishell *mini);
+
+//EXPORT
+int		custom_export(t_minishell *mini);
+int		replace_value(t_env *found_env, char *value);
+
+//UNSET
+int		custom_unset(t_minishell *mini);
+
+//KEY_UTILS
+int		count_node(t_minishell *mini);
+t_env	*find_key(t_minishell *mini, char *key);
+int		check_valid_key(char *str);
+
+//PWD
+int		custom_pwd(t_minishell *mini);
+
+//PIPES
+
 
 #endif

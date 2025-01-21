@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 21:12:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/20 00:32:25 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/01/20 19:15:34 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/20 19:30:47 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	print_nodes(t_node *command_list)
 		i++;
 	}
 }
-
+//TODO isto e desnecessario com o comando exit
 void	read_lines_exit(t_minishell *mini, char *read)
 {
 	if (read == NULL)
@@ -59,22 +59,42 @@ void	read_lines_exit(t_minishell *mini, char *read)
 	}
 }
 
+bool	is_spaces(char *read)
+{
+	int	i;
+
+	i = 0;
+	while (read[i])
+	{
+		if (read[i] != ' ' && !(read[i] >= 9 && read[i] <= 13))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 void	read_lines(t_minishell *mini)
 {
-	char	*read ;
+	char	*read;
 
-	mini->prompt = "\033[1;31mminishell>\033[0m ";
 	read = NULL;
 	while (1)
 	{
-		read = readline(mini->prompt);
+		read = readline("\033[1;31mminishell>\033[0m ");
 		read_lines_exit(mini, read);
-		if (*read)
+		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
 			if (!mini->has_error)
-				print_nodes(mini->tokelst);
+				print_nodes(mini->tokenlst);
+			if (mini->has_error)
+			{
+				free(read);
+				free_list(mini);
+				continue ;
+			}
+			first_token(mini);
 			free_list(mini);
 		}
 		free(read);
@@ -94,7 +114,8 @@ int	main(int argc, char *argv[], char *env[])
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
 		exit (1);
 	}
-	mini.tokelst = NULL;
+	mini.tokenlst = NULL;
+	mini.exit_status = 0;
 	parse_env(&mini, env);
 	copy_env(env, &mini);
 	read_lines(&mini);
@@ -102,3 +123,88 @@ int	main(int argc, char *argv[], char *env[])
 	free_envvars(&mini);
 	return (0);
 }
+
+
+//TODO: Apagar main antiga
+/* int	main(int argc, char *argv[], char *env[]) //env[]: Environment variables ... KEY=VALUE That will be used with the entered command
+{
+	char	*read;
+	t_minishell	*data;
+	t_node	*current;
+	
+	
+	(void)argc;
+	(void)argv;
+	data = NULL;
+	//TODO: Tem de inicializar antes de fazer isto - falar com paulo 
+	//data = create_command_node("dummy_command");
+	data = malloc(sizeof(t_node));
+	copy_env(env, data);
+	parse_env(data, env);
+	//TODO: DELETE TESTES SPLIT PARSE ENV
+	 // Print the parsed environment variables
+	if (data->envvars) {
+		for (int i = 0; data->envvars[i].key != NULL; i++) {
+			printf("Key: %s, Value: %s, Print: %d\n",
+				data->envvars[i].key,
+				data->envvars[i].value ? data->envvars[i].value : "(null)",
+				data->envvars[i].print);
+		}
+		//JA PASSOU AQUI SEG FAULT
+		// Free the allocated memory
+		for (int i = 0; data->envvars[i].key != NULL; i++) {
+			//free(data->envvars[i].key);
+			//free(data->envvars[i].value);
+		} 
+		//JA PASSOU AQUI SEG FAULT
+		//free(data->envvars);
+	}
+	//TODO: DELETE TESTES SPLIT PARSE ENV 
+	//LOOP TO ADD EACH COMMAND TO NODES
+	while ((read = readline("minishell> ")) != NULL)
+	{
+		if (ft_strcmp(read, "exit") == 0)
+			break;
+		if (*read)
+		{
+			split_and_add_commands(&data, read);
+			add_history(read);
+			first_token(data);
+		}
+		free(read);
+	}
+	
+
+	//LOOP TO ADD INPUT LINES TO NODES
+	while ((read = readline("minishell> "))!= NULL)
+	{
+		if (ft_strcmp(read, "time to leave minishell") == 0)
+			break ;
+		if (*read)
+		{                                                                                                                                                                                                                                                                     
+			add_command_node(&minishell, read);
+			add_history(read); //from readline/history.h ... manages history (scrolls inputed commands)
+			printf("command: %s\n", read);
+		}
+		free(read);
+	}
+	current = data;
+	//LOOP TO OUTPUT NODES VALUES, AS SOON AS EITHER CTRL + D IS PRESSED OR THE MESSAGE:
+	//"time to leave minishell" IS ENTERED
+	
+
+	int	i = 0;
+	while (current)
+	{
+		if (i == 0)
+			printf ("Nodes command list: node[head]: %s\n", current->token);
+
+		else
+			printf ("Nodes command list: node[%d]: %s\n", i, current->token);
+		current = current->next;
+		i++;
+	}
+	free_list(data);
+	return (0);
+}
+ */

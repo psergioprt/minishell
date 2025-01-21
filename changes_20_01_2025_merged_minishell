@@ -1,0 +1,25 @@
+Changes:
+
+1) To handle the \(char) that was skipping the first char:
+- Removed void handle_escape_character function at parser_handler.c
+- Changed at handle_loop_parsers function at parser_handler.c, the following else if:
+ 55         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
+ 56         {
+ 57                 mini->disable_expand = true;
+ 58                 if (input[*tok_ctx->i + 1])
+ 59                         tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
+ 60                 (*tok_ctx->i)++;
+ 61         }
+
+
+2) To handle the CTRL+C that when there was some text, after entering CTRL+C, there should be a blank bash new line, not with the previous content.
+- Added the line 19 at sigint_handler function at signal_functions.c
+ 15 void    sigint_handler(int sig)
+ 16 {
+ 17         (void)sig;
+ 18         rl_on_new_line();
+ 19         rl_replace_line("", 0); 
+ 20         write(STDOUT_FILENO, "\n", 1);
+ 21         rl_redisplay();
+ 22 }
+

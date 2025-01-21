@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal_functions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/14 15:14:40 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/20 19:34:45 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	rl_on_new_line();
+	rl_replace_line("", 0);
 	write(STDOUT_FILENO, "\n", 1);
 	rl_redisplay();
 }
