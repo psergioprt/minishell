@@ -41,6 +41,13 @@ typedef struct s_minishell
 	char			current_token[1024];
 }t_minishell;
 
+typedef struct s_redirection
+{
+	int	type;
+	char	*target;
+	struct	s_redirection *next;
+} t_redirection;
+
 typedef struct s_parse_context
 {
 	char		*current_token;

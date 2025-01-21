@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/21 10:36:31 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/21 23:31:26 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,29 +66,34 @@ int	first_token(t_minishell *mini)
 	size_t	len;
 
 	ret = 0;
-	len = ft_strlen(mini->tokenlst->token);
-	if (!ft_strncmp(mini->tokenlst->token, "echo", len))
-		ret = custom_echo(mini);
-		// printf("Fazer o echo\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
-		ret = custom_cd(mini);
-		//printf("Fazer o cd\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		ret = custom_pwd(mini);
-		//printf("Fazer o pwd\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
-		ret = custom_export(mini);
-		//printf("Fazer o export\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
-		ret = custom_unset(mini);
-		//printf("Fazer o unset\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "env", len))
-		ret = custom_env(mini);	
-		//printf("Fazer o env\n");
-	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-		printf("Fazer o exit\n");
+	if (mini->tokenlst && mini->tokenlst->token)//UPDATED BY PAULO. $x caused SEGFAULT
+	{
+		len = ft_strlen(mini->tokenlst->token);
+		if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+			ret = custom_echo(mini);
+			// printf("Fazer o echo\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
+			ret = custom_cd(mini);
+			//printf("Fazer o cd\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
+			ret = custom_pwd(mini);
+			//printf("Fazer o pwd\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "export", len))
+			ret = custom_export(mini);
+			//printf("Fazer o export\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
+			ret = custom_unset(mini);
+			//printf("Fazer o unset\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "env", len))
+			ret = custom_env(mini);	
+			//printf("Fazer o env\n");
+		else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
+			printf("Fazer o exit\n");
+		else
+			ret = custom_fork(mini);
+	}
 	else
-		ret = custom_fork(mini);
+		printf("Error: Invalid token or token list\n");
 	if (ret <= 0)
 		printf("Error, command not found!\n");
 	return (ret);

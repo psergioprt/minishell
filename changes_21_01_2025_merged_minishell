@@ -195,3 +195,46 @@ on the parsing.
  59         else
  60                 tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
  61 }
+
+6 - If I entered at the beginning of the input a non existent envvar e.g. $p, it returned SEGFAULT.
+So I changed first_token function at function_analise.c, and added variables checker if they were not null.
+
+ 63 int     first_token(t_minishell *mini)
+ 64 {
+ 65         int             ret;
+ 66         size_t  len;
+ 67 
+ 68         ret = 0;
+ 69         if (mini->tokenlst && mini->tokenlst->token)//UPDATED BY PAULO. $x caused SEGFAULT
+ 70         {
+ 71                 len = ft_strlen(mini->tokenlst->token);
+ 72                 if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+ 73                         ret = custom_echo(mini);
+ 74                         // printf("Fazer o echo\n");
+ 75                 else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
+ 76                         ret = custom_cd(mini);
+ 77                         //printf("Fazer o cd\n");
+ 78                 else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
+ 79                         ret = custom_pwd(mini);
+ 80                         //printf("Fazer o pwd\n");
+ 81                 else if (!ft_strncmp(mini->tokenlst->token, "export", len))
+ 82                         ret = custom_export(mini);
+ 83                         //printf("Fazer o export\n");
+ 84                 else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
+ 85                         ret = custom_unset(mini);
+ 86                         //printf("Fazer o unset\n");
+ 87                 else if (!ft_strncmp(mini->tokenlst->token, "env", len))
+ 88                         ret = custom_env(mini);
+ 89                         //printf("Fazer o env\n");
+ 90                 else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
+ 91                         printf("Fazer o exit\n");
+ 92                 else
+ 93                         ret = custom_fork(mini);
+ 94         }
+ 95         else
+ 96                 printf("Error: Invalid token or token list\n");
+ 97         if (ret <= 0)
+ 98                 printf("Error, command not found!\n");
+ 99         return (ret);
+100 }
+

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 09:35:02 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/21 23:13:10 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ void	get_command(t_minishell *mini)
 	ft_strlcpy(mini->command, node->token, len + 1);
 }
 //TODO: 25 linhas
-//VERSÃO JOÃO EXECUTE_EXECVE
-/*int	execute_execve(t_minishell *mini) 
+
+int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -152,10 +152,10 @@ void	get_command(t_minishell *mini)
 	free(argv);
 	free(mini->command);
 	return (1);
-}*/
+}
 
 //VERSÃO ATUALIZADA PAULO EXECVE
-int	execute_execve(t_minishell *mini) 
+/*int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -218,4 +218,4 @@ int	execute_execve(t_minishell *mini)
 	free(argv);
 	free(mini->command);
 	return (1);
-}
+}*/
