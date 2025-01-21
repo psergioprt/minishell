@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/20 15:49:37 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/21 12:29:54 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,10 @@ t_node	*flag_checker(t_node *node, bool *has_flag)
 int	custom_echo(t_minishell *mini)
 {
 	int		first;
-	int		i;
 	t_node	*node;
 	bool	has_flag;
 
 	first = 1;
-	i = 0;
 	has_flag = false;
 	node = mini->tokenlst;
 	node = node->next;
@@ -71,5 +69,5 @@ int	custom_echo(t_minishell *mini)
 	}
 	if (!has_flag)
 		write(1, "\n", 1);
-	return (1);
+	return (0);
 }

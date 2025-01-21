@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/10 16:04:13 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/21 11:47:00 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,8 @@ int	execute_execve(t_minishell *mini)
 		pathname = fallback_path(mini);
 		if (!pathname)
 		{
-			ft_error("Couldn't find path!", mini);
+			printf("%s: command not found\n", node->token);
+			//ft_error("Couldn't find path!", mini);
 			return (-1);
 		}
 	}

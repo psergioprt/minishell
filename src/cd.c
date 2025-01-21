@@ -39,7 +39,7 @@ void	has_found_env(t_env *found_env, char *key, char *dir)
 		printf("malloc error\n");
 		return ;
 	}
-	replace_value(found_env, new_value);
+	replace_env_value(found_env, new_value);
 	free(new_value);
 }
 
@@ -80,20 +80,20 @@ int	custom_cd(t_minishell *mini)
 	if (!node->next)
 	{
 		ft_error("cd: missing argument", mini);
-		return (-1);
+		return (1);
 	}
 	node = node->next; //Supostamente estara aqui o path
 	if (node->next)
 	{
 		ft_error("cd: too many arguments", mini);
-		return (-1);
+		return (1);
 	}
 	path = node->token;
 	if (chdir(path) == -1)
 	{
-		printf("cd: no such file or directory: %s\n", path);
-		return (-1);
+		printf("cd: %s: No such file or directory\n", path);
+		return (1);
 	}
 	update_pwd(mini, last_dir);
-	return (1);
+	return (0);
 }

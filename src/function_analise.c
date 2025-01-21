@@ -30,8 +30,8 @@ int	custom_fork(t_minishell *mini)
 
 		// Execute the command using execve
 		if (execute_execve(mini) == -1) {
-			printf("execve error");
-			exit(EXIT_FAILURE); // Exit the child process if execve fails
+			printf("execve error\n");
+			exit(127); // Exit the child process if execve fails
 		}
 	} else {
 		// Parent process
@@ -51,12 +51,13 @@ int	custom_fork(t_minishell *mini)
 		}
 		else if (WIFSIGNALED(status))
 		{
+			mini->exit_status = 128 + WTERMSIG(status);
 			printf("Child process terminated by signal: %d\n", WTERMSIG(status));
 		}
 	}
-	return (1);
+	return (0);
 }
-
+//TODO: mudar logica para dar os error codes
 int	first_token(t_minishell *mini)
 {
 	int		ret;
@@ -65,28 +66,24 @@ int	first_token(t_minishell *mini)
 	ret = 0;
 	len = ft_strlen(mini->tokenlst->token);
 	if (!ft_strncmp(mini->tokenlst->token, "echo", len))
-		ret = custom_echo(mini);
-		// printf("Fazer o echo\n");
+		mini->exit_status = custom_echo(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
-		ret = custom_cd(mini);
-		//printf("Fazer o cd\n");
+		mini->exit_status = custom_cd(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		ret = custom_pwd(mini);
-		//printf("Fazer o pwd\n");
+		mini->exit_status = custom_pwd(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
-		ret = custom_export(mini);
-		//printf("Fazer o export\n");
+		mini->exit_status = custom_export(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
-		ret = custom_unset(mini);
-		//printf("Fazer o unset\n");
+		mini->exit_status = custom_unset(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "env", len))
-		ret = custom_env(mini);	
-		//printf("Fazer o env\n");
+		mini->exit_status = custom_env(mini);//correct exit codes
 	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-		printf("Fazer o exit\n");
+		printf("Fazer o exit\n"); //TODO
 	else
-		ret = custom_fork(mini);
-	if (ret <= 0)
-		printf("Error, command not found!\n");
+		ret = custom_fork(mini); //TODO corrigir/verificar exit codes
+	/* if (ret <= 0)
+		printf("Error, command not found!\n"); */
+	//mini->exit_status = ret;
+	printf("exit status: %d\n", mini->exit_status);
 	return (ret);
 }

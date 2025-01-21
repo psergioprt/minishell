@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/20 15:13:33 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:15:17 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct s_env
 typedef struct s_node
 {
 	char			*token;
-	struct s_node	*next;	
+	struct s_node	*next;
 }	t_node;
 
 typedef struct s_minishell
@@ -120,7 +120,7 @@ int		custom_env(t_minishell *mini);
 
 //EXPORT
 int		custom_export(t_minishell *mini);
-int		replace_value(t_env *found_env, char *value);
+//int		replace_value(t_env *found_env, char *value);
 
 //UNSET
 int		custom_unset(t_minishell *mini);
@@ -129,6 +129,7 @@ int		custom_unset(t_minishell *mini);
 int		count_node(t_minishell *mini);
 t_env	*find_key(t_minishell *mini, char *key);
 int		check_valid_key(char *str);
+int		replace_env_value(t_env *found_env, char *value);
 
 //PWD
 int		custom_pwd(t_minishell *mini);
