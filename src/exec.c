@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/10 16:04:13 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/21 09:35:02 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ void	get_command(t_minishell *mini)
 	ft_strlcpy(mini->command, node->token, len + 1);
 }
 //TODO: 25 linhas
-int	execute_execve(t_minishell *mini) 
+//VERSÃO JOÃO EXECUTE_EXECVE
+/*int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -144,6 +145,72 @@ int	execute_execve(t_minishell *mini)
 	printf("Command: %s\n", mini->command); //TODO: Apagar teste find_path
 	if (execve(pathname, argv, mini->envp) == -1) //TODO: Fazer o fork
 		ft_error("execve failed!", mini);
+	// Free argv for testing purposes
+	for (int j = 0; argv[j]; j++) {
+		free(argv[j]);
+	}
+	free(argv);
+	free(mini->command);
+	return (1);
+}*/
+
+//VERSÃO ATUALIZADA PAULO EXECVE
+int	execute_execve(t_minishell *mini) 
+{
+	// Variable declarations
+	char	**argv;
+	char	*pathname;
+	int		i;
+	t_node	*node;
+	pid_t	pid; //adicionei PAULO
+	int	status; //adicionei PAULO
+
+	node = mini->tokenlst; // Store the head of the list
+	// Allocate and copy command
+	get_command(mini);
+	// Count the number of tokens
+	i = count_node(mini);
+	argv = get_argv(mini, i, node);
+	if (!argv)
+		ft_error("Couldnt get argv!", mini);
+	pathname = find_path(mini);
+	if (!pathname)
+	{
+		pathname = fallback_path(mini);
+		if (!pathname)
+		{
+			ft_error("Couldn't find path!", mini);
+			return (-1);
+		}
+	}
+	printf("Pathname: %s\n", pathname); //TODO: Apagar teste find_path
+	printf("Command: %s\n", mini->command); //TODO: Apagar teste find_path
+						//
+	pid = fork(); //Create a child process by PAULO
+	if (pid == 0) //Child process by PAULO
+	{
+		restore_default_signals();
+		if (execve(pathname, argv, mini->envp) == -1) //TODO: Fazer o fork
+			ft_error("execve failed!", mini);
+	}
+	else if (pid > 0) // Parent process
+    	{
+        	waitpid(pid, &status, 0); // Wait for the child process to finish
+        	if (WIFSIGNALED(status)) // Check if the child was terminated by a signal
+        	{
+            		if (WTERMSIG(status) == SIGQUIT)
+                		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+        	}
+        	else if (WIFEXITED(status)) // Check if the child exited normally
+       	 	{
+            		mini->exit_status = WEXITSTATUS(status);
+        	}
+	}
+	else
+	{
+		perror("fork failed");
+		return (-1);
+	}
 	// Free argv for testing purposes
 	for (int j = 0; argv[j]; j++) {
 		free(argv[j]);

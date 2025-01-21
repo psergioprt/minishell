@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
+/*   Updated: 2025/01/21 10:36:31 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	custom_fork(t_minishell *mini)
 	else if (pid == 0) {
 		// Child process
 		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
-
+		restore_default_signals();
 		// Execute the command using execve
 		if (execute_execve(mini) == -1) {
 			printf("execve error");
@@ -51,7 +51,10 @@ int	custom_fork(t_minishell *mini)
 		}
 		else if (WIFSIGNALED(status))
 		{
-			printf("Child process terminated by signal: %d\n", WTERMSIG(status));
+			if (WTERMSIG(status) == SIGQUIT)
+				write(1, "Quit (core dumped)\n", 19);
+			else
+				printf("Child process terminated by signal: %d\n", WTERMSIG(status));
 		}
 	}
 	return (1);

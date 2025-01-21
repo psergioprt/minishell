@@ -6,11 +6,23 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/20 19:34:45 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/21 09:14:42 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	restore_default_signals(void)
+{
+	struct	sigaction sa_default;
+
+	sigemptyset(&sa_default.sa_mask);
+	sa_default.sa_flags = 0;
+	sa_default.sa_handler = SIG_DFL;
+
+	sigaction(SIGINT, &sa_default, NULL);
+	sigaction(SIGQUIT, &sa_default, NULL);
+}
 
 void	sigint_handler(int sig)
 {

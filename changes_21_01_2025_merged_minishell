@@ -1,0 +1,197 @@
+Changes:
+
+1) To handle the \(char) that was skipping the first char:
+- Removed void handle_escape_character function at parser_handler.c
+- Changed at handle_loop_parsers function at parser_handler.c, the following else if:
+
+ 55         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
+ 56         {
+ 57                 mini->disable_expand = true;
+ 58                 if (input[*tok_ctx->i + 1])
+ 59                         tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
+ 60                 (*tok_ctx->i)++;
+ 61         }
+
+
+2) To handle the CTRL+C that when there was some text, after entering CTRL+C, there should be a blank
+ bash new line, not with the previous content.
+- Added the line 19 at sigint_handler function at signal_functions.c
+
+ 15 void    sigint_handler(int sig)
+ 16 {
+ 17         (void)sig;
+ 18         rl_on_new_line();
+ 19         rl_replace_line("", 0); 
+ 20         write(STDOUT_FILENO, "\n", 1);
+ 21         rl_redisplay();
+ 22 }
+
+3) To handle the CTRL+\, after an ininterrupt process, which should output ^\Quit (core dumped)
+- Created a new function at signal_functions.c and updated minishell.h
+
+ 15 void    restore_default_signals(void)
+ 16 {
+ 17         struct  sigaction sa_default;
+ 18 
+ 19         sigemptyset(&sa_default.sa_mask);
+ 20         sa_default.sa_flags = 0;
+ 21         sa_default.sa_handler = SIG_DFL;
+ 22 
+ 23         sigaction(SIGINT, &sa_default, NULL);
+ 24         sigaction(SIGQUIT, &sa_default, NULL);
+ 25 }
+
+- Updated the function custom_fork at function_analise.c
+
+added lines 30 and 54 to 56
+ 15 int     custom_fork(t_minishell *mini)
+ 16 {
+ 17         pid_t   pid;
+ 18         int             status;
+ 19 
+ 20         pid = fork();
+ 21         if (pid < 0)
+ 22         {
+ 23                 printf("Fork error");
+ 24                 exit(EXIT_FAILURE);
+ 25 /*              perror("fork");*/
+ 26         }
+ 27         else if (pid == 0) {
+ 28                 // Child process
+ 29                 printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
+ 30                 restore_default_signals();
+ 31                 // Execute the command using execve
+ 32                 if (execute_execve(mini) == -1) {
+ 33                         printf("execve error");
+ 34                         exit(EXIT_FAILURE); // Exit the child process if execve fails
+ 35                 }
+ 36         } else {
+ 37                 // Parent process
+ 38                 printf("Parent process waiting for child (PID: %d)\n", pid);
+ 39 
+ 40                 // Wait for the child process to finish
+ 41                 if (waitpid(pid, &status, 0) == -1) {
+ 42                         printf("waitpid error");
+ 43                         exit(EXIT_FAILURE); 
+ 44                 }
+ 45                 
+ 46                  // Check child's exit status
+ 47                 if (WIFEXITED(status))
+ 48                 {
+ 49                         mini->exit_status = WEXITSTATUS(status);
+ 50                         printf("mini->exit_status: %d\n", mini->exit_status);
+ 51                 }
+ 52                 else if (WIFSIGNALED(status))
+ 53                 {
+ 54                         if (WTERMSIG(status) == SIGQUIT)
+ 55                                 write(1, "Quit (core dumped)\n", 19);
+ 56                         else
+ 57                                 printf("Child process terminated by signal: %d\n", WTERMSIG(status))    ;
+ 58                 }
+ 59         }
+ 60         return (1);
+ 61 }
+
+4) To deal with Enter key after only spaces and memory management of mini->has_error variable
+	4a) For Enter key question, added is_spaces function (62-74) and checked it at line 85
+	4b) For mini->has_error management added lines (91-96)
+	4c) To keep readlines within the 25 line number boundary:
+		a) Removed mini->prompt variable and updated minishell.h;
+		b) There is no variable for is_spaces checker.
+
+ 62 bool    is_spaces(char *read)
+ 63 {
+ 64         int     i;
+ 65 
+ 66         i = 0;
+ 67         while (read[i])
+ 68         {
+ 69                 if (read[i] != ' ' && !(read[i] >= 9 && read[i] <= 13))
+ 70                         return (true);
+ 71                 i++;
+ 72         }
+ 73         return (false);
+ 74 }
+ 75 
+ 76 void    read_lines(t_minishell *mini)
+ 77 {
+ 78         char    *read;
+ 79 
+ 80         read = NULL;
+ 81         while (1)
+ 82         {
+ 83                 read = readline("\033[1;31mminishell>\033[0m ");
+ 84                 read_lines_exit(mini, read);
+ 85                 if (*read && is_spaces(read))
+ 86                 {
+ 87                         split_and_add_commands(mini, read);
+ 88                         add_history(read);
+ 89                         if (!mini->has_error)
+ 90                                 print_nodes(mini->tokenlst);
+ 91                         if (mini->has_error)
+ 92                         {
+ 93                                 free(read);
+ 94                                 free_list(mini);
+ 95                                 continue ;
+ 96                         }
+ 97                         first_token(mini);
+ 98                         free_list(mini);
+ 99                 }
+100                 free(read);
+101         }
+102         free_list(mini);
+103 }
+
+5) To handle inputs when terminated with | or only spaces after |.
+
+- Created a new handle_pipes(15-34) at parser_hanler.c, which calls the previous handle_sep function to carry 
+on the parsing.
+- Changed the pipes related else if lines(44-45)
+
+ 15 void    handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+ 16 {
+ 17         int     saved_index;
+ 18 
+ 19         mini->has_pipe += 1;
+ 20         saved_index = *i;
+ 21         (*i)++;
+ 22         while (ctx->input[*i])
+ 23         {
+ 24                 if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 && ctx->input[*i] <= 13))
+ 25                 {
+ 26                         *i = saved_index;
+ 27                         handle_sep(mini, ctx, i, j);
+ 28                         return ; 
+ 29                 }
+ 30                 (*i)++;
+ 31         }
+ 32         printf("Error: Pipe sign without further input\n");
+ 33         mini->has_error = true;
+ 34 }               
+ 35  
+ 36 void    handle_loop_parsers(t_minishell *mini, const char *input, \
+ 37                 t_token_context *tok_ctx)
+ 38 {
+ 39         if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+ 40                 handle_spaces_quotes(mini, input, tok_ctx);
+ 41         else if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == '>' || \
+ 42                                 input[*tok_ctx->i] == '<'))
+ 43                 handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 44         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
+ 45                 handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 46         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ';')
+ 47                 handle_sep(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 48         else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
+ 49                 handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 50         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
+ 51         {
+ 52                 mini->disable_expand = true;
+ 53                 if (input[*tok_ctx->i + 1])
+ 54                         tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
+ 55                 (*tok_ctx->i)++;
+ 56         }
+ 57         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$')
+ 58                 handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 59         else
+ 60                 tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
+ 61 }

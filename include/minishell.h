@@ -73,6 +73,7 @@ void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
 void	print_envvar(t_minishell *mini);
 void	init_sigaction(void);
+void	restore_default_signals(void);
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
 void	handle_loop_parsers(t_minishell *mini, const char *input, t_token_context *tok_ctx);
 void	handle_spaces_quotes(t_minishell *mini, const char *input, t_token_context *tok_ctx);
