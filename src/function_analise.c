@@ -27,7 +27,7 @@ int	custom_fork(t_minishell *mini)
 	else if (pid == 0) {
 		// Child process
 		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
-
+		restore_default_signals();
 		// Execute the command using execve
 		if (execute_execve(mini) == -1) {
 			printf("execve error\n");
@@ -47,12 +47,14 @@ int	custom_fork(t_minishell *mini)
 		if (WIFEXITED(status))
 		{
 			mini->exit_status = WEXITSTATUS(status);
-			printf("mini->exit_status: %d\n", mini->exit_status);
+			printf("mini->exit_status: %d\n", mini->exit_status);//TODO apagar testes
 		}
 		else if (WIFSIGNALED(status))
 		{
+			if (WTERMSIG(status) == SIGQUIT)
+				write(1, "Quit (core dumped)\n", 19);
 			mini->exit_status = 128 + WTERMSIG(status);
-			printf("Child process terminated by signal: %d\n", WTERMSIG(status));
+			printf("Child process terminated by signal: %d\n", WTERMSIG(status));//TODO apagar testes
 		}
 	}
 	return (0);
@@ -64,26 +66,29 @@ int	first_token(t_minishell *mini)
 	size_t	len;
 
 	ret = 0;
-	len = ft_strlen(mini->tokenlst->token);
-	if (!ft_strncmp(mini->tokenlst->token, "echo", len))
-		mini->exit_status = custom_echo(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
-		mini->exit_status = custom_cd(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-		mini->exit_status = custom_pwd(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "export", len))
-		mini->exit_status = custom_export(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
-		mini->exit_status = custom_unset(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "env", len))
-		mini->exit_status = custom_env(mini);//correct exit codes
-	else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-		printf("Fazer o exit\n"); //TODO
-	else
-		ret = custom_fork(mini); //TODO corrigir/verificar exit codes
+	if (mini->tokenlst && mini->tokenlst->token)
+	{
+		len = ft_strlen(mini->tokenlst->token);
+		if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+			mini->exit_status = custom_echo(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
+			mini->exit_status = custom_cd(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
+			mini->exit_status = custom_pwd(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "export", len))
+			mini->exit_status = custom_export(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
+			mini->exit_status = custom_unset(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "env", len))
+			mini->exit_status = custom_env(mini);//correct exit codes
+		else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
+			printf("Fazer o exit\n"); //TODO
+		else
+			ret = custom_fork(mini); //TODO corrigir/verificar exit codes
+	}
 	/* if (ret <= 0)
 		printf("Error, command not found!\n"); */
 	//mini->exit_status = ret;
-	printf("exit status: %d\n", mini->exit_status);
+	printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
 	return (ret);
 }

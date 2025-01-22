@@ -1,27 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/08 12:00:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/08 12:02:11 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/01/07 12:20:52 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/07 12:50:56 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <unistd.h>
 
-int	ft_strcmp(char *str1, char *str2)
+char	*ft_strcpy(char *dst, char *src)
 {
-	while (*str1 && *str2)
+	while (*src)
 	{
-		if (*str1 - *str2 < 0)
-			return (-1);
-		else if (*str1 - *str2 > 0)
-			return (1);
-		str1++;
-		str2++;
+		*dst = *src;
+		src++;
+		dst++;
 	}
-	return (0);
+	*dst = '\0';
+	return (dst);
 }

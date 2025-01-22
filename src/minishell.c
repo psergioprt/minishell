@@ -47,12 +47,12 @@ void	read_lines_exit(t_minishell *mini, char *read)
 	}
 }
 
-bool	is_space(char *read)
+bool	is_spaces(char *read)
 {
 	int	i;
-
+	
 	i = 0;
-	while(read[i])
+	while (read[i])
 	{
 		if (read[i] != ' ' && !(read[i] >= 9 && read[i] <= 13))
 			return (true);
@@ -63,17 +63,14 @@ bool	is_space(char *read)
 
 void	read_lines(t_minishell *mini)
 {
-	char	*read ;
-	bool	is_ok;
+	char	*read;
 
-	mini->prompt = "\033[1;31mminishell>\033[0m ";
 	read = NULL;
 	while (1)
 	{
-		read = readline(mini->prompt);
+		read = readline("\033[1;31mminishell>\033[0m ");
 		read_lines_exit(mini, read);
-		is_ok = is_space(read);
-		if (*read && is_ok == true)
+		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);

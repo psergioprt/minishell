@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 16:15:17 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/22 12:01:17 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct s_minishell
 	bool			has_error;
 	char			*last_command_out; //TODO fazer logica de pipe, e necessario isto?
 	int				env_count;
-	char			*prompt;
 	char			current_token[1024];
 }	t_minishell;
 
@@ -96,6 +95,8 @@ void	handle_sep(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j);
 void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j);
+void	restore_default_signals(void);
+
 
 int		first_token(t_minishell *mini);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pauldos- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 12:59:41 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/14 17:06:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/08 12:24:59 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ int		ft_isprint(int c);
 int		ft_strlen(const char *str);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
-int		ft_strcmp(char *str1, char *str2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 int		ft_atoi(const char *str);
 int		ft_putchar(char c);
 int		ft_putstr(char *str);
+int		ft_strcmp(char *str1, char *str2);
 
 char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
@@ -73,5 +73,6 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_itoa(int n);
 char	*ft_strtrim(char const *s1, char const *set);
 char	**ft_split(char const *s, char c);
+char	*ft_strcpy(char *dst, char *src);
 
 #endif
