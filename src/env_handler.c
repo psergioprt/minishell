@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/20 10:44:02 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/22 19:26:27 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	(*i)++;
 	if (ctx->input[*i] == '?')
 	{
-		ctx->exit_status = "EXIT_STATUS";
+		ctx->exit_status = ft_itoa(mini->exit_status);
 		ctx->m = 0;
 		while (ctx->exit_status[ctx->m])
 			ctx->current_token[(*j)++] = ctx->exit_status[ctx->m++];

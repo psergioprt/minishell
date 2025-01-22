@@ -5,11 +5,14 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <sys/types.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../Libft/libft.h"
+
+extern void *g_in_prompt;
 
 typedef struct s_env
 {

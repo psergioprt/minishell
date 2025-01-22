@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/21 09:14:42 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/22 20:35:57 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,23 @@ void	restore_default_signals(void)
 	sigaction(SIGQUIT, &sa_default, NULL);
 }
 
-void	sigint_handler(int sig)
+void sigint_handler(int sig)
 {
 	(void)sig;
-	rl_on_new_line();
+	t_minishell *mini;
+
+	if (g_in_prompt)
+	{
+		mini = (t_minishell *)g_in_prompt;
+		mini->exit_status = 130;
+	}
 	rl_replace_line("", 0);
 	write(STDOUT_FILENO, "\n", 1);
-	rl_redisplay();
+	if (g_in_prompt)
+	{
+		rl_on_new_line();
+		rl_redisplay();
+    }
 }
 
 void	init_sigaction(void)

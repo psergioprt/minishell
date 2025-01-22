@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/21 23:31:26 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/22 20:04:04 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int	custom_fork(t_minishell *mini)
 		{
 			if (WTERMSIG(status) == SIGQUIT)
 				write(1, "Quit (core dumped)\n", 19);
-			else
-				printf("Child process terminated by signal: %d\n", WTERMSIG(status));
+			mini->exit_status = 128 + WTERMSIG(status);
+			printf("Child process terminated by signal: %d\n", WTERMSIG(status)); 
 		}
 	}
 	return (1);
@@ -92,9 +92,7 @@ int	first_token(t_minishell *mini)
 		else
 			ret = custom_fork(mini);
 	}
-	else
-		printf("Error: Invalid token or token list\n");
-	if (ret <= 0)
+	if (ret <= 0 && mini->tokenlst && mini->tokenlst->token)
 		printf("Error, command not found!\n");
 	return (ret);
 }
