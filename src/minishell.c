@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 19:15:34 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/22 20:34:23 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/23 13:48:11 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	print_nodes(t_node *command_list)
 	}
 }
 //TODO isto e desnecessario com o comando exit
+
 void	read_lines_exit(t_minishell *mini, char *read)
 {
 	if (read == NULL)
@@ -78,10 +79,11 @@ bool	is_spaces(char *read)
 void	read_lines(t_minishell *mini)
 {
 	char	*read;
+
 	read = NULL;
 	while (1)
-	{	
-		g_in_prompt =(void *)mini;
+	{
+		g_in_prompt = (void *)mini;
 		read = readline("\033[1;31mminishell>\033[0m ");
 		g_in_prompt = NULL;
 		read_lines_exit(mini, read);
@@ -89,7 +91,7 @@ void	read_lines(t_minishell *mini)
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
-		if (!mini->has_error && g_in_prompt != NULL)
+			if (!mini->has_error && g_in_prompt != NULL)
 				print_nodes(mini->tokenlst);
 			if (mini->has_error)
 			{

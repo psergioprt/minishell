@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal_functions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/22 20:35:57 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/01/23 13:52:54 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/23 13:55:07 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,20 @@
 
 void	restore_default_signals(void)
 {
-	struct	sigaction sa_default;
+	struct sigaction	sa_default;
 
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_flags = 0;
 	sa_default.sa_handler = SIG_DFL;
-
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
 }
 
-void sigint_handler(int sig)
+void	sigint_handler(int sig)
 {
-	(void)sig;
-	t_minishell *mini;
+	t_minishell	*mini;
 
+	(void)sig;
 	if (g_in_prompt)
 	{
 		mini = (t_minishell *)g_in_prompt;
@@ -40,7 +39,7 @@ void sigint_handler(int sig)
 	{
 		rl_on_new_line();
 		rl_redisplay();
-    }
+	}
 }
 
 void	init_sigaction(void)
