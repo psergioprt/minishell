@@ -12,9 +12,9 @@
 
 #include "../include/minishell.h"
 
-//TODO: falar paulo env with no options or arguments, so ignora se tem algo a frente?
+//TODO: mudar logica para dar os error codes
 
-int custom_env(t_minishell *mini)
+int print_envvars(t_minishell *mini)
 {
 	t_env	*envvars;
 
@@ -29,5 +29,38 @@ int custom_env(t_minishell *mini)
 		}
 		envvars = envvars->next;
 	}
-	return (1);
+	return (0);
 }
+
+int	option_error(char error_char)
+{
+	printf("env: invalid option -- '%c'\n", error_char);
+	return (125);
+}
+
+int	arg_error(char *str)
+{
+	printf("env: '%s': No such file or directory\n", str);
+	return (127);
+}
+
+int	custom_env(t_minishell *mini)
+{
+	t_node	*tokenlst;
+
+	tokenlst = mini->tokenlst;
+	if (tokenlst->next)
+	{
+		tokenlst = tokenlst->next;
+		if (tokenlst->token[0] == '-' && !(tokenlst->token[1]))
+			return (0);
+		else if (tokenlst->token[0] == '-' && tokenlst->token[1])
+			return (option_error(tokenlst->token[1]));
+		else
+			return (arg_error(tokenlst->token));
+	}
+	else
+		return (print_envvars(mini));
+}
+
+

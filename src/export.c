@@ -28,16 +28,14 @@ int	export_no_args(t_minishell *mini)
 		printf("\n");
 		envvars = envvars->next;
 	}	
-	return (1);
+	return (0);
 }
 
-int	export_args(t_minishell *mini, char *var) //TODO 25 linhas, passar algo para a argumentate()?
+t_env	*export_args(char *var)
 {
-	t_env		*envvars;
 	t_env		*new_env;
 	size_t		i;
 
-	envvars = mini->envvars;
 	i = 0;
 	new_env = malloc(sizeof(t_env));
 	printf("var: %s\n", var); //TODO apagar testes
@@ -55,83 +53,73 @@ int	export_args(t_minishell *mini, char *var) //TODO 25 linhas, passar algo para
 		new_env->print = false;
 		new_env->value = ft_strdup("");
 	}
-	while (envvars->next)
-	{
-		envvars = envvars->next; //Ir ate ao ultimo dos envvars para adicionar o novo
-	}
-	envvars->next = new_env;
-	new_env->next = NULL;
 
-	printf("KEY: %s", new_env->key); //TODO apagar testes
-	printf("Value: %s", new_env->value); //TODO apagar testes
+	//TODO apagar testes
+ 	printf("KEY: %s\n", new_env->key); 
+	printf("Value: %s\n", new_env->value); 
 	if (new_env->print)
 		printf("Has print\n");
 	else
 		printf("Doesn't have print\n");
+	//TODO apagar testes
 
-	return (1);
+	return (new_env);
 }
  
 //tem que adicionar mais que uma se tiver mais que uma
-int	argumentate(t_minishell *mini, t_node *node)
+void	argumentate(t_minishell *mini, t_node *node)
 {
-	export_args(mini, node->token);
-	return (1);
+	t_env	*envvars;
+	t_env	*new_env;
+
+	envvars = mini->envvars;
+	new_env = export_args(node->token);
+	while (envvars->next)
+	{
+		envvars = envvars->next;
+	}
+	envvars->next = new_env;
+	new_env->next = NULL;
 }
 
-int	replace_value(t_env *found_env, char *value)
+void loop_node(t_minishell *mini, t_node *node, int *ret)
 {
-	int	i;
+	t_env	*found_env;
 
-	i = 0;
-	while (value[i] != '=' && value[i] != '\0')
-		i++;
-	if (value[i] == '=' && value[i + 1] != '\0')
+	while (node)
 	{
-		free(found_env->value);
-		found_env->value = ft_strdup(value + i + 1);
-		found_env->print = true;
+		found_env = find_key(mini, node->token);
+		if (check_valid_key(node->token) == 0) //analisar chars especiais - Key nao pode ter
+		{
+			if (found_env != NULL) //key ja existe, fazer troca de valor
+				replace_env_value(found_env, node->token);
+			else
+				argumentate(mini, node);
+		}
+		else
+		{
+			printf("export: %s is not a valid identifier\n", node->token);
+			*ret = 1;
+		}
+		node = node->next;
 	}
-	else if (value[i] == '=')
-	{
-		free(found_env->value);
-		found_env->value = ft_strdup("");
-		found_env->print = true;
-	}
-	return (1);
 }
 
 int	custom_export(t_minishell *mini)
 {
 	t_node	*node;
-	t_env	*found_env;
+	int		ret;
 
+	ret = 0;
 	node = mini->tokenlst;
 	if (!node->next)
 		return (export_no_args(mini));
-
 	node = node->next; //Passar o comando em si a frente
-	while (node)
+	if (node->token[0] == '-' && node->token[1])
 	{
-		found_env = find_key(mini, node->token);
-		//TODO se tiver espacos com \ antes tem de considerar espaco no value - Parsing?
-		if (check_valid_key(node->token) == 0) //analisar chars especiais - Key nao pode ter
-		{
-			if (found_env != NULL) //key ja existe, fazer troca de valor
-			{
-				printf("found_env->key: %s\n", found_env->key);//TODO apagar
-				replace_value(found_env, node->token);
-				//TODO apagar
-				//se ja existir a key, e o novo tiver um = so, troca o value para ""
-				//Se ja existir a key e o novo tiver um = e value, troca o value para o novo
-				//Se ja existir mas a key nao tiver =, nao muda nada
-			}
-			else
-				argumentate(mini, node);
-		}
-		else
-			printf("export: %s is not a valid identifier\n", node->token);
-		node = node->next;
+		printf("export: %s: invalid option\n", node->token);
+		return (2);
 	}
-	return (1);
+	loop_node(mini, node, &ret);
+	return (ret);
 }

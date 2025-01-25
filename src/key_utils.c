@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/20 10:44:50 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:11:36 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,26 @@ int	check_valid_key(char *str)
 		i++;
 	}
 	return (0);
+}
+
+int	replace_env_value(t_env *found_env, char *value)
+{
+	int	i;
+
+	i = 0;
+	while (value[i] != '=' && value[i] != '\0')
+		i++;
+	if (value[i] == '=' && value[i + 1] != '\0')
+	{
+		free(found_env->value);
+		found_env->value = ft_strdup(value + i + 1);
+		found_env->print = true;
+	}
+	else if (value[i] == '=')
+	{
+		free(found_env->value);
+		found_env->value = ft_strdup("");
+		found_env->print = true;
+	}
+	return (1);
 }

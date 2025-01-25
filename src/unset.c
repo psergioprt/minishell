@@ -32,15 +32,12 @@ void	delete_env(t_minishell *mini, t_env **envvars, t_env **prev_envvar)
 	free(temp);
 }
 
-int	custom_unset(t_minishell *mini)
+void run_varlst(t_minishell *mini, t_node *varlst)
 {
-	t_node		*varlst;
 	t_env		*envvars;
 	t_env		*prev_envvar;
 	int			var_len;
 
-	varlst = mini->tokenlst;
-	varlst = varlst->next; //Passar o comando em si a frente
 	while (varlst)
 	{
 		envvars = mini->envvars;
@@ -58,5 +55,22 @@ int	custom_unset(t_minishell *mini)
 		}
 		varlst = varlst->next;
 	}
-	return (1);
+}
+
+int	custom_unset(t_minishell *mini)
+{
+	t_node		*varlst;
+
+	varlst = mini->tokenlst;
+	if (varlst->next)
+		varlst = varlst->next;
+	if (varlst->token && varlst->token[0] == '-' && varlst->token[1])
+	{
+		printf("unset: %s: invalid option\n", varlst->token);
+		return (2);
+	}
+	else if (varlst->token && varlst->token[0] == '-' && !(varlst->token[1]))
+		return (0);
+	run_varlst(mini, varlst);
+	return (0);
 }

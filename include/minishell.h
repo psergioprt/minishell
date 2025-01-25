@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
+/*   Updated: 2025/01/25 11:57:49 by pauldos-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -5,7 +17,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
-# include <sys/types.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <readline/readline.h>
@@ -18,38 +29,30 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
-	bool			print; //Quando e so key, so imprime no export sem mais nada, se nao so imprime o que tiver pelo menos key= 1-PRINT, 2-NOT
+	bool			print;
 	struct s_env	*next;
-}t_env;
+}	t_env;
 
 typedef struct s_node
 {
-	char			*token; //TODO: temos de mudar para a logica agora ir ver os tokens e adicionar nos tokens
-	struct s_node	*next;	
-}t_node;
+	char			*token;
+	struct s_node	*next;
+}	t_node;
 
-typedef struct s_minishell 
+typedef struct s_minishell
 {
 	char			*command;
 	char			**envp; //so copia o que tem para usar no execve
 	t_node			*tokenlst;
 	t_env			*envvars;
 	int				exit_status; //TODO init
-	int				has_pipe; //TODO: Inicializar a falso e ver logica de como vamos fazer se tiver pipe.
+	int				has_pipe;
 	bool			disable_expand;
 	bool			has_error;
-	char			*last_command_out; //TODO: fazer logica de se tem pipe nao imprimir e guardar aqui
+	char			*last_command_out; //TODO fazer logica de pipe, e necessario isto?
 	int				env_count;
-	char			*prompt;
 	char			current_token[1024];
-}t_minishell;
-
-typedef struct s_redirection
-{
-	int	type;
-	char	*target;
-	struct	s_redirection *next;
-} t_redirection;
+}	t_minishell;
 
 typedef struct s_parse_context
 {
@@ -83,13 +86,18 @@ void	copy_env(char *env[], t_minishell *mini);
 char	*get_env_value(char *env_name, t_minishell *mini);
 void	print_envvar(t_minishell *mini);
 void	init_sigaction(void);
-void	restore_default_signals(void);
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
-void	handle_loop_parsers(t_minishell *mini, const char *input, t_token_context *tok_ctx);
-void	handle_spaces_quotes(t_minishell *mini, const char *input, t_token_context *tok_ctx);
-void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
-void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void	handle_loop_parsers(t_minishell *mini, const char *input, \
+		t_token_context *tok_ctx);
+void	handle_spaces_quotes(t_minishell *mini, const char *input, \
+		t_token_context *tok_ctx);
+void	handle_open_close_quotes(t_minishell *mini, \
+		t_parse_context *ctx, int *i, int *j);
+void	handle_sep(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j);
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j);
+void	restore_default_signals(void);
 
 
 int		first_token(t_minishell *mini);
@@ -108,14 +116,14 @@ int		execute_execve(t_minishell *mini);
 void	ft_error(char *error_msg, t_minishell *mini);
 
 //CD
-int 	custom_cd(t_minishell *mini);
+int		custom_cd(t_minishell *mini);
 
 //ENV
 int		custom_env(t_minishell *mini);
 
 //EXPORT
 int		custom_export(t_minishell *mini);
-int		replace_value(t_env *found_env, char *value);
+//int		replace_value(t_env *found_env, char *value);
 
 //UNSET
 int		custom_unset(t_minishell *mini);
@@ -124,11 +132,11 @@ int		custom_unset(t_minishell *mini);
 int		count_node(t_minishell *mini);
 t_env	*find_key(t_minishell *mini, char *key);
 int		check_valid_key(char *str);
+int		replace_env_value(t_env *found_env, char *value);
 
 //PWD
 int		custom_pwd(t_minishell *mini);
 
 //PIPES
-
 
 #endif

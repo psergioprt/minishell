@@ -31,7 +31,7 @@ void	add_env_variable(t_minishell *mini, char *key, char *value)
 
 void	has_found_env(t_env *found_env, char *key, char *dir)
 {
-	char    *new_value;
+	char	*new_value;
 
 	new_value = ft_strjoin(key, dir);
 	if (!new_value)
@@ -39,15 +39,15 @@ void	has_found_env(t_env *found_env, char *key, char *dir)
 		printf("malloc error\n");
 		return ;
 	}
-	replace_value(found_env, new_value);
+	replace_env_value(found_env, new_value);
 	free(new_value);
 }
 
-int update_pwd(t_minishell *mini, char *last_dir)
+int	update_pwd(t_minishell *mini, char *last_dir)
 {
-	char    *current_dir;
-	char    cwd[1024];
-	t_env   *found_env;
+	char	*current_dir;
+	char	cwd[1024];
+	t_env	*found_env;
 
 	current_dir = getcwd(cwd, sizeof(cwd));
 	if (!current_dir)
@@ -68,36 +68,32 @@ int update_pwd(t_minishell *mini, char *last_dir)
 	return (1);
 }
 
-int custom_cd(t_minishell *mini)
+int	custom_cd(t_minishell *mini)
 {
 	char	*path;
 	t_node	*node;
-	char 	*last_dir;
+	char	*last_dir;
 	char	cwd[1024];
-	//TODO: como no subject diz so absolute ou relative path, so fazer esses
-	//TODO: trocar coiso que esta a espera de input para dizer o cwd? (Current Working Directory)
-	//TODO: ja recebe as env vars expandidas certo?
 
 	node = mini->tokenlst;
 	last_dir = getcwd(cwd, sizeof(cwd));
-	printf("last_dir: %s\n", last_dir);
 	if (!node->next)
 	{
 		ft_error("cd: missing argument", mini);
-		return (-1);
+		return (1);
 	}
 	node = node->next; //Supostamente estara aqui o path
 	if (node->next)
 	{
 		ft_error("cd: too many arguments", mini);
-		return (-1);
+		return (1);
 	}
 	path = node->token;
 	if (chdir(path) == -1)
 	{
-		printf("cd error\n");
-		return (-1);
+		printf("cd: %s: No such file or directory\n", path);
+		return (1);
 	}
 	update_pwd(mini, last_dir);
-	return (1);
+	return (0);
 }

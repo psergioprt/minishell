@@ -21,10 +21,10 @@ int	pwd_execute(void)
 	if (!directory)
 	{
 		printf("CWD error\n");
-		return (-1);
+		return (1);
 	}
 	printf("%s\n", directory);
-	return (1);
+	return (0);
 }
 
 int custom_pwd(t_minishell *mini)
@@ -34,14 +34,14 @@ int custom_pwd(t_minishell *mini)
 	nodes = mini->tokenlst; //PWD
 	if (nodes->next != NULL)
 	{
-		nodes = nodes->next; //flag ou pipe
-		if (nodes->token[0] == '-')//tinha feito  && !(nodes->token[1] == 'L' || nodes->token[1] == 'P'), mas diz "no options" no subject entao assumo que nao deva ter
+		nodes = nodes->next;//flag ou pipe
+		if (nodes->token[0] == '-' && nodes->token[1])//tinha feito  && !(nodes->token[1] == 'L' || nodes->token[1] == 'P'), mas diz "no options" no subject entao assumo que nao deva ter
 		{
 			printf("pwd: %s: invalid option\n", nodes->token);
-			return (-1);
+			return (2);
 		}
-		else if (nodes->token[0] == '|')
-			printf("FAZ A MERDA DOS PIPES\n");
+/* 		else if (nodes->token[0] == '|')
+			printf("FAZ A MERDA DOS PIPES\n"); */ //TODO: isto e necessario?
 		else
 			return (pwd_execute());
 	}

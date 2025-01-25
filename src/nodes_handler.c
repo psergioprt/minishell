@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nodes_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/23 13:49:33 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/23 13:49:37 by pauldos-         ###   ########.fr       */
+/*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/20 10:53:01 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

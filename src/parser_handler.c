@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/23 13:51:24 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/25 11:54:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	(*i)++;
 	while (ctx->input[*i])
 	{
-		if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 && \
-					ctx->input[*i] <= 13))
+		if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 && ctx->input[*i] <= 13))
 		{
 			*i = saved_index;
 			handle_sep(mini, ctx, i, j);
@@ -44,8 +43,6 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 		handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
 		handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
-	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ';')
-		handle_sep(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
 		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal_functions.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/23 13:52:54 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/23 13:55:07 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/25 12:07:00 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,29 @@
 
 void	restore_default_signals(void)
 {
-	struct sigaction	sa_default;
+	struct	sigaction sa_default;
 
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_flags = 0;
 	sa_default.sa_handler = SIG_DFL;
+
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
 }
 
-void	sigint_handler(int sig)
+/*void	sigint_handler(int sig)
 {
-	t_minishell	*mini;
-
 	(void)sig;
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	write(STDOUT_FILENO, "\n", 1);
+	rl_redisplay();
+}*/
+
+void sigint_handler(int sig)
+{
+	(void)sig;
+	t_minishell *mini;
 	if (g_in_prompt)
 	{
 		mini = (t_minishell *)g_in_prompt;
