@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/22 12:01:17 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/26 17:22:08 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,71 +70,79 @@ typedef struct s_token_context
 	t_parse_context	*ctx;
 }	t_token_context;
 
-t_node	*create_command_node(const char *command);
-void	add_command_node(t_minishell *mini, const char *command);
-void	free_list(t_minishell *mini);
-void	split_and_add_commands(t_minishell *mini, const char *input);
-void	init_variables(t_minishell *mini, t_parse_context *ctx, \
-		const char *input, char *current_token);
-void	cleanup_readline(void);
-void	free_envvars(t_minishell *mini);
-void	parse_env(t_minishell *mini, char *env[]);
-char	*expand_env_var(char *token, t_minishell *mini);
-void	copy_env(char *env[], t_minishell *mini);
-char	*get_env_value(char *env_name, t_minishell *mini);
-void	print_envvar(t_minishell *mini);
-void	init_sigaction(void);
-void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
-void	handle_loop_parsers(t_minishell *mini, const char *input, \
-		t_token_context *tok_ctx);
-void	handle_spaces_quotes(t_minishell *mini, const char *input, \
-		t_token_context *tok_ctx);
-void	handle_open_close_quotes(t_minishell *mini, \
-		t_parse_context *ctx, int *i, int *j);
-void	handle_sep(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j);
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j);
-void	restore_default_signals(void);
+t_node		*create_command_node(const char *command);
+void		add_command_node(t_minishell *mini, const char *command);
+void		free_list(t_minishell *mini);
+void		split_and_add_commands(t_minishell *mini, const char *input);
+void		init_variables(t_minishell *mini, t_parse_context *ctx, \
+			const char *input, char *current_token);
+void		cleanup_readline(void);
+void		free_envvars(t_minishell *mini);
+void		parse_env(t_minishell *mini, char *env[]);
+char		*expand_env_var(char *token, t_minishell *mini);
+void		copy_env(char *env[], t_minishell *mini);
+char		*get_env_value(char *env_name, t_minishell *mini);
+void		print_envvar(t_minishell *mini);
+void		init_sigaction(void);
+void		handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void		handle_loop_parsers(t_minishell *mini, const char *input, \
+			t_token_context *tok_ctx);
+void		handle_spaces_quotes(t_minishell *mini, const char *input, \
+			t_token_context *tok_ctx);
+void		handle_open_close_quotes(t_minishell *mini, \
+			t_parse_context *ctx, int *i, int *j);
+void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
+void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
+void		restore_default_signals(void);
 
 
-int		first_token(t_minishell *mini);
+int			first_token(t_minishell *mini);
 
 //ECHO
-int		custom_echo(t_minishell *mini);
+int			custom_echo(t_minishell *mini);
 
 //Splits
-void	parse_env(t_minishell *node, char *env[]);
-void	copy_env(char *env[], t_minishell *mini);
+void		parse_env(t_minishell *node, char *env[]);
+void		copy_env(char *env[], t_minishell *mini);
 
 //EXEC
-int		execute_execve(t_minishell *mini);
+int			execute_execve(t_minishell *mini);
 
 //ERROR
-void	ft_error(char *error_msg, t_minishell *mini);
+void		ft_error(char *error_msg, t_minishell *mini);
 
 //CD
-int		custom_cd(t_minishell *mini);
+int			custom_cd(t_minishell *mini);
 
 //ENV
-int		custom_env(t_minishell *mini);
+int			custom_env(t_minishell *mini);
 
 //EXPORT
-int		custom_export(t_minishell *mini);
+int			custom_export(t_minishell *mini);
 //int		replace_value(t_env *found_env, char *value);
 
 //UNSET
-int		custom_unset(t_minishell *mini);
+int			custom_unset(t_minishell *mini);
 
 //KEY_UTILS
-int		count_node(t_minishell *mini);
-t_env	*find_key(t_minishell *mini, char *key);
-int		check_valid_key(char *str);
-int		replace_env_value(t_env *found_env, char *value);
+int			count_node(t_minishell *mini);
+t_env		*find_key(t_minishell *mini, char *key);
+int			check_valid_key(char *str);
+int			replace_env_value(t_env *found_env, char *value);
 
 //PWD
-int		custom_pwd(t_minishell *mini);
+int			custom_pwd(t_minishell *mini);
 
 //PIPES
+
+//EXIT
+int			custom_exit(t_minishell *mini);
+
+//EXIT UTILS
+bool		m_long(char *str);
+int			is_num(char *str);
+long long	ft_atoll(const char *str);
 
 #endif

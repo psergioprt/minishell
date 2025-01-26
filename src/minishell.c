@@ -69,7 +69,7 @@ void	read_lines(t_minishell *mini)
 	while (1)
 	{
 		read = readline("\033[1;31mminishell>\033[0m ");
-		read_lines_exit(mini, read);
+		//read_lines_exit(mini, read); //TODO
 		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);

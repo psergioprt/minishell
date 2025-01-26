@@ -82,7 +82,8 @@ int	first_token(t_minishell *mini)
 		else if (!ft_strncmp(mini->tokenlst->token, "env", len))
 			mini->exit_status = custom_env(mini);//correct exit codes
 		else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-			printf("Fazer o exit\n"); //TODO
+			mini->exit_status = custom_exit(mini);
+			//printf("Fazer o exit\n"); //TODO
 		else
 			ret = custom_fork(mini); //TODO corrigir/verificar exit codes
 	}
