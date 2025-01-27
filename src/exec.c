@@ -6,150 +6,82 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 11:47:00 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/27 15:14:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-char	*find_path(t_minishell *mini)
+int handle_search_path(t_minishell *mini, t_node *node, char **pathname)
 {
-	t_env	*envvars;
-	char	*pathname;
-	char	**paths;
-	int		i;
-	
+    *pathname = find_path(mini);
+    if (!*pathname)
+    {
+        printf("%s: command not found\n", node->token);
+        mini->exit_status = 127;
+        return (-1);  // Just return the error without freeing memory
+    }
+    return (0);
+}
+
+static void cleanup_execve_memory(char **argv, char *command, char *pathname)
+{
+	int	i;
+
 	i = 0;
-	envvars = mini->envvars;
-	while (envvars != NULL)
+	free(command);
+	free(pathname);
+	while (argv && argv[i])
 	{
-		if (ft_strncmp(envvars->key, "PATH", 4) == 0)
-			break;
-		envvars = envvars->next;
-	}
-	if (envvars == NULL || envvars->value == NULL)
-		return (NULL);
-	paths = ft_split(envvars->value, ':');
-	while (paths[i])
-	{	
-  		pathname = ft_strjoin(paths[i], "/");
-		pathname = ft_strjoin(pathname, mini->command);
-		if (access(pathname, F_OK) == 0)
-			return (pathname);
+		free(argv[i]);
 		i++;
-	}
-	return (NULL);
-}
-
-char	*fallback_path(t_minishell *mini)
-{
-	char	*cwd;
-	char	*full_path;
-
-	if (mini->command[0] == '.' && mini->command[1] == '/')
-	{
-		cwd = getcwd(NULL, 0); // Get the current working directory
-		if (!cwd)
-		{
-			perror("getcwd failed");
-			return (NULL);
-		}
-		full_path = ft_strjoin(cwd, "/");
-		free(cwd); // Free the allocated cwd after use
-		full_path = ft_strjoin(full_path, mini->command + 2); // Skip "./"
-		if (access(full_path, F_OK) == 0)
-			return (full_path);
-		free(full_path); // Free if the path is invalid
-	}
-	return (NULL);
-}
-
-char	**get_argv(t_minishell *mini, int i, t_node *node)
-{
-	int		len;
-	char	**argv;
-
-	argv = (char **)malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	if (!argv)
-		return (NULL);
-	while (node) {
-		len = ft_strlen(node->token);
-		argv[i] = (char *)malloc(sizeof(char) * (len + 1)); // Allocate for each string
-		if (!argv[i]) {
-			perror("Error allocating argv[i]");
-			// Free previously allocated memory
-			while (i > 0)
-				free(argv[--i]);
-			free(argv);
-			free(mini->command);
-			return (NULL);
-		}
-		ft_strlcpy(argv[i], node->token, len + 1);
-		node = node->next;
-		i++;
-	}
-	argv[i] = NULL; // Null-terminate argv
-	
-	//TODO: Depois dos testes, apagar
-	// Print argv for debugging
-	for (int j = 0; argv[j]; j++) {
-		printf("Argv[%d]: %s\n", j, argv[j]);
-	}
-	return (argv);
-}
-
-void	get_command(t_minishell *mini)
-{
-	int		len;
-	t_node	*node;
-
-	node = mini->tokenlst; // Store the head of the list
-	len = ft_strlen(node->token);
-	mini->command = (char *)malloc(sizeof(char) * (len + 1));
-	if (!mini->command) {
-		perror("Error allocating command");
-		return ;
-	}
-	ft_strlcpy(mini->command, node->token, len + 1);
-}
-//TODO: 25 linhas
-int	execute_execve(t_minishell *mini) 
-{
-	// Variable declarations
-	char	**argv;
-	char	*pathname;
-	int		i;
-	t_node	*node;
-
-	node = mini->tokenlst; // Store the head of the list
-	// Allocate and copy command
-	get_command(mini);
-	// Count the number of tokens
-	i = count_node(mini);
-	argv = get_argv(mini, i, node);
-	if (!argv)
-		ft_error("Couldnt get argv!", mini);
-	pathname = find_path(mini);
-	if (!pathname)
-	{
-		pathname = fallback_path(mini);
-		if (!pathname)
-		{
-			printf("%s: command not found\n", node->token);
-			//ft_error("Couldn't find path!", mini);
-			return (-1);
-		}
-	}
-	printf("Pathname: %s\n", pathname); //TODO: Apagar teste find_path
-	printf("Command: %s\n", mini->command); //TODO: Apagar teste find_path
-	if (execve(pathname, argv, mini->envp) == -1) //TODO: Fazer o fork
-		ft_error("execve failed!", mini);
-	// Free argv for testing purposes
-	for (int j = 0; argv[j]; j++) {
-		free(argv[j]);
 	}
 	free(argv);
-	free(mini->command);
+}
+
+static int handle_execve_error(t_minishell *mini, char **argv, char *command, int error_code)
+{
+	mini->exit_status = error_code;
+	cleanup_execve_memory(argv, command, NULL);
+	return (-1);
+}
+
+static int handle_path(t_minishell *mini, char **argv, char **pathname)
+{
+	int error_code;
+
+	if (ft_strchr(mini->command, '/') || mini->command[0] == '.')
+	{
+		error_code = execpath_error(mini->command);
+		if (error_code != 0)
+			return (handle_execve_error(mini, argv, mini->command, error_code));
+		*pathname = ft_strdup(mini->command);
+	}
+	else
+	{
+		error_code = handle_search_path(mini, mini->tokenlst, pathname);
+		if (!*pathname)
+			return (handle_execve_error(mini, argv, mini->command, 127));
+	}
+	return 0;
+}
+
+int execute_execve(t_minishell *mini)
+{
+	char **argv;
+	char *pathname;  // Initialize pathname to NULL
+	int i;
+
+	pathname = NULL;
+	get_command(mini);
+	i = count_node(mini);
+	argv = get_argv(mini, i, mini->tokenlst);
+	if (!argv)
+		return (handle_execve_error(mini, NULL, mini->command, 1));
+	if (handle_path(mini, argv, &pathname) != 0)
+		return (-1);
+	if (execve(pathname, argv, mini->envp) == -1)
+		return (handle_execve_error(mini, argv, mini->command, 126));
+	cleanup_execve_memory(argv, mini->command, pathname);
 	return (1);
 }

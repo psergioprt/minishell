@@ -38,13 +38,13 @@ void	read_lines_exit(t_minishell *mini, char *read)
 		free_list(mini);
 		exit (0);
 	}
-	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
+/* 	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
 	{
 		write(STDOUT_FILENO, "exit\n", 5);
 		free(read);
 		free_list(mini);
 		exit (0);
-	}
+	} */
 }
 
 bool	is_spaces(char *read)
@@ -69,7 +69,7 @@ void	read_lines(t_minishell *mini)
 	while (1)
 	{
 		read = readline("\033[1;31mminishell>\033[0m ");
-		//read_lines_exit(mini, read); //TODO
+		read_lines_exit(mini, read); //TODO da segfault quando comentada no cntrl D	
 		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);

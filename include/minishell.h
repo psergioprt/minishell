@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/26 17:22:08 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/27 14:31:40 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
+#include <sys/stat.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <readline/readline.h>
@@ -110,6 +111,16 @@ void		copy_env(char *env[], t_minishell *mini);
 //EXEC
 int			execute_execve(t_minishell *mini);
 
+//EXEC_UTILS
+char		*find_path(t_minishell *mini);
+char		*fallback_path(t_minishell *mini);
+char		**get_argv(t_minishell *mini, int i, t_node *node);
+void		get_command(t_minishell *mini);
+int			execpath_error(char *path);
+
+//EXEC_UTILS2
+int			handle_direct_path(t_minishell *mini, char **argv);
+
 //ERROR
 void		ft_error(char *error_msg, t_minishell *mini);
 
@@ -135,8 +146,6 @@ int			replace_env_value(t_env *found_env, char *value);
 //PWD
 int			custom_pwd(t_minishell *mini);
 
-//PIPES
-
 //EXIT
 int			custom_exit(t_minishell *mini);
 
@@ -144,5 +153,8 @@ int			custom_exit(t_minishell *mini);
 bool		m_long(char *str);
 int			is_num(char *str);
 long long	ft_atoll(const char *str);
+
+//PIPES
+
 
 #endif

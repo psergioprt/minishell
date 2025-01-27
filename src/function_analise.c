@@ -22,7 +22,7 @@ int	custom_fork(t_minishell *mini)
 	{
 		printf("Fork error");
 		exit(EXIT_FAILURE);
-/* 		perror("fork");*/
+ 		//perror("fork");
 	}
 	else if (pid == 0) {
 		// Child process
@@ -30,8 +30,8 @@ int	custom_fork(t_minishell *mini)
 		restore_default_signals();
 		// Execute the command using execve
 		if (execute_execve(mini) == -1) {
-			printf("execve error\n");
-			exit(127); // Exit the child process if execve fails
+			printf("execve error\n"); //TODO apagar
+			exit(mini->exit_status); // Exit the child process if execve fails
 		}
 	} else {
 		// Parent process
