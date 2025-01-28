@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 11:47:00 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/28 11:53:41 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,73 @@ void	get_command(t_minishell *mini)
 	ft_strlcpy(mini->command, node->token, len + 1);
 }
 //TODO: 25 linhas
-int	execute_execve(t_minishell *mini) 
+
+//PS FUNCTION NEED TO SKIP REDIRECTS, FOR COMMAND NOT READ
+int execute_execve(t_minishell *mini)
+{
+	char	**argv;
+	char	*pathname;
+	int	i = 0;
+	int	j = 0;
+	t_node  *node;
+
+	node = mini->tokenlst;
+	get_command(mini);
+	t_node *current = node;
+	//count number of non redirects (to allocate mem)
+	while (current)
+	{
+		if (current->redir_type == NONE)
+			i++;
+		current = current->next;
+	}
+	argv = malloc((i + 1) * sizeof(char *));
+	if (!argv)
+		ft_error("malloc failed", mini);
+	// Build argv, skip redirection tokens
+	current = node;
+	while (current)
+	{
+		if (current->redir_type == NONE)
+		{
+			argv[j] = current->token;
+			j++;
+		}
+		if (current->redir_type != NONE)
+			current = current->next;
+		current = current->next;
+	}
+	argv[j] = NULL;
+	pathname = find_path(mini);
+	if (!pathname)
+	{
+		pathname = fallback_path(mini);
+		if (!pathname)
+		{
+			printf("%s: command not found\n", node->token);
+			return (-1);
+		}
+	}
+	printf("Executing command with execve: %s\n", pathname);
+	// Debug
+	printf("Pathname: %s\n", pathname); //TODO: Remove debug print
+	printf("Command: %s\n", mini->command); //TODO: Remove debug print
+	// Execute the command using execve
+	if (execve(pathname, argv, mini->envp) == -1)
+		ft_error("execve failed!", mini);
+	printf("Executing execve with pathname: %s\n", pathname);
+    // Free the memory allocated for argv (for testing purposes)
+    	for (int k = 0; argv[k]; k++)
+	{
+		free(argv[k]);
+	}
+	free(argv);
+	free(mini->command);
+	return (1);
+}
+
+
+/*int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -152,4 +218,4 @@ int	execute_execve(t_minishell *mini)
 	free(argv);
 	free(mini->command);
 	return (1);
-}
+}*/

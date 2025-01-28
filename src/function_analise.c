@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
+/*   Updated: 2025/01/28 12:46:16 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	custom_fork(t_minishell *mini)
 	int		status;
 
 	pid = fork();
+	printf("fork returned: %d\n", pid);
 	if (pid < 0)
 	{
 		printf("Fork error");
@@ -28,6 +29,10 @@ int	custom_fork(t_minishell *mini)
 		// Child process
 		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
 		restore_default_signals();
+	        /*if (handle_redirections(mini) == -1)
+       		 {
+            		exit(EXIT_FAILURE); // Exit if redirection setup fails
+       		 }*/
 		// Execute the command using execve
 		if (execute_execve(mini) == -1) {
 			printf("execve error\n");
@@ -64,11 +69,15 @@ int	first_token(t_minishell *mini)
 {
 	int		ret;
 	size_t	len;
-
+	
 	ret = 0;
 	if (mini->tokenlst && mini->tokenlst->token)
 	{
 		len = ft_strlen(mini->tokenlst->token);
+		if (handle_redirections(mini) == -1)
+       		 {
+            		exit(EXIT_FAILURE); // Exit if redirection setup fails
+       		 }
 		if (!ft_strncmp(mini->tokenlst->token, "echo", len))
 			mini->exit_status = custom_echo(mini);//correct exit codes
 		else if (!ft_strncmp(mini->tokenlst->token, "cd", len))

@@ -77,8 +77,14 @@ void	read_lines(t_minishell *mini)
 		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);
+          /*  		if (handle_redirections(mini) == -1) {
+                		fprintf(stderr, "Error handling redirections\n");
+                		free(read);
+                		free_list(mini);
+                		continue;
+            		}*/
 			add_history(read);
-			if (!mini->has_error && g_in_prompt != NULL)
+			if (!mini->has_error/* && g_in_prompt != NULL*/)
 				print_nodes(mini->tokenlst);
 			if (mini->has_error)
 			{
