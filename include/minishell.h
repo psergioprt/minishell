@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/28 12:34:10 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 17:29:44 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 extern void *g_in_prompt;
 
-typedef enum	e_redirection_type //PS: Definition of redirection type and their values
+typedef enum	e_type //PS: Definition of redirection type and their values
 {
 	NONE = -1,         // No redirection
 	OUTPUT = 1,        // >
@@ -34,7 +34,8 @@ typedef enum	e_redirection_type //PS: Definition of redirection type and their v
 	INPUT,             // >>
 	HEREDOC,           // <<
 	PIPE		   // |
-} t_redirection_type;
+} t_type;
+
 typedef struct s_env
 {
 	char			*key;
@@ -47,7 +48,7 @@ typedef struct s_node //ALTERAR t_redirection_type para type
 {
 	char			*token;
 	struct s_node	*next;
-	t_redirection_type	redir_type; //PS:Redirection type (OUTPUT, APPEND_OUTPUT, ETC)
+	t_type	type; //PS:Redirection type (OUTPUT, APPEND_OUTPUT, ETC)
 	char			*target; //PS: Target of the redirection (file.txt)
 }	t_node;
 
@@ -84,8 +85,8 @@ typedef struct s_token_context
 	t_parse_context	*ctx;
 }	t_token_context;
 
-t_node	*create_command_node(const char *token, t_redirection_type redir_type, t_node **prev_node);
-void	add_command_node(t_minishell *mini, const char *token, t_redirection_type redir_type);
+t_node	*create_command_node(const char *token, t_type type, t_node **prev_node);
+void	add_command_node(t_minishell *mini, const char *token, t_type type);
 void	free_list(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
 void	init_variables(t_minishell *mini, t_parse_context *ctx, \

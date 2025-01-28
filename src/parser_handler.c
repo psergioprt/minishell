@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/25 11:54:48 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 17:11:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	(*i)++;
 	while (ctx->input[*i])
 	{
-		if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 && ctx->input[*i] <= 13))
+		if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 && \
+					ctx->input[*i] <= 13))
 		{
 			*i = saved_index;
 			handle_sep(mini, ctx, i, j);

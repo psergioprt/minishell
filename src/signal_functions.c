@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/25 12:07:00 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 17:15:16 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 void	restore_default_signals(void)
 {
-	struct	sigaction sa_default;
+	struct sigaction	sa_default;
 
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_flags = 0;
 	sa_default.sa_handler = SIG_DFL;
-
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
 }
@@ -33,10 +32,11 @@ void	restore_default_signals(void)
 	rl_redisplay();
 }*/
 
-void sigint_handler(int sig)
+void	sigint_handler(int sig)
 {
-	(void)sig;
 	t_minishell *mini;
+
+	(void)sig;
 	if (g_in_prompt)
 	{
 		mini = (t_minishell *)g_in_prompt;

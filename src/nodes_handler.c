@@ -6,16 +6,18 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/27 23:12:55 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 18:16:56 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-t_node	*create_command_node(const char *token, t_redirection_type redir_type, t_node **prev_node)
+t_node	*create_command_node(const char *token, t_type type, \
+		t_node **prev_node)
 {
-	t_node *new_node;
-	
+	t_node	*new_node;
+	t_node	*prev;
+
 	new_node = malloc(sizeof(t_node));
 	if (!new_node)
 	{
@@ -29,13 +31,13 @@ t_node	*create_command_node(const char *token, t_redirection_type redir_type, t_
 		free(new_node);
 		return (NULL);
 	}
-	new_node->redir_type = redir_type;
+	new_node->type = type;
 	new_node->target = NULL;
 	new_node->next = NULL;
 	if (prev_node && *prev_node)
 	{
-		t_node *prev = *prev_node;
-		if (prev->redir_type != NONE && prev->target == NULL)
+		prev = *prev_node;
+		if (prev->type != NONE && prev->target == NULL)
 		{
 			prev->target = ft_strdup(token);
 			printf("Assigned target '%s' to node with token '%s'\n", prev->target, prev->token);
@@ -43,58 +45,23 @@ t_node	*create_command_node(const char *token, t_redirection_type redir_type, t_
 	}
 	if (prev_node)
 		*prev_node = new_node;
-	printf("Node created: token='%s', redir_type=%d, target='%s'\n", new_node->token, new_node->redir_type, new_node->target/*new_node->target ? new_node->target : "(null)"*/);
+	printf("Node created: token='%s', type=%d, target='%s'\n", new_node->token, new_node->type, new_node->target);
 	return (new_node);
 }
 
-/*t_node	*create_command_node(const char *token, t_redirection_type redir_type, const char *target)
+void	add_command_node(t_minishell *mini, const char *token, \
+		t_type type)
 {
-	t_node	*new_node;
-
-	new_node = malloc(sizeof(t_node));
-	if (!new_node)
-	{
-		perror("Error! Failed to allocate memory for new_node\n");
-		return (NULL);
-	}
-	new_node->token = ft_strdup(token);
-	if (!new_node->token)
-	{
-		perror("Error! Failed to duplicate command\n");
-		free(new_node);
-		return (NULL);
-	}
-	new_node->redir_type = redir_type;
-	if (target)
-	{
-		new_node->target = ft_strdup(target);
-		if (!new_node->target)
-		{
-			perror("Error! Failed to duplicate target\n");
-			free(new_node->token);
-			free(new_node);
-			return (NULL);
-		}
-	}
-	else
-		new_node->target = NULL;
-	new_node->next = NULL;
-	printf("Target: %s, Redir_type: %d\n", new_node->target, new_node->redir_type);
-	return (new_node);
-}*/
-
-void	add_command_node(t_minishell *mini, const char *token, t_redirection_type redir_type) //ADDED t_redirection_type
-{
-	t_node	*new_node;
-	t_node	*current;
-	static t_node	*prev_node = NULL; //ADDED THIS VARIABLE
+	t_node			*new_node;
+	t_node			*current;
+	static t_node	*prev_node = NULL;
 
 	if (!mini || !token)
 	{
 		perror("Error: add_command_node called with NULL mini or command\n");
 		return ;
 	}
-	new_node = create_command_node(token, redir_type, &prev_node);
+	new_node = create_command_node(token, type, &prev_node);
 	if (!new_node)
 	{
 		perror("Error: Failed to create new node\n");
@@ -110,57 +77,6 @@ void	add_command_node(t_minishell *mini, const char *token, t_redirection_type r
 		current->next = new_node;
 	}
 }
-
-//ORIGINAL FUNCTIONS BEFORE REDIRECTS
-/*t_node	*create_command_node(const char *token)
-{
-	t_node	*new_node;
-
-	new_node = malloc(sizeof(t_node));
-	new_node->token = NULL;
-	new_node->next = NULL;
-	if (!new_node)
-	{
-		perror("Error! Failed to allocate memory for new_node\n");
-		return (NULL);
-	}
-	new_node->token = ft_strdup(token);
-	if (!new_node->token)
-	{
-		perror("Error! Failed to duplicate command\n");
-		free(new_node);
-		return (NULL);
-	}
-	new_node->next = NULL;
-	return (new_node);
-}
-
-void	add_command_node(t_minishell *mini, const char *token)
-{
-	t_node	*new_node;
-	t_node	*current;
-
-	if (!mini || !token)
-	{
-		perror("Error: add_command_node called with NULL mini or command\n");
-		return ;
-	}
-	new_node = create_command_node(token);
-	if (!new_node)
-	{
-		perror("Error: Failed to create new node\n");
-		return ;
-	}
-	if (!mini->tokenlst)
-		mini->tokenlst = new_node;
-	else
-	{
-		current = mini->tokenlst;
-		while (current->next)
-			current = current->next;
-		current->next = new_node;
-	}
-}*/
 
 void	handle_command_addition(t_minishell *mini, int *j)
 {

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/28 11:53:41 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 17:31:12 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ int execute_execve(t_minishell *mini)
 	//count number of non redirects (to allocate mem)
 	while (current)
 	{
-		if (current->redir_type == NONE)
+		if (current->type == NONE)
 			i++;
 		current = current->next;
 	}
@@ -141,12 +141,12 @@ int execute_execve(t_minishell *mini)
 	current = node;
 	while (current)
 	{
-		if (current->redir_type == NONE)
+		if (current->type == NONE)
 		{
 			argv[j] = current->token;
 			j++;
 		}
-		if (current->redir_type != NONE)
+		if (current->type != NONE)
 			current = current->next;
 		current = current->next;
 	}

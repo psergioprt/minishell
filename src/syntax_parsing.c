@@ -6,15 +6,16 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/28 12:31:45 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/28 17:27:56 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	open_file(const char *filename, t_redirection_type type)
+int	open_file(const char *filename, t_type type)
 {
 	int	fd;
+
 	if (type == OUTPUT)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (type == APPEND_OUTPUT)
@@ -31,68 +32,25 @@ int	open_file(const char *filename, t_redirection_type type)
 	return (fd);
 }
 
-/*int	handle_redirections(t_minishell *mini)
-{
-	int	fd;
-
-	t_node *current = mini->tokenlst;
-	while (current)
-	{
-		if (current->redir_type != NONE)
-		{
-			if (current->redir_type == 1)
-			{
-				current = current->next;
-				if (current && current->token)
-					current->target = strdup(current->token);
-			}
-			fd = open_file(current->target, current->redir_type);
-			if (fd == -1)
-			{
-				printf("Failed to open file: %s\n", current->target);
-				return (-1);
-			}
-			if (current->redir_type == OUTPUT || current->redir_type == APPEND_OUTPUT)
-			{
-				if (dup2(fd, STDOUT_FILENO) == -1)
-				{
-					perror("dup2");
-					close(fd);
-					return (-1);
-				}
-			}
-			else if (current->redir_type == INPUT || current->redir_type == HEREDOC)
-			{
-				if (dup2(fd, STDIN_FILENO) == -1)
-				{
-					perror("dup2");
-					close(fd);
-					return (-1);
-				}
-			}
-			close(fd);
-		}
-		current = current->next;
-	}
-	return (0);
-}*/
-
 int	handle_redirections(t_minishell *mini)
 {
-	t_node *current = mini->tokenlst;
-	int	fd = -1;
+	int		fd;
+	t_node	*current;
+
+	current = mini->tokenlst;
+	fd = -1;
 	while (current)
 	{
-		if (current->redir_type != NONE && current->target != NULL)
+		if ((current->type != NONE && current->type != PIPE) && current->target != NULL)
 		{
-			printf("Processing redirection: token='%s', redir_type=%d, target='%s'\n", current->token, current->redir_type, current->target);
-			fd = open_file(current->target, current->redir_type);
+			printf("Processing redirection: token='%s', redir_type=%d, target='%s'\n", current->token, current->type, current->target);
+			fd = open_file(current->target, current->type);
 			if (fd == -1)
 			{
 				printf("Failed to open file: %s\n", current->target);
 				return (-1);
 			}
-			if (current->redir_type == OUTPUT || current->redir_type == APPEND_OUTPUT)
+			if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
 			{
 				if (dup2(fd, STDOUT_FILENO) == -1)
 				{
@@ -102,7 +60,7 @@ int	handle_redirections(t_minishell *mini)
 				}
 				printf("Successfully redirected STDOUT to fd=%d\n", fd);
 			}
-			else if (current->redir_type == INPUT || current->redir_type == HEREDOC)
+			else if (current->type == INPUT || current->type == HEREDOC)
 			{
 				if (dup2(fd, STDIN_FILENO) == -1)
 				{
@@ -116,65 +74,8 @@ int	handle_redirections(t_minishell *mini)
 		}
 		current = current->next;
 	}
-	return 0;
+	return (0);
 }
-
-//
-/*int	handle_redirections(t_minishell *mini)
-{
-	t_node *current = mini->tokenlst;
-	int	fd = -1;
-	//int	cur_type;
-	
-	while (current)
-	{
-		printf("Processing node: token='%s', redir_type=%d, target='%s'\n", current->token, current->redir_type, current->target);
-//		if (current->redir_type != NONE)
-//		{
-//			cur_type = current->redir_type;
-//			current = current->next;
-//			if (!current)
-//				break;
-//			current->redir_type = cur_type;
-//		}
-		if (current->redir_type != NONE && current->target != NULL)
-		{
-			printf("target: %s, type: %d\n", current->target, current->redir_type);
-			fd = open_file(current->target, current->redir_type);
-			if (fd == -1)
-			{
-				fprintf(stderr, "Failed to open file: %s\n", current->target);
-				return -1;
-			}
-			printf("Processing redirection: token='%s', redir_type=%d\n", current->token, current->redir_type);
-			if (current->redir_type == OUTPUT || current->redir_type == APPEND_OUTPUT)
-			{
-				printf("Entered here\n");
-				fflush(stdout);
-				if (dup2(fd, STDOUT_FILENO) == -1)
-				{
-					printf("hello\n");
-					perror("dup2");
-					close(fd);
-					return -1;
-				}
-				printf("dup2 succeeded: redirected STDOUT to fd=%d\n", fd);
-			}
-			else if (current->redir_type == INPUT || current->redir_type == HEREDOC)
-			{
-				if (dup2(fd, STDIN_FILENO) == -1)
-				{
-					perror("dup2");
-					close(fd);
-					return -1;
-				}
-			}
-			close(fd);
-		}
-		current = current->next;
-	}
-	return 0;
-}*/
 
 int	identify_redirection_type(char *token)
 {
@@ -192,14 +93,14 @@ int	identify_redirection_type(char *token)
 	return (-1);
 }
 
-void    handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-                int *i, int *j)
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j)
 {
-	char    double_op[3];
-	char    single_op[2];
-	char    *redir_token;
-	int     redir_type;
-	
+	char	double_op[3];
+	char	single_op[2];
+	char	*redir_token;
+	int		redir_type;
+
 	if (*j > 0)
 	{
 		ctx->current_token[*j] = '\0';
@@ -227,50 +128,25 @@ void    handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		perror("Error: Invalid redirection operator\n");
 }
 
-
-//function created to handle redirectinal signs
-/*void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
-{
-	char	double_op[3];
-	char	single_op[2];
-
-	if (*j > 0)
-	{
-		ctx->current_token[*j] = '\0';
-		add_command_node(mini, ctx->current_token);
-		*j = 0;
-	}
-	if (ctx->input[(*i) + 1] == ctx->input[*i])
-	{
-		double_op[0] = ctx->input[*i];
-		double_op[1] = ctx->input[(*i) + 1];
-		double_op[2] = '\0';
-		add_command_node(mini, double_op);
-		(*i)++;
-	}
-	else
-	{
-		single_op[0] = ctx->input[*i];
-		single_op[1] = '\0';
-		add_command_node(mini, single_op);
-	}
-}*/
-
 //function created to handle pipes delimeter
 void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	sep[2];
+	int		pipe_type;
 
+	pipe_type = identify_redirection_type((char []){ctx->input[*i], '\0'});
+	printf("HERE: ctx->input[*i]: %c, pipe_type: %d\n", ctx->input[*i], pipe_type);
 	if (*j > 0)
 	{
+		printf("ENTERED\n");
 		ctx->current_token[*j] = '\0';
 		add_command_node(mini, ctx->current_token, NONE);
 		*j = 0;
 	}
 	sep[0] = ctx->input[*i];
 	sep[1] = '\0';
-	add_command_node(mini, sep, NONE);
+	printf("OUT\n");
+	add_command_node(mini, sep, pipe_type);
 }
 
 void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
