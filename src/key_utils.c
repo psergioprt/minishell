@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 16:11:36 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/28 18:48:16 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ t_env	*find_key(t_minishell *mini, char *key)
 	t_env	*envvars;
 
 	envvars = mini->envvars;
-	printf("Key: %s\n", key); //TODO apagar testes
  	while (envvars)
 	{
 		if (ft_strcmp(key, envvars->key) == 0)

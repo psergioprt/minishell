@@ -67,13 +67,11 @@ t_env	*export_args(char *var)
 }
  
 //tem que adicionar mais que uma se tiver mais que uma
-void	argumentate(t_minishell *mini, t_node *node)
+void	argumentate(t_minishell *mini, t_env *new_env)
 {
 	t_env	*envvars;
-	t_env	*new_env;
 
 	envvars = mini->envvars;
-	new_env = export_args(node->token);
 	while (envvars->next)
 	{
 		envvars = envvars->next;
@@ -85,16 +83,18 @@ void	argumentate(t_minishell *mini, t_node *node)
 void loop_node(t_minishell *mini, t_node *node, int *ret)
 {
 	t_env	*found_env;
+	t_env	*new_env;
 
 	while (node)
 	{
-		found_env = find_key(mini, node->token);
+		new_env = export_args(node->token);
+		found_env = find_key(mini, new_env->key);
 		if (check_valid_key(node->token) == 0) //analisar chars especiais - Key nao pode ter
 		{
 			if (found_env != NULL) //key ja existe, fazer troca de valor
 				replace_env_value(found_env, node->token);
 			else
-				argumentate(mini, node);
+				argumentate(mini, new_env);
 		}
 		else
 		{
