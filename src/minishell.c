@@ -82,11 +82,14 @@ void	read_lines(t_minishell *mini)
 				free_list(mini);
 				continue ;
 			}
-			first_token(mini);
+			//first_token(mini);
+			exec_cmds(mini);
+			free_commands(mini->commands);
 			free_list(mini);
 		}
 		free(read);
 	}
+	free_commands(mini->commands);
 	free_list(mini);
 }
 

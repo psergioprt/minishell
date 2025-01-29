@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/27 14:31:40 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/29 17:50:15 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,19 @@ typedef struct s_node
 	struct s_node	*next;
 }	t_node;
 
+typedef struct s_cmd
+{
+	t_node			*tokens;
+	int				fd[2];
+	struct s_cmd	*next;
+}	t_cmd;
+
 typedef struct s_minishell
 {
 	char			*command;
 	char			**envp; //so copia o que tem para usar no execve
 	t_node			*tokenlst;
+	t_cmd			*commands;
 	t_env			*envvars;
 	int				exit_status; //TODO init
 	int				has_pipe;
@@ -98,8 +106,12 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 void		restore_default_signals(void);
 
-
+//FUNCTION_ANALISE
 int			first_token(t_minishell *mini);
+void		exec_cmds(t_minishell *mini);
+
+//SPLIT_INTO_COMMANDS
+void		split_commands(t_minishell *mini);
 
 //ECHO
 int			custom_echo(t_minishell *mini);
@@ -123,6 +135,7 @@ int			handle_direct_path(t_minishell *mini, char **argv);
 
 //ERROR
 void		ft_error(char *error_msg, t_minishell *mini);
+void		free_commands(t_cmd *commands);
 
 //CD
 int			custom_cd(t_minishell *mini);
@@ -155,6 +168,6 @@ int			is_num(char *str);
 long long	ft_atoll(const char *str);
 
 //PIPES
-
+void		create_pipes(t_cmd *cmd);
 
 #endif

@@ -31,7 +31,7 @@ int custom_pwd(t_minishell *mini)
 {
 	t_node  *nodes;
 
-	nodes = mini->tokenlst; //PWD
+	nodes = mini->commands->tokens; //mudei de mini->tokenlst;
 	if (nodes->next != NULL)
 	{
 		nodes = nodes->next;//flag ou pipe

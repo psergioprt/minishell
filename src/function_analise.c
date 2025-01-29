@@ -59,37 +59,85 @@ int	custom_fork(t_minishell *mini)
 	}
 	return (0);
 }
+
+//TODO apagar: funcao de testes para ver se cmds estao a ficar bem guardados
+void print_commands(t_minishell *mini)
+{
+    t_cmd *cmd;
+    t_node *token;
+    
+    cmd = mini->commands;
+    while (cmd)
+    {
+        token = cmd->tokens;
+        printf("Command: ");
+        while (token)
+        {
+            printf("%s ", token->token);
+            token = token->next;
+        }
+        printf("\n");
+        cmd = cmd->next;
+    }
+}
+
+void exec_multiple_cmds(t_minishell *mini)
+{
+	create_pipes(mini->commands);
+}
+
+void	exec_cmds(t_minishell *mini)
+{
+/* 	t_node	*tokenlst;
+
+	tokenlst = mini->tokenlst; */
+	split_commands(mini);
+	print_commands(mini);
+	
+	
+	if(mini->commands && !mini->commands->next)
+		first_token(mini);
+	else
+		exec_multiple_cmds(mini);
+	//logica se tem pipe -> exec multiple commands
+	//else first token
+}
+
+void execute(t_minishell *mini, int *ret, t_cmd *cmdlst)
+{
+	size_t	len;
+
+	len = ft_strlen(cmdlst->tokens->token);
+	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
+		mini->exit_status = custom_echo(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))
+		mini->exit_status = custom_cd(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "pwd", len))
+		mini->exit_status = custom_pwd(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "export", len))
+		mini->exit_status = custom_export(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "unset", len))
+		mini->exit_status = custom_unset(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "env", len))
+		mini->exit_status = custom_env(mini);//correct exit codes
+	else if (!ft_strncmp(cmdlst->tokens->token, "exit", len))
+		mini->exit_status = custom_exit(mini);
+	else
+		*ret = custom_fork(mini);
+}
+
 //TODO: mudar logica para dar os error codes
 int	first_token(t_minishell *mini)
 {
 	int		ret;
-	size_t	len;
+	t_cmd	*cmdlst;
 
 	ret = 0;
-	if (mini->tokenlst && mini->tokenlst->token)
+	if (mini->commands && mini->commands->tokens && mini->commands->tokens->token)
 	{
-		len = ft_strlen(mini->tokenlst->token);
-		if (!ft_strncmp(mini->tokenlst->token, "echo", len))
-			mini->exit_status = custom_echo(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
-			mini->exit_status = custom_cd(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
-			mini->exit_status = custom_pwd(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "export", len))
-			mini->exit_status = custom_export(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
-			mini->exit_status = custom_unset(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "env", len))
-			mini->exit_status = custom_env(mini);//correct exit codes
-		else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-			mini->exit_status = custom_exit(mini);
-			//printf("Fazer o exit\n"); //TODO
-		else
-			ret = custom_fork(mini); //TODO corrigir/verificar exit codes
+		cmdlst = mini->commands;
+		execute(mini, &ret, cmdlst);
 	}
-	/* if (ret <= 0)
-		printf("Error, command not found!\n"); */
-	//mini->exit_status = ret;
 	printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
 	return (ret);
 }

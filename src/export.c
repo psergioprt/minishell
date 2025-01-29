@@ -111,7 +111,7 @@ int	custom_export(t_minishell *mini)
 	int		ret;
 
 	ret = 0;
-	node = mini->tokenlst;
+	node = mini->commands->tokens;//mudei de mini->tokenlst;
 	if (!node->next)
 		return (export_no_args(mini));
 	node = node->next; //Passar o comando em si a frente

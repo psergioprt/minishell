@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/27 15:14:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:13:22 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int handle_path(t_minishell *mini, char **argv, char **pathname)
 	}
 	else
 	{
-		error_code = handle_search_path(mini, mini->tokenlst, pathname);
+		error_code = handle_search_path(mini, mini->commands->tokens, pathname); //mudei de mini->tokenlst;
 		if (!*pathname)
 			return (handle_execve_error(mini, argv, mini->command, 127));
 	}
@@ -75,7 +75,7 @@ int execute_execve(t_minishell *mini)
 	pathname = NULL;
 	get_command(mini);
 	i = count_node(mini);
-	argv = get_argv(mini, i, mini->tokenlst);
+	argv = get_argv(mini, i, mini->commands->tokens);//mudei de mini->tokenlst;
 	if (!argv)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)

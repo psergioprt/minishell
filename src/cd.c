@@ -75,7 +75,7 @@ int	custom_cd(t_minishell *mini)
 	char	*last_dir;
 	char	cwd[1024];
 
-	node = mini->tokenlst;
+	node = mini->commands->tokens; //mudei de mini->tokenlst;
 	last_dir = getcwd(cwd, sizeof(cwd));
 	if (!node->next)
 	{

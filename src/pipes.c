@@ -15,6 +15,22 @@
 //cat test.txt | grep "apple" | wc -l
 //2 pipes, 3 comandos
 
+void	create_pipes(t_cmd *cmd)
+{
+	if (!cmd)
+		return ;
+	while (cmd)
+	{
+		if (cmd->next && pipe(cmd->fd) == -1)
+		{
+			printf("Error creating pipes\n");
+			return ;
+		}
+		cmd = cmd->next;
+	}
+	return ;
+}
+
 /* int	checking_pipes(t_minishell *mini)
 {
 	t_node	nodelst;

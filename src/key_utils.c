@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/28 18:48:16 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:18:24 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	count_node(t_minishell *mini)
 	t_node	*temp;
 
 	i = 0;
-	temp = mini->tokenlst; // Temporary pointer for counting
+	temp = mini->commands->tokens; //mudei de mini->tokenlst;
 	while (temp) {
 		i++;
 		temp = temp->next;

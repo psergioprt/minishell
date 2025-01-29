@@ -104,7 +104,7 @@ void	get_command(t_minishell *mini)
 	int		len;
 	t_node	*node;
 
-	node = mini->tokenlst; // Store the head of the list
+	node = mini->commands->tokens;//mudei de mini->tokenlst;
 	len = ft_strlen(node->token);
 	mini->command = (char *)malloc(sizeof(char) * (len + 1));
 	if (!mini->command) {

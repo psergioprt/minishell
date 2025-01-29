@@ -48,7 +48,7 @@ int	custom_env(t_minishell *mini)
 {
 	t_node	*tokenlst;
 
-	tokenlst = mini->tokenlst;
+	tokenlst = mini->commands->tokens; //mudei de mini->tokenlst;
 	if (tokenlst->next)
 	{
 		tokenlst = tokenlst->next;

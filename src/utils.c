@@ -27,6 +27,7 @@ void	free_list(t_minishell *mini)
 		current = next;
 	}
 	mini->tokenlst = NULL;
+	//free_commands(mini->commands);
 }
 
 void	free_envvars(t_minishell *mini)

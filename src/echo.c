@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/21 12:29:54 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:01:25 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	custom_echo(t_minishell *mini)
 
 	first = 1;
 	has_flag = false;
-	node = mini->tokenlst;
+	node = mini->commands->tokens; //mudei de mini->tokenlst
 	node = node->next;
 	node = flag_checker(node, &has_flag);
 	while (node)

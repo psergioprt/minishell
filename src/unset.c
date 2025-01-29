@@ -61,7 +61,7 @@ int	custom_unset(t_minishell *mini)
 {
 	t_node		*varlst;
 
-	varlst = mini->tokenlst;
+	varlst = mini->commands->tokens;//mudei de mini->tokenlst;
 	if (varlst->next)
 		varlst = varlst->next;
 	if (varlst->token && varlst->token[0] == '-' && varlst->token[1])

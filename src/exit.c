@@ -48,7 +48,7 @@ int custom_exit(t_minishell *mini)
 {
 	t_node  *nodelst;
 
-	nodelst = mini->tokenlst; //exit
+	nodelst = mini->commands->tokens; //mudei de mini->tokenlst;
 	if (!nodelst->next)
 	{
 		do_exit(mini, 0);
