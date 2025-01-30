@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/28 17:15:16 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/30 08:40:04 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	restore_default_signals(void)
 
 void	sigint_handler(int sig)
 {
-	t_minishell *mini;
+	t_minishell	*mini;
 
 	(void)sig;
 	if (g_in_prompt)

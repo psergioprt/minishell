@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/28 12:46:16 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/30 08:18:37 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,8 @@ int	custom_fork(t_minishell *mini)
 		// Child process
 		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
 		restore_default_signals();
-	        /*if (handle_redirections(mini) == -1)
-       		 {
-            		exit(EXIT_FAILURE); // Exit if redirection setup fails
-       		 }*/
-		// Execute the command using execve
+	       	// Execute the command using execve
+		printf("INSIDE PID == 0\n");
 		if (execute_execve(mini) == -1) {
 			printf("execve error\n");
 			exit(127); // Exit the child process if execve fails
@@ -65,19 +62,29 @@ int	custom_fork(t_minishell *mini)
 	return (0);
 }
 //TODO: mudar logica para dar os error codes
+//
+//
 int	first_token(t_minishell *mini)
 {
 	int		ret;
 	size_t	len;
-	
+	int 		saved_stdout;
+	int		saved_stdin;
+
 	ret = 0;
 	if (mini->tokenlst && mini->tokenlst->token)
 	{
 		len = ft_strlen(mini->tokenlst->token);
+		saved_stdout = dup(STDOUT_FILENO);
+		saved_stdin = dup(STDIN_FILENO);
 		if (handle_redirections(mini) == -1)
-       		 {
-            		exit(EXIT_FAILURE); // Exit if redirection setup fails
-       		 }
+		{
+			perror("Redirection error");
+			close(saved_stdout);
+			close(saved_stdin);
+			return (-1);
+		}
+		skip_redirection_plus_target(mini);
 		if (!ft_strncmp(mini->tokenlst->token, "echo", len))
 			mini->exit_status = custom_echo(mini);//correct exit codes
 		else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
@@ -91,12 +98,16 @@ int	first_token(t_minishell *mini)
 		else if (!ft_strncmp(mini->tokenlst->token, "env", len))
 			mini->exit_status = custom_env(mini);//correct exit codes
 		else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
-			printf("Fazer o exit\n"); //TODO
+			printf("Fazer o exit\n"); // TODO: Implement exit
 		else
-			ret = custom_fork(mini); //TODO corrigir/verificar exit codes
+			ret = custom_fork(mini);
+		dup2(saved_stdout, STDOUT_FILENO);
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdout);
+		close(saved_stdin);
 	}
-	/* if (ret <= 0)
-		printf("Error, command not found!\n"); */
+	// if (ret <= 0)
+	//	printf("Error, command not found!\n");
 	//mini->exit_status = ret;
 	printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
 	return (ret);

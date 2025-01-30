@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/09 15:33:38 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/09 15:33:38 by jcavadas         ###   ########.fr       */
+/*   Created: 2025/01/30 06:52:56 by pauldos-          #+#    #+#             */
+/*   Updated: 2025/01/30 06:58:41 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,16 +63,4 @@ void	cleanup_readline(void)
 	rl_free_line_state();
 	rl_deprep_terminal();
 	rl_cleanup_after_signal();
-}
-
-void	print_envvar(t_minishell *mini)
-{
-	t_env	*current;
-
-	current = mini->envvars;
-	while (current)
-	{
-		printf("Key: %s, Value: %s\n", current->key, current->value);
-		current = current->next;
-	}
 }

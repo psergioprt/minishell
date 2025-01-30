@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/28 17:31:12 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/30 08:20:36 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char	*fallback_path(t_minishell *mini)
 	return (NULL);
 }
 
+
+
 char	**get_argv(t_minishell *mini, int i, t_node *node)
 {
 	int		len;
@@ -115,8 +117,7 @@ void	get_command(t_minishell *mini)
 }
 //TODO: 25 linhas
 
-//PS FUNCTION NEED TO SKIP REDIRECTS, FOR COMMAND NOT READ
-int execute_execve(t_minishell *mini)
+/*int execute_execve(t_minishell *mini)
 {
 	char	**argv;
 	char	*pathname;
@@ -130,8 +131,7 @@ int execute_execve(t_minishell *mini)
 	//count number of non redirects (to allocate mem)
 	while (current)
 	{
-		if (current->type == NONE)
-			i++;
+		i++;
 		current = current->next;
 	}
 	argv = malloc((i + 1) * sizeof(char *));
@@ -141,13 +141,9 @@ int execute_execve(t_minishell *mini)
 	current = node;
 	while (current)
 	{
-		if (current->type == NONE)
-		{
-			argv[j] = current->token;
-			j++;
-		}
-		if (current->type != NONE)
-			current = current->next;
+		argv[j] = current->token;
+		printf("ARGV[%d]: %s\n", j, argv[j]);
+		j++;
 		current = current->next;
 	}
 	argv[j] = NULL;
@@ -177,10 +173,10 @@ int execute_execve(t_minishell *mini)
 	free(argv);
 	free(mini->command);
 	return (1);
-}
+}*/
 
 
-/*int	execute_execve(t_minishell *mini) 
+int	execute_execve(t_minishell *mini) 
 {
 	// Variable declarations
 	char	**argv;
@@ -218,4 +214,4 @@ int execute_execve(t_minishell *mini)
 	free(argv);
 	free(mini->command);
 	return (1);
-}*/
+}

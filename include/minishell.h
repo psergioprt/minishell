@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/28 17:29:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/30 08:01:20 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
-typedef struct s_node //ALTERAR t_redirection_type para type
+typedef struct s_node 
 {
 	char			*token;
 	struct s_node	*next;
@@ -108,10 +108,14 @@ void	handle_open_close_quotes(t_minishell *mini, \
 		t_parse_context *ctx, int *i, int *j);
 void	handle_sep(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j);
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j);
 int	handle_redirections(t_minishell *mini);
 void	restore_default_signals(void);
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j);
+int	identify_redirection_type(char *token);
+void	skip_redirection_plus_target(t_minishell *mini);
+void	print_nodes(t_node *command_list);
+void	print_env(char *env[]);
 
 
 int		first_token(t_minishell *mini);

@@ -6,43 +6,13 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:57:45 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/28 17:02:53 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/30 06:56:06 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	*g_in_prompt = NULL;
-
-void	print_env(char *env[])
-{
-	int	i;
-
-	i = 0;
-	while (env[i] != NULL)
-	{
-		printf("%s\n", env[i]);
-		i++;
-	}
-}
-
-void	print_nodes(t_node *command_list)
-{
-	int		i;
-	t_node	*current;
-
-	i = 0;
-	current = command_list;
-	while (current)
-	{
-		if (i == 0)
-			printf("\033[1;33mNode[0]: %s\033[0m\n", current->token);
-		else
-			printf("\033[1;33mNode[%d]: %s\033[0m\n", i, current->token);
-		current = current->next;
-		i++;
-	}
-}
 
 //TODO isto e desnecessario com o comando exit
 void	read_lines_exit(t_minishell *mini, char *read)
@@ -90,15 +60,8 @@ void	read_lines(t_minishell *mini)
 		if (*read && is_spaces(read))
 		{
 			split_and_add_commands(mini, read);
-			/*if (handle_redirections(mini) == -1)
-			{
-				printf("Error handling redirections\n");
-				free(read);
-				free_list(mini);
-				continue ;
-			}*/
 			add_history(read);
-			if (!mini->has_error/* && g_in_prompt != NULL*/)
+			if (!mini->has_error)
 				print_nodes(mini->tokenlst);
 			if (mini->has_error)
 			{

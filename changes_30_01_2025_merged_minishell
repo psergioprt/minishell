@@ -1,0 +1,264 @@
+MINISHELL.H FILE changes:
+
+For REDIRECTS:
+ 29 typedef enum    e_type //PS: Definition of redirection type and their values
+ 30 {
+ 31         NONE = -1,         // No redirection
+ 32         OUTPUT = 1,        // >
+ 33         APPEND_OUTPUT,     // <
+ 34         INPUT,             // >>
+ 35         HEREDOC,           // <<
+ 36         PIPE               // |
+ 37 } t_type;
+
+ 47 typedef struct s_node 
+ 48 {
+ 49         char                    *token;
+ 50         struct s_node   *next;
+ 51         t_type  type; //PS:Redirection type (OUTPUT, APPEND_OUTPUT, ETC)
+ 52         char                    *target; //PS: Target of the redirection (file.txt)
+ 53 }
+
+UPDATE function args:
+ 88 t_node  *create_command_node(const char *token, t_type type, t_node **prev_node);
+ 89 void    add_command_node(t_minishell *mini, const char *token, t_type type);
+
+ADD FUNCTIONS:
+113 void    handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+114                 int *i, int *j);
+115 int     identify_redirection_type(char *token);
+115 void    skip_redirection_plus_target(t_minishell *mini);
+116 void    print_nodes(t_node *command_list);
+117 void    print_env(char *env[]);
+-----------------------------------------------------------------------------------------
+
+NEW FILES CREATED:
+utils2.c
+Moved debubbing print to that funtion:
+From minishell.c: void print_nodes and void print_env functions
+From utils.c: void print_envaar function
+-----------------------------------------------------------------------------------------
+
+MAKEFILE UPDATE:
+Add $(SRCDIR)/env_utils.c to SRC files
+-----------------------------------------------------------------------------------------
+
+FUNCTIONS CHANGED:
+AT NODES_HANDLER.c
+---------------------------------------------------------------------------
+
+CHANGED DEEPLY
+ 15 t_node  *create_command_node(const char *token, t_type type, \
+ 16                 t_node **prev_node)
+ 17 {
+ 18         t_node  *new_node;
+ 19         t_node  *prev;
+ 20 
+ 21         new_node = malloc(sizeof(t_node));
+ 22         if (!new_node)
+ 23         {
+ 24                 perror("Error! Failed to allocate memory for new_node\n");
+ 25                 return (NULL);
+ 26         }
+ 27         new_node->token = ft_strdup(token);
+ 28         if (!new_node->token)
+ 29         {
+ 30                 perror("Error! Failed to duplicate command\n");
+ 31                 free(new_node);
+ 32                 return (NULL);
+ 33         }
+ 34         new_node->type = type;
+ 35         new_node->target = NULL;
+ 36         new_node->next = NULL;
+ 37         if (prev_node && *prev_node)
+ 38         {
+ 39                 prev = *prev_node;
+ 40                 if (prev->type != NONE && prev->target == NULL)
+ 41                 {
+ 42                         prev->target = ft_strdup(token);
+ 43                         printf("Assigned target '%s' to node with token '%s'\n", prev->target, prev->token);
+ 44                 }
+ 45         }
+ 46         if (prev_node)
+ 47                 *prev_node = new_node;
+ 48         printf("Node created: token='%s', type=%d, target='%s'\n", new_node->token, new_node->type, new_node->target);
+ 49         return (new_node);
+ 50 }
+-----------------------------------------------------------------------------------
+CHANGED:
+added t_type type argument
+added LINE 57 (new variable)
+updated LINE 64 (function call)
+
+ 52 void    add_command_node(t_minishell *mini, const char *token, \
+ 53                 t_type type)
+ 54 {
+ 55         t_node                  *new_node;
+ 56         t_node                  *current;
+ 57         static t_node   *prev_node = NULL;
+ 58 
+ 59         if (!mini || !token)
+ 60         {
+ 61                 perror("Error: add_command_node called with NULL mini or command\n");
+ 62                 return ;
+ 63         }
+ 64         new_node = create_command_node(token, type, &prev_node);
+ 65         if (!new_node)
+ 66         {
+ 67                 perror("Error: Failed to create new node\n");
+ 68                 return ;
+ 69         }
+ 70         if (!mini->tokenlst)
+ 71                 mini->tokenlst = new_node;
+ 72         else
+ 73         {
+ 74                 current = mini->tokenlst;
+ 75                 while (current->next)
+ 76                         current = current->next;
+ 77                 current->next = new_node;
+ 78         }
+ 79 }
+---------------------------------------------------------------------------------------
+UPDATED LINES 91 and 93, add_command_node call (added NONE)
+
+ 81 void    handle_command_addition(t_minishell *mini, int *j)
+ 82 {
+ 83         char    *expanded_token;
+ 84 
+ 85         expanded_token = NULL;
+ 86         if (*j > 0 && !mini->has_error)
+ 87         {
+ 88                 mini->current_token[*j] = '\0';
+ 89                 expanded_token = expand_env_var(mini->current_token, mini);
+ 90                 if (mini->disable_expand)
+ 91                         add_command_node(mini, mini->current_token, NONE);
+ 92                 else
+ 93                         add_command_node(mini, expanded_token, NONE);
+ 94                 if (expanded_token != mini->current_token)
+ 95                         free(expanded_token);
+ 96                 mini->disable_expand = false;
+ 97         }
+ 98 }
+---------------------------------------------------------------------------------------
+
+AT SYNTAX_PARSING.C FILE
+
+UPDATED void handle_sep function to handle pipes type definition
+ 16 void    handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)                          
+ 17 {                                                                                                    
+ 18         char    sep[2];                                                                              
+ 19         int             pipe_type;                                                                   
+ 20                                                                                                      
+ 21         pipe_type = identify_redirection_type((char []){ctx->input[*i], '\0'});                      
+ 22         if (*j > 0)                                                                                  
+ 23         {                                                                                            
+ 24                 printf("ENTERED\n");                                                                 
+ 25                 ctx->current_token[*j] = '\0';                                                       
+ 26                 add_command_node(mini, ctx->current_token, NONE);                                    
+ 27                 *j = 0;                                                                              
+ 28         }                                                                                            
+ 29         sep[0] = ctx->input[*i];                                                                     
+ 30         sep[1] = '\0';                                                                               
+ 31         printf("OUT\n");                                                                             
+ 32         add_command_node(mini, sep, pipe_type);                                                      
+ 33 }
+----------------------------------------------------------------
+
+UPDATED void handle_spaces_quotes function, add_command_node call at LINES 102 and 104 (added NONE)
+ 88 void    handle_spaces_quotes(t_minishell *mini, const char *input, \
+ 89                 t_token_context *tok_ctx)
+ 90 {
+ 91         char    *expanded_token;
+ 92 
+ 93         if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+ 94         {
+ 95                 while (input[*tok_ctx->i + 1] == ' ')
+ 96                         (*tok_ctx->i)++;
+ 97                 if (*tok_ctx->j > 0)
+ 98                 {
+ 99                         tok_ctx->current_token[*tok_ctx->j] = '\0';
+100                         expanded_token = expand_env_var(tok_ctx->current_token, mini);
+101                         if (mini->disable_expand == true)
+102                                 add_command_node(mini, tok_ctx->current_token, NONE);
+103                         else
+104                                 add_command_node(mini, expanded_token, NONE);
+105                         if (expanded_token != tok_ctx->current_token)
+106                                 free(expanded_token);
+107                         *tok_ctx->j = 0;
+108                         mini->disable_expand = false;
+109                 }
+110         }
+111         else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
+112                 handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+113         else
+114                 tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
+115 }
+-------------------------------------------------------------
+
+CREATED NEW FILE REDIRECTS_HANDLER.C
+CONTAINS:
+ 15 int     open_file(const char *filename, t_type type)  
+ 35 int     handle_redirections(t_minishell *mini) 
+ 78 int     identify_redirection_type(char *token)
+ 94 void    handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+ 95                 int *i, int *j)
+129 void    skip_redirection_plus_target(t_minishell *mini)
+-------------------------------------------------------------
+
+UPDATED int first_token function at function_analise.c
+
+TO HANDLE redirects, have been added lines:
+71, 72, 78-87 -> These must be before reading execve and builtin command functions
+104-107 -> These must be after reading execve and builtin command functions
+
+ 67 int     first_token(t_minishell *mini)
+ 68 {
+ 69         int             ret;
+ 70         size_t  len;
+ 71         int             saved_stdout;
+ 72         int             saved_stdin;
+ 73 
+ 74         ret = 0;
+ 75         if (mini->tokenlst && mini->tokenlst->token)
+ 76         {
+ 77                 len = ft_strlen(mini->tokenlst->token);
+ 78                 saved_stdout = dup(STDOUT_FILENO);
+ 79                 saved_stdin = dup(STDIN_FILENO);
+ 80                 if (handle_redirections(mini) == -1)
+ 81                 {
+ 82                         perror("Redirection error");
+ 83                         close(saved_stdout);
+ 84                         close(saved_stdin);
+ 85                         return (-1);
+ 86                 }
+ 87                 skip_redirection_plus_target(mini);
+ 88                 if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+ 89                         mini->exit_status = custom_echo(mini);//correct exit codes
+ 90                 else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
+ 91                         mini->exit_status = custom_cd(mini);//correct exit codes
+ 92                 else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
+ 93                         mini->exit_status = custom_pwd(mini);//correct exit codes
+ 94                 else if (!ft_strncmp(mini->tokenlst->token, "export", len))
+ 95                         mini->exit_status = custom_export(mini);//correct exit codes
+ 96                 else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
+ 97                         mini->exit_status = custom_unset(mini);//correct exit codes
+ 98                 else if (!ft_strncmp(mini->tokenlst->token, "env", len))
+ 99                         mini->exit_status = custom_env(mini);//correct exit codes
+100                 else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
+101                         printf("Fazer o exit\n"); // TODO: Implement exit
+102                 else
+103                         ret = custom_fork(mini);
+104                 dup2(saved_stdout, STDOUT_FILENO);
+105                 dup2(saved_stdin, STDIN_FILENO);
+106                 close(saved_stdout);
+107                 close(saved_stdin);
+108         }
+109         // if (ret <= 0)
+110         //      printf("Error, command not found!\n");
+111         //mini->exit_status = ret;
+112         printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
+113         return (ret);
+114 }
+-------------------------------------------------------------------------------------
+UPDATED LIBFT ft_strcmp function:
+Replaced && for || in the while loop
