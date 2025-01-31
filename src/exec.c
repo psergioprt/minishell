@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/29 16:13:22 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/31 12:30:49 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,26 @@ static int handle_path(t_minishell *mini, char **argv, char **pathname)
 	return 0;
 }
 
+void	close_pipes(t_cmd *cmd)
+{
+	if (!cmd)
+		return ;
+	while (cmd)
+	{
+		if (cmd->fd[0] != -1)
+			close(cmd->fd[0]);
+		if (cmd->fd[1] != -1)
+			close(cmd->fd[1]);
+		cmd = cmd->next;
+	}
+}
+
 int execute_execve(t_minishell *mini)
 {
-	char **argv;
-	char *pathname;  // Initialize pathname to NULL
-	int i;
+	char 	**argv;
+	char 	*pathname;  // Initialize pathname to NULL
+	int 	i;
+	pid_t	pid;
 
 	pathname = NULL;
 	get_command(mini);
@@ -80,8 +95,13 @@ int execute_execve(t_minishell *mini)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)
 		return (-1);
-	if (execve(pathname, argv, mini->envp) == -1)
-		return (handle_execve_error(mini, argv, mini->command, 126));
+	pid = create_pid();
+	if (pid == 0)
+	{
+		close_pipes(mini->commands);
+		if (execve(pathname, argv, mini->envp) == -1)
+			return (handle_execve_error(mini, argv, mini->command, 126));
+	}
 	cleanup_execve_memory(argv, mini->command, pathname);
 	return (1);
 }

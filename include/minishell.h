@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/29 17:50:15 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/01/31 14:59:39 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../Libft/libft.h"
+
+# include <fcntl.h>
 
 typedef struct s_env
 {
@@ -54,6 +56,8 @@ typedef struct s_minishell
 	t_env			*envvars;
 	int				exit_status; //TODO init
 	int				has_pipe;
+	pid_t			child[1024];
+	int				i;
 	bool			disable_expand;
 	bool			has_error;
 	char			*last_command_out; //TODO fazer logica de pipe, e necessario isto?
@@ -109,6 +113,7 @@ void		restore_default_signals(void);
 //FUNCTION_ANALISE
 int			first_token(t_minishell *mini);
 void		exec_cmds(t_minishell *mini);
+void		execute(t_minishell *mini, int *ret, t_cmd *cmdlst);
 
 //SPLIT_INTO_COMMANDS
 void		split_commands(t_minishell *mini);
@@ -136,6 +141,7 @@ int			handle_direct_path(t_minishell *mini, char **argv);
 //ERROR
 void		ft_error(char *error_msg, t_minishell *mini);
 void		free_commands(t_cmd *commands);
+void		free_tokens(t_node *tokens);
 
 //CD
 int			custom_cd(t_minishell *mini);
@@ -169,5 +175,9 @@ long long	ft_atoll(const char *str);
 
 //PIPES
 void		create_pipes(t_cmd *cmd);
+void		redir_fds(int redir, int local);
+void		wait_childs(t_minishell *mshell, int n_cmds);
+int			get_ncmds(t_cmd *cmd);
+pid_t		create_pid(void);
 
 #endif

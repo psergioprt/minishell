@@ -22,7 +22,7 @@ void	ft_error(char *error_msg, t_minishell *mini)
 	//TODO vai ter de sair do processo filho e voltar para o pai
 }
 
-static void free_tokens(t_node *tokens)
+void free_tokens(t_node *tokens)
 {
 	t_node *tmp;
 	while (tokens)

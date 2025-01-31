@@ -107,6 +107,7 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokenlst = NULL;
 	mini.exit_status = 0;
+	mini.i = 0;
 	parse_env(&mini, env);
 	copy_env(env, &mini);
 	read_lines(&mini);
