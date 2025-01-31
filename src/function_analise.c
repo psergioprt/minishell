@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/01/30 08:18:37 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/31 12:57:09 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,36 @@ int	custom_fork(t_minishell *mini)
 //TODO: mudar logica para dar os error codes
 //
 //
+
+int	check_redirect_errors(t_minishell *mini)
+{
+	//char	*prev;
+
+	//prev = mini->tokenlst->token;
+
+	if (!mini->tokenlst->token || !mini->tokenlst)
+		return (-1);
+	if (!ft_strncmp(mini->tokenlst->token, ">", 1) || !ft_strncmp(mini->tokenlst->token, ">>", 2) || !ft_strncmp(mini->tokenlst->token, "<", 1) || !ft_strncmp(mini->tokenlst->token, "<<",2))
+	{
+		//prev = mini->tokenlst->token;
+		if (!mini->tokenlst->next)
+		{
+			printf("redirect error\n");
+			mini->has_error = true;
+			return (-1);
+		}
+		else
+		{
+	//		mini->tokenlst->token = prev;
+			printf("Something after redirect\n");
+			printf("current token: %s\n", mini->tokenlst->token);
+			handle_redirections(mini);
+			return (0);
+		}
+	}
+	return (0);
+}
+
 int	first_token(t_minishell *mini)
 {
 	int		ret;
@@ -72,6 +102,8 @@ int	first_token(t_minishell *mini)
 	int		saved_stdin;
 
 	ret = 0;
+	if (check_redirect_errors(mini))
+		return (-1);
 	if (mini->tokenlst && mini->tokenlst->token)
 	{
 		len = ft_strlen(mini->tokenlst->token);
