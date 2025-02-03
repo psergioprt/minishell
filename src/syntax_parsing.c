@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/03 14:07:20 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 23:02:41 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,12 @@ void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	pipe_type = identify_redirection_type((char []){ctx->input[*i], '\0'});
 	if (*j > 0)
 	{
-		printf("ENTERED\n");
 		ctx->current_token[*j] = '\0';
 		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
 		*j = 0;
 	}
 	sep[0] = ctx->input[*i];
 	sep[1] = '\0';
-	printf("OUT\n");
 	add_command_node(mini, sep, pipe_type, &(mini->prev_node));
 }
 
