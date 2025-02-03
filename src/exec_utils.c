@@ -93,9 +93,9 @@ char	**get_argv(t_minishell *mini, int i, t_node *node)
 	
 	//TODO: Depois dos testes, apagar
 	// Print argv for debugging
-	for (int j = 0; argv[j]; j++) {
-		printf("Argv[%d]: %s\n", j, argv[j]);
-	}
+	// for (int j = 0; argv[j]; j++) {
+	// 	printf("Argv[%d]: %s\n", j, argv[j]);
+	// }
 	return (argv);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/31 12:30:49 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/03 12:30:21 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ int execute_execve(t_minishell *mini)
 	char 	**argv;
 	char 	*pathname;  // Initialize pathname to NULL
 	int 	i;
+	int		status;
 	pid_t	pid;
 
 	pathname = NULL;
@@ -98,10 +99,11 @@ int execute_execve(t_minishell *mini)
 	pid = create_pid();
 	if (pid == 0)
 	{
-		close_pipes(mini->commands);
+		//close_pipes(mini->commands);
 		if (execve(pathname, argv, mini->envp) == -1)
 			return (handle_execve_error(mini, argv, mini->command, 126));
 	}
+	waitpid(pid, &status, 0);
 	cleanup_execve_memory(argv, mini->command, pathname);
 	return (1);
 }

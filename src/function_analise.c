@@ -70,13 +70,13 @@ void print_commands(t_minishell *mini)
     while (cmd)
     {
         token = cmd->tokens;
-        printf("Command: ");
+       // printf("Command: ");
         while (token)
         {
-            printf("%s ", token->token);
+            //printf("%s ", token->token);
             token = token->next;
         }
-        printf("\n");
+        //printf("\n");
         cmd = cmd->next;
     }
 }
@@ -117,18 +117,19 @@ void run_cmd(t_minishell *mini, int *prev_fd)
 void	exec_commands(t_minishell *mini, int *prev_fd)
 {
     pid_t	pid;
+	int		status;
 
     pid = create_pid();
     if (pid == 0) // Child process
     {
         if (*prev_fd != -1) // Redirect stdin
         {
-            printf("Child process: Redirecting prev_fd %d -> stdin\n", *prev_fd);
+            //printf("Child process: Redirecting prev_fd %d -> stdin\n", *prev_fd);
             redir_fds(*prev_fd, STDIN_FILENO);
         }
         if (mini->commands->next) // Redirect stdout if there's another command
         {
-            printf("Child process: Redirecting cmd->fd[1] %d -> stdout\n", mini->commands->fd[1]);
+            //printf("Child process: Redirecting cmd->fd[1] %d -> stdout\n", mini->commands->fd[1]);
             redir_fds(mini->commands->fd[1], STDOUT_FILENO);
         }
 
@@ -141,23 +142,21 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
         first_token(mini); // Execute command (execve or builtin)
         exit(mini->exit_status); // Ensure child exits
     }
-
+	waitpid(pid, &status, 0);
     // Parent process
     if (*prev_fd != -1)
     {
-        printf("Parent closing prev_fd %d (was stdin for previous cmd)\n", *prev_fd);
+        //printf("Parent closing prev_fd %d (was stdin for previous cmd)\n", *prev_fd);
         close(*prev_fd);
     }
     if (mini->commands->next) // Close write end in parent
     {
-        printf("Parent closing cmd->fd[1] %d\n", mini->commands->fd[1]);
+        //printf("Parent closing cmd->fd[1] %d\n", mini->commands->fd[1]);
         close(mini->commands->fd[1]);
     }
-
     // Keep read end open for next command
-    *prev_fd = mini->commands->fd[0];
-    printf("Parent: Saving cmd->fd[0] %d as prev_fd for next command\n", *prev_fd);
-
+	*prev_fd = mini->commands->fd[0];
+    //printf("Parent: Saving cmd->fd[0] %d as prev_fd for next command\n", *prev_fd);
     mini->child[mini->i++] = pid;
 }
 
@@ -208,23 +207,32 @@ void exec_multiple_cmds(t_minishell *mini)
 	t_cmd	*old_cmd;
 	int		n_cmds;
 	int		prev_fd;
+	int		temp_fd[1024];
+	int		i;
 
-	create_pipes(mini->commands);
+	i = 0;
+	create_pipes(mini->commands, temp_fd);
 	prev_fd = -1;
 	n_cmds = get_ncmds(mini->commands);
 	while (mini->commands)
 	{
 		exec_commands(mini, &prev_fd);
 		temp_cmd = mini->commands->next;
-		if (mini->commands->fd[0] != -1) // Close only after execution
-			close(mini->commands->fd[0]);
-		if (mini->commands->fd[1] != -1)
-			close(mini->commands->fd[1]);
+		//if (mini->commands->fd[0] != -1) // Close only after execution
+			//close(mini->commands->fd[0]);
+		// if (mini->commands->fd[1] != -1)
+		// 	close(mini->commands->fd[1]);
 		free_tokens(mini->commands->tokens);
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
 		free(old_cmd);
 	}
+	while (temp_fd[i])
+	{
+		close(temp_fd[i++]);
+	}
+	
+	//close(prev_fd);
 	wait_childs(mini, n_cmds);
 }
 
@@ -308,6 +316,6 @@ int	first_token(t_minishell *mini)
 		cmdlst = mini->commands;
 		execute(mini, &ret, cmdlst);
 	}
-	printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
+	//printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
 	return (ret);
 }

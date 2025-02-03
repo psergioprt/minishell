@@ -15,8 +15,11 @@
 //cat test.txt | grep "apple" | wc -l
 //2 pipes, 3 comandos
 
-void create_pipes(t_cmd *cmd)
+void create_pipes(t_cmd *cmd, int *temp_fd)
 {
+    int i;
+
+    i = 0;
     if (!cmd)
         return;
     while (cmd)
@@ -28,7 +31,9 @@ void create_pipes(t_cmd *cmd)
                 perror("Error creating pipes");
                 exit(1);
             }
-            printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
+            temp_fd[i++] = cmd->fd[0];
+            temp_fd[i++] = cmd->fd[1];
+            //printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
         }
         cmd = cmd->next;
     }
@@ -58,7 +63,7 @@ void redir_fds(int redir, int local)
         perror("Invalid file descriptor");
         return;
     }
-    printf("Redirecting %d -> %d\n", redir, local);
+    //printf("Redirecting %d -> %d\n", redir, local);
     
     if (fcntl(redir, F_GETFD) == -1)
     {

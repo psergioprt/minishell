@@ -27,7 +27,7 @@ clean:
 	$(RM) $(OBJS)
 	@$(MAKE) -C $(LIBFTDIR) clean
 valgrind: ${NAME}
-	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-fds=yes --track-origins=yes --trace-children=yes ./minishell
+	valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-fds=yes --track-origins=yes --trace-children=yes -s ./minishell
 fclean: clean
 	$(RM) $(NAME)
 	@$(MAKE) -C $(LIBFTDIR) fclean
