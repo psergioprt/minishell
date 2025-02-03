@@ -154,6 +154,8 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
         //printf("Parent closing cmd->fd[1] %d\n", mini->commands->fd[1]);
         close(mini->commands->fd[1]);
     }
+
+
     // Keep read end open for next command
 	*prev_fd = mini->commands->fd[0];
     //printf("Parent: Saving cmd->fd[0] %d as prev_fd for next command\n", *prev_fd);
@@ -207,15 +209,15 @@ void exec_multiple_cmds(t_minishell *mini)
 	t_cmd	*old_cmd;
 	int		n_cmds;
 	int		prev_fd;
-	int		temp_fd[1024];
+	//int		temp_fd[1024];
 	int		i;
 
 	i = 0;
-	create_pipes(mini->commands, temp_fd);
 	prev_fd = -1;
 	n_cmds = get_ncmds(mini->commands);
 	while (mini->commands)
 	{
+		create_pipes(mini->commands); //, temp_fd
 		exec_commands(mini, &prev_fd);
 		temp_cmd = mini->commands->next;
 		//if (mini->commands->fd[0] != -1) // Close only after execution
@@ -227,12 +229,8 @@ void exec_multiple_cmds(t_minishell *mini)
 		mini->commands = temp_cmd;
 		free(old_cmd);
 	}
-	while (temp_fd[i])
-	{
-		close(temp_fd[i++]);
-	}
 	
-	//close(prev_fd);
+	close(prev_fd);
 	wait_childs(mini, n_cmds);
 }
 

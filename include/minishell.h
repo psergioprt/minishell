@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/03 13:00:11 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/03 15:32:57 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ int			is_num(char *str);
 long long	ft_atoll(const char *str);
 
 //PIPES
-void		create_pipes(t_cmd *cmd, int *temp_fd);
+void		create_pipes(t_cmd *cmd);
 void		redir_fds(int redir, int local);
 void		wait_childs(t_minishell *mshell, int n_cmds);
 int			get_ncmds(t_cmd *cmd);

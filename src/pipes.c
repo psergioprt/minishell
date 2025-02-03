@@ -15,28 +15,24 @@
 //cat test.txt | grep "apple" | wc -l
 //2 pipes, 3 comandos
 
-void create_pipes(t_cmd *cmd, int *temp_fd)
+void create_pipes(t_cmd *cmd)
 {
     int i;
 
     i = 0;
     if (!cmd)
         return;
-    while (cmd)
+    if (cmd->next)
     {
-        if (cmd->next)
+        if (pipe(cmd->fd) == -1)
         {
-            if (pipe(cmd->fd) == -1)
-            {
-                perror("Error creating pipes");
-                exit(1);
-            }
-            temp_fd[i++] = cmd->fd[0];
-            temp_fd[i++] = cmd->fd[1];
-            //printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
+            perror("Error creating pipes");
+            exit(1);
         }
-        cmd = cmd->next;
+        //printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
     }
+    //cmd = cmd->next;
+    
 }
 
 
