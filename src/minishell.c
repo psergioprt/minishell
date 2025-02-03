@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:57:45 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/30 06:56:06 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:15:34 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ bool	is_spaces(char *read)
 void	read_lines(t_minishell *mini)
 {
 	char	*read;
+	int	saved_stdout;
+	int	saved_stdin;
 
 	read = NULL;
 	while (1)
@@ -69,7 +71,14 @@ void	read_lines(t_minishell *mini)
 				free_list(mini);
 				continue ;
 			}
+			saved_stdout = dup(STDOUT_FILENO);
+			saved_stdin = dup(STDIN_FILENO);
 			first_token(mini);
+			dup2(saved_stdout, STDOUT_FILENO);
+			dup2(saved_stdin, STDIN_FILENO);
+			close(saved_stdout);
+			close(saved_stdin);
+
 			free_list(mini);
 		}
 		free(read);

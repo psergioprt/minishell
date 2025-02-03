@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/28 18:16:56 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:32:16 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_node	*create_command_node(const char *token, t_type type, \
 		prev = *prev_node;
 		if (prev->type != NONE && prev->target == NULL)
 		{
-			prev->target = ft_strdup(token);
+			prev->target = new_node->token;
 			printf("Assigned target '%s' to node with token '%s'\n", prev->target, prev->token);
 		}
 	}
@@ -50,18 +50,17 @@ t_node	*create_command_node(const char *token, t_type type, \
 }
 
 void	add_command_node(t_minishell *mini, const char *token, \
-		t_type type)
+		t_type type, t_node **prev_node)
 {
 	t_node			*new_node;
 	t_node			*current;
-	static t_node	*prev_node = NULL;
 
 	if (!mini || !token)
 	{
 		perror("Error: add_command_node called with NULL mini or command\n");
 		return ;
 	}
-	new_node = create_command_node(token, type, &prev_node);
+	new_node = create_command_node(token, type, prev_node);
 	if (!new_node)
 	{
 		perror("Error: Failed to create new node\n");
@@ -88,9 +87,9 @@ void	handle_command_addition(t_minishell *mini, int *j)
 		mini->current_token[*j] = '\0';
 		expanded_token = expand_env_var(mini->current_token, mini);
 		if (mini->disable_expand)
-			add_command_node(mini, mini->current_token, NONE);
+			add_command_node(mini, mini->current_token, NONE, &(mini->prev_node));
 		else
-			add_command_node(mini, expanded_token, NONE);
+			add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
 		if (expanded_token != mini->current_token)
 			free(expanded_token);
 		mini->disable_expand = false;

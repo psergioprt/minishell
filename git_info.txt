@@ -19,3 +19,7 @@ To create collaborators github
 2 - Collaborators
 3 - Invite collaborators (add people)
 
+To create a new branch copying the content of an existing branch
+1 - Switch to the branch from where files should be copied: e.g. git checkout <source branch>
+2 - Create the new branch based on that <source branch>: git checkout -b <dest branch>
+3 - To push new_files/updated files from the new branch: git push --set-upstream origin <dest branch>

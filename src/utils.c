@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 06:52:56 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/30 06:58:41 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:21:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	mini->has_pipe = 0;
 	mini->disable_expand = false;
 	mini->has_error = false;
+	mini->prev_node = NULL;
 }
 
 void	cleanup_readline(void)

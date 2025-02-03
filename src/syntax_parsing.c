@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/30 07:40:27 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:07:20 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,48 @@ void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	{
 		printf("ENTERED\n");
 		ctx->current_token[*j] = '\0';
-		add_command_node(mini, ctx->current_token, NONE);
+		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
 		*j = 0;
 	}
 	sep[0] = ctx->input[*i];
 	sep[1] = '\0';
 	printf("OUT\n");
-	add_command_node(mini, sep, pipe_type);
+	add_command_node(mini, sep, pipe_type, &(mini->prev_node));
+}
+
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j)
+{
+	char	double_op[3];
+	char	single_op[2];
+	char	*redir_token;
+	int		redir_type;
+
+	if (*j > 0)
+	{
+		ctx->current_token[*j] = '\0';
+		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
+		*j = 0;
+	}
+	if (ctx->input[(*i) + 1] == ctx->input[*i])
+	{
+		double_op[0] = ctx->input[*i];
+		double_op[1] = ctx->input[(*i) + 1];
+		double_op[2] = '\0';
+		redir_token = double_op;
+		(*i)++;
+	}
+	else
+	{
+		single_op[0] = ctx->input[*i];
+		single_op[1] = '\0';
+		redir_token = single_op;
+	}
+	redir_type = identify_redirection_type(redir_token);
+	if (redir_type != -1)
+		add_command_node(mini, redir_token, redir_type, &(mini->prev_node));
+	else
+		perror("Error: Invalid redirection operator\n");
 }
 
 void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
@@ -99,9 +134,9 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 			tok_ctx->current_token[*tok_ctx->j] = '\0';
 			expanded_token = expand_env_var(tok_ctx->current_token, mini);
 			if (mini->disable_expand == true)
-				add_command_node(mini, tok_ctx->current_token, NONE);
+				add_command_node(mini, tok_ctx->current_token, NONE, &(mini->prev_node));
 			else
-				add_command_node(mini, expanded_token, NONE);
+				add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
 			if (expanded_token != tok_ctx->current_token)
 				free(expanded_token);
 			*tok_ctx->j = 0;
