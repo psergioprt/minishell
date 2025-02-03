@@ -1,0 +1,91 @@
+1 - Update first_token function at function_analise.c. Changed the last if LINE 95, to prevent any output in case
+the input is NULL $with_non_existent_envvar.
+
+ 63 int     first_token(t_minishell *mini)
+ 64 {
+ 65         int             ret;
+ 66         size_t  len;
+ 67 
+ 68         ret = 0;
+ 69         if (mini->tokenlst && mini->tokenlst->token)//UPDATED BY PAULO. $x caused SEGFAULT
+ 70         {
+ 71                 len = ft_strlen(mini->tokenlst->token);
+ 72                 if (!ft_strncmp(mini->tokenlst->token, "echo", len))
+ 73                         ret = custom_echo(mini);
+ 74                         // printf("Fazer o echo\n");
+ 75                 else if (!ft_strncmp(mini->tokenlst->token, "cd", len))
+ 76                         ret = custom_cd(mini);
+ 77                         //printf("Fazer o cd\n");
+ 78                 else if (!ft_strncmp(mini->tokenlst->token, "pwd", len))
+ 79                         ret = custom_pwd(mini);
+ 80                         //printf("Fazer o pwd\n");
+ 81                 else if (!ft_strncmp(mini->tokenlst->token, "export", len))
+ 82                         ret = custom_export(mini);
+ 83                         //printf("Fazer o export\n");
+ 84                 else if (!ft_strncmp(mini->tokenlst->token, "unset", len))
+ 85                         ret = custom_unset(mini);
+ 86                         //printf("Fazer o unset\n");
+ 87                 else if (!ft_strncmp(mini->tokenlst->token, "env", len))
+ 88                         ret = custom_env(mini);
+ 89                         //printf("Fazer o env\n");
+ 90                 else if (!ft_strncmp(mini->tokenlst->token, "exit", len))
+ 91                         printf("Fazer o exit\n");
+ 92                 else
+ 93                         ret = custom_fork(mini);
+ 94         }
+ 95         if (ret <= 0 && mini->tokenlst && mini->tokenlst->token)
+ 96                 printf("Error, command not found!\n");
+ 97         return (ret);
+ 98 }
+
+2 - Updated signals to handle issues when inputing CTRL+C after cat. Added value 130 to mini->exit_status for 
+CTRL+C without cat.
+Issue solved by not reading rl_redisplay(). With that, it caused when pressing CTRL+C without cat, the output 
+has flaws.
+Had to create if clause to separate how it handles both situations.
+Add to create global variables to deal with it and access t_minishell *mini.
+
+ 27 void sigint_handler(int sig)
+ 28 {
+ 29         (void)sig;
+ 30         t_minishell *mini;
+ 31 
+ 32         if (g_in_prompt)
+ 33         {
+ 34                 mini = (t_minishell *)g_in_prompt;
+ 35                 mini->exit_status = 130;
+ 36         }
+ 37         rl_replace_line("", 0);
+ 38         write(STDOUT_FILENO, "\n", 1);
+ 39         if (g_in_prompt)
+ 40         {
+ 41                 rl_on_new_line();
+ 42                 rl_redisplay();
+ 43     }
+ 44 }
+
+The following declarations, assignments were made:
+minishell.h - declared variable -> extern void *g_in_prompt
+minishell.c - LINE 15, 84, 86, 92
+
+ 13 #include "../include/minishell.h"
+ 14 
+ 15 void    *g_in_prompt = NULL;
+ 16 
+
+ 78 void    read_lines(t_minishell *mini)
+ 79 {
+ 80         char    *read;
+ 81         read = NULL;
+ 82         while (1)
+ 83         {
+ 84                 g_in_prompt =(void *)mini;
+ 85                 read = readline("\033[1;31mminishell>\033[0m ");
+ 86                 g_in_prompt = NULL;
+ 87                 read_lines_exit(mini, read);
+ 88                 if (*read && is_spaces(read))
+ 89                 {
+ 90                         split_and_add_commands(mini, read);
+ 91                         add_history(read);
+ 92                 if (!mini->has_error && g_in_prompt != NULL)
+ 93                                 print_nodes(mini->tokenlst);

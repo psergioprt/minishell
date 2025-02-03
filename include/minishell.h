@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/30 08:01:20 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:10:33 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef struct s_minishell
 	char			*last_command_out; //TODO fazer logica de pipe, e necessario isto?
 	int				env_count;
 	char			current_token[1024];
+	t_node			*prev_node;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -86,7 +87,7 @@ typedef struct s_token_context
 }	t_token_context;
 
 t_node	*create_command_node(const char *token, t_type type, t_node **prev_node);
-void	add_command_node(t_minishell *mini, const char *token, t_type type);
+void	add_command_node(t_minishell *mini, const char *token, t_type type, t_node **prev_node);
 void	free_list(t_minishell *mini);
 void	split_and_add_commands(t_minishell *mini, const char *input);
 void	init_variables(t_minishell *mini, t_parse_context *ctx, \
@@ -114,6 +115,7 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j);
 int	identify_redirection_type(char *token);
 void	skip_redirection_plus_target(t_minishell *mini);
+int	check_redirect_errors(t_minishell *mini);
 void	print_nodes(t_node *command_list);
 void	print_env(char *env[]);
 

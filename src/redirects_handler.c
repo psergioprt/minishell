@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 07:33:17 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/30 08:39:13 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:34:55 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,41 +92,6 @@ int	identify_redirection_type(char *token)
 	return (-1);
 }
 
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
-{
-	char	double_op[3];
-	char	single_op[2];
-	char	*redir_token;
-	int		redir_type;
-
-	if (*j > 0)
-	{
-		ctx->current_token[*j] = '\0';
-		add_command_node(mini, ctx->current_token, NONE);
-		*j = 0;
-	}
-	if (ctx->input[(*i) + 1] == ctx->input[*i])
-	{
-		double_op[0] = ctx->input[*i];
-		double_op[1] = ctx->input[(*i) + 1];
-		double_op[2] = '\0';
-		redir_token = double_op;
-		(*i)++;
-	}
-	else
-	{
-		single_op[0] = ctx->input[*i];
-		single_op[1] = '\0';
-		redir_token = single_op;
-	}
-	redir_type = identify_redirection_type(redir_token);
-	if (redir_type != -1)
-		add_command_node(mini, redir_token, redir_type);
-	else
-		perror("Error: Invalid redirection operator\n");
-}
-
 void	skip_redirection_plus_target(t_minishell *mini)
 {
 	t_node	*prev;
@@ -163,4 +128,46 @@ void	skip_redirection_plus_target(t_minishell *mini)
 		}
 	}
 	current = mini->tokenlst;
+}
+
+int	check_redirect_errors(t_minishell *mini)
+{
+	if (!mini->tokenlst || !mini->tokenlst->token)
+		return (-1);
+	if (!ft_strncmp(mini->tokenlst->token, ">", 1) || \
+			!ft_strncmp(mini->tokenlst->token, ">>", 2) || \
+			!ft_strncmp(mini->tokenlst->token, "<", 1) || \
+			!ft_strncmp(mini->tokenlst->token, "<<", 2))
+	{
+		if (!mini->tokenlst->next)
+		{
+			perror("minishell: syntax error near unexpected token 'newline'");
+			mini->has_error = true;
+			return (-1);
+		}
+		else if (mini->tokenlst->next && !mini->tokenlst->next->next)
+			handle_redirections(mini);
+		else
+			skip_redirection_plus_target(mini);
+	}
+	else if ((ft_strncmp(mini->tokenlst->token, ">", 1) || \
+				 ft_strncmp(mini->tokenlst->token, ">>", 2) || \
+				 ft_strncmp(mini->tokenlst->token, "<", 1) || \
+				 ft_strncmp(mini->tokenlst->token, "<<", 2)) && \
+			 mini->tokenlst->next)
+	{
+		if (((!ft_strncmp(mini->tokenlst->next->token, ">", 1) || \
+						!ft_strncmp(mini->tokenlst->next->token, ">>", 2) || \
+						!ft_strncmp(mini->tokenlst->next->token, "<", 1) || \
+						!ft_strncmp(mini->tokenlst->next->token, "<<", 2))  && \
+					!mini->tokenlst->next->next))
+		{
+			perror("minishell: syntax error near unexpected token 'newline'");
+			mini->has_error = true;
+			return (-1);
+		}
+		else
+			return (0);
+	}
+	return (0);
 }
