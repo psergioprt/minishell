@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/03 15:32:57 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:16:45 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,12 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../Libft/libft.h"
-
 # include <fcntl.h>
 
 typedef struct s_env
@@ -113,7 +112,7 @@ void		restore_default_signals(void);
 //FUNCTION_ANALISE
 int			first_token(t_minishell *mini);
 void		exec_cmds(t_minishell *mini);
-void		execute(t_minishell *mini, int *ret, t_cmd *cmdlst);
+void		execute(t_minishell *mini, /* int *ret, */ t_cmd *cmdlst);
 
 //SPLIT_INTO_COMMANDS
 void		split_commands(t_minishell *mini);

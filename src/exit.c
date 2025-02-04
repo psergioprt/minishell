@@ -14,9 +14,11 @@
 
 void	do_exit(t_minishell *mini, int error_code)
 {
+	mini->exit_status = error_code;
 	free_envvars(mini);
+	free_commands(mini->commands);
 	free_list(mini);
-	printf("exit\n");
+	printf("exit\n");	
 	exit(error_code);
 }
 
@@ -55,10 +57,6 @@ int custom_exit(t_minishell *mini)
 		return (0);
 	}
 	else
-	{
-		printf("exit\n");
 		get_exit(mini, nodelst);
-	}
-	printf("nodelst: %s\n", nodelst->token);
 	return (0);
 }

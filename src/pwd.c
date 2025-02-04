@@ -20,7 +20,7 @@ int	pwd_execute(void)
 	directory = getcwd(cwd, sizeof(cwd));
 	if (!directory)
 	{
-		printf("CWD error\n");
+		printf("pwd error\n");
 		return (1);
 	}
 	printf("%s\n", directory);

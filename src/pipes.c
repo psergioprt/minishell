@@ -17,9 +17,6 @@
 
 void create_pipes(t_cmd *cmd)
 {
-    int i;
-
-    i = 0;
     if (!cmd)
         return;
     if (cmd->next)

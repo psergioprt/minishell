@@ -210,9 +210,7 @@ void exec_multiple_cmds(t_minishell *mini)
 	int		n_cmds;
 	int		prev_fd;
 	//int		temp_fd[1024];
-	int		i;
 
-	i = 0;
 	prev_fd = -1;
 	n_cmds = get_ncmds(mini->commands);
 	while (mini->commands)
@@ -278,7 +276,7 @@ void	exec_cmds(t_minishell *mini)
 	//else first token
 }
 
-void execute(t_minishell *mini, int *ret, t_cmd *cmdlst)
+void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 {
 	size_t	len;
 
@@ -298,21 +296,23 @@ void execute(t_minishell *mini, int *ret, t_cmd *cmdlst)
 	else if (!ft_strncmp(cmdlst->tokens->token, "exit", len))
 		mini->exit_status = custom_exit(mini);
 	else
-		*ret = execute_execve(mini);
+		mini->exit_status = execute_execve(mini);
+		//*ret = execute_execve(mini);
 		//*ret = custom_fork(mini);
 }
 
 //TODO: mudar logica para dar os error codes
 int	first_token(t_minishell *mini)
 {
-	int		ret;
+	//int		ret;
 	t_cmd	*cmdlst;
 
-	ret = 0;
+	//ret = 0;
 	if (mini->commands && mini->commands->tokens && mini->commands->tokens->token)
 	{
 		cmdlst = mini->commands;
-		execute(mini, &ret, cmdlst);
+		execute(mini,/*  &ret, */ cmdlst);
+		//printf("%d\n", ret);
 	}
 	//printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
 	return (ret);

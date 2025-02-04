@@ -98,7 +98,7 @@ void loop_node(t_minishell *mini, t_node *node, int *ret)
 		}
 		else
 		{
-			printf("export: %s is not a valid identifier\n", node->token);
+			printf("export: '%s' is not a valid identifier\n", node->token);
 			*ret = 1;
 		}
 		node = node->next;

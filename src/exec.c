@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/03 12:30:21 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/04 16:41:21 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,26 @@ void	close_pipes(t_cmd *cmd)
 	}
 }
 
+void	feel_signals(t_minishell *mini, int status)
+{
+	if (WIFEXITED(status))
+	{
+		mini->exit_status = WEXITSTATUS(status);
+		printf("mini->exit_status: %d\n", mini->exit_status);//TODO apagar testes
+	}
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			write(1, "Quit (core dumped)\n", 19);
+		mini->exit_status = 128 + WTERMSIG(status);
+		printf("Child process terminated by signal: %d\n", WTERMSIG(status));//TODO apagar testes
+	}
+}
+
 int execute_execve(t_minishell *mini)
 {
 	char 	**argv;
-	char 	*pathname;  // Initialize pathname to NULL
+	char 	*pathname;
 	int 	i;
 	int		status;
 	pid_t	pid;
@@ -99,11 +115,11 @@ int execute_execve(t_minishell *mini)
 	pid = create_pid();
 	if (pid == 0)
 	{
-		//close_pipes(mini->commands);
 		if (execve(pathname, argv, mini->envp) == -1)
 			return (handle_execve_error(mini, argv, mini->command, 126));
 	}
 	waitpid(pid, &status, 0);
+	feel_signals(mini, status);
 	cleanup_execve_memory(argv, mini->command, pathname);
-	return (1);
+	return (mini->exit_status);
 }
