@@ -12,9 +12,7 @@
 
 #include "../include/minishell.h"
 
-//TODO: mudar logica para dar os error codes
-
-int print_envvars(t_minishell *mini)
+int	print_envvars(t_minishell *mini)
 {
 	t_env	*envvars;
 
@@ -48,7 +46,7 @@ int	custom_env(t_minishell *mini)
 {
 	t_node	*tokenlst;
 
-	tokenlst = mini->commands->tokens; //mudei de mini->tokenlst;
+	tokenlst = mini->commands->tokens;
 	if (tokenlst->next)
 	{
 		tokenlst = tokenlst->next;
@@ -62,5 +60,3 @@ int	custom_env(t_minishell *mini)
 	else
 		return (print_envvars(mini));
 }
-
-

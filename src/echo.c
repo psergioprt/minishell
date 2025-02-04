@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 14:45:31 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/29 16:01:25 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/04 17:36:37 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ t_node	*flag_checker(t_node *node, bool *has_flag)
 	return (node);
 }
 
-// Custom echo function to handle a linked list of tokens
 int	custom_echo(t_minishell *mini)
 {
 	int		first;
@@ -56,7 +55,7 @@ int	custom_echo(t_minishell *mini)
 
 	first = 1;
 	has_flag = false;
-	node = mini->commands->tokens; //mudei de mini->tokenlst
+	node = mini->commands->tokens;
 	node = node->next;
 	node = flag_checker(node, &has_flag);
 	while (node)

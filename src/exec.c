@@ -6,25 +6,25 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/04 16:41:21 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/04 18:13:51 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int handle_search_path(t_minishell *mini, t_node *node, char **pathname)
+int	handle_search_path(t_minishell *mini, t_node *node, char **pathname)
 {
-    *pathname = find_path(mini);
-    if (!*pathname)
-    {
-        printf("%s: command not found\n", node->token);
-        mini->exit_status = 127;
-        return (-1);  // Just return the error without freeing memory
-    }
-    return (0);
+	*pathname = find_path(mini);
+	if (!*pathname)
+	{
+		printf("%s: command not found\n", node->token);
+		mini->exit_status = 127;
+		return (-1);
+	}
+	return (0);
 }
 
-static void cleanup_execve_memory(char **argv, char *command, char *pathname)
+static void	cleanup_execve_memory(char **argv, char *command, char *pathname)
 {
 	int	i;
 
@@ -39,16 +39,17 @@ static void cleanup_execve_memory(char **argv, char *command, char *pathname)
 	free(argv);
 }
 
-static int handle_execve_error(t_minishell *mini, char **argv, char *command, int error_code)
+static int	handle_execve_error(t_minishell *mini, char **argv, \
+			char *command, int error_code)
 {
 	mini->exit_status = error_code;
 	cleanup_execve_memory(argv, command, NULL);
 	return (-1);
 }
 
-static int handle_path(t_minishell *mini, char **argv, char **pathname)
+static int	handle_path(t_minishell *mini, char **argv, char **pathname)
 {
-	int error_code;
+	int	error_code;
 
 	if (ft_strchr(mini->command, '/') || mini->command[0] == '.')
 	{
@@ -59,55 +60,25 @@ static int handle_path(t_minishell *mini, char **argv, char **pathname)
 	}
 	else
 	{
-		error_code = handle_search_path(mini, mini->commands->tokens, pathname); //mudei de mini->tokenlst;
+		error_code = handle_search_path(mini, mini->commands->tokens, pathname);
 		if (!*pathname)
 			return (handle_execve_error(mini, argv, mini->command, 127));
 	}
-	return 0;
+	return (0);
 }
 
-void	close_pipes(t_cmd *cmd)
+int	execute_execve(t_minishell *mini)
 {
-	if (!cmd)
-		return ;
-	while (cmd)
-	{
-		if (cmd->fd[0] != -1)
-			close(cmd->fd[0]);
-		if (cmd->fd[1] != -1)
-			close(cmd->fd[1]);
-		cmd = cmd->next;
-	}
-}
-
-void	feel_signals(t_minishell *mini, int status)
-{
-	if (WIFEXITED(status))
-	{
-		mini->exit_status = WEXITSTATUS(status);
-		printf("mini->exit_status: %d\n", mini->exit_status);//TODO apagar testes
-	}
-	else if (WIFSIGNALED(status))
-	{
-		if (WTERMSIG(status) == SIGQUIT)
-			write(1, "Quit (core dumped)\n", 19);
-		mini->exit_status = 128 + WTERMSIG(status);
-		printf("Child process terminated by signal: %d\n", WTERMSIG(status));//TODO apagar testes
-	}
-}
-
-int execute_execve(t_minishell *mini)
-{
-	char 	**argv;
-	char 	*pathname;
-	int 	i;
+	char	**argv;
+	char	*pathname;
+	int		i;
 	int		status;
 	pid_t	pid;
 
 	pathname = NULL;
 	get_command(mini);
 	i = count_node(mini);
-	argv = get_argv(mini, i, mini->commands->tokens);//mudei de mini->tokenlst;
+	argv = get_argv(mini, i, mini->commands->tokens);
 	if (!argv)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)

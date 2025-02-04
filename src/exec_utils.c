@@ -18,7 +18,7 @@ char	*find_path(t_minishell *mini)
 	char	*pathname;
 	char	**paths;
 	int		i;
-	
+
 	i = 0;
 	envvars = mini->envvars;
 	while (envvars != NULL)
@@ -48,18 +48,18 @@ char	*fallback_path(t_minishell *mini)
 
 	if (mini->command[0] == '.' && mini->command[1] == '/')
 	{
-		cwd = getcwd(NULL, 0); // Get the current working directory
+		cwd = getcwd(NULL, 0);
 		if (!cwd)
 		{
 			perror("getcwd failed");
 			return (NULL);
 		}
 		full_path = ft_strjoin(cwd, "/");
-		free(cwd); // Free the allocated cwd after use
-		full_path = ft_strjoin(full_path, mini->command + 2); // Skip "./"
+		free(cwd);
+		full_path = ft_strjoin(full_path, mini->command + 2);
 		if (access(full_path, F_OK) == 0)
 			return (full_path);
-		free(full_path); // Free if the path is invalid
+		free(full_path);
 	}
 	return (NULL);
 }
@@ -75,10 +75,9 @@ char	**get_argv(t_minishell *mini, int i, t_node *node)
 		return (NULL);
 	while (node) {
 		len = ft_strlen(node->token);
-		argv[i] = (char *)malloc(sizeof(char) * (len + 1)); // Allocate for each string
+		argv[i] = (char *)malloc(sizeof(char) * (len + 1));
 		if (!argv[i]) {
 			perror("Error allocating argv[i]");
-			// Free previously allocated memory
 			while (i > 0)
 				free(argv[--i]);
 			free(argv);
@@ -89,13 +88,7 @@ char	**get_argv(t_minishell *mini, int i, t_node *node)
 		node = node->next;
 		i++;
 	}
-	argv[i] = NULL; // Null-terminate argv
-	
-	//TODO: Depois dos testes, apagar
-	// Print argv for debugging
-	// for (int j = 0; argv[j]; j++) {
-	// 	printf("Argv[%d]: %s\n", j, argv[j]);
-	// }
+	argv[i] = NULL;
 	return (argv);
 }
 

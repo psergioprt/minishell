@@ -297,23 +297,18 @@ void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 		mini->exit_status = custom_exit(mini);
 	else
 		mini->exit_status = execute_execve(mini);
-		//*ret = execute_execve(mini);
-		//*ret = custom_fork(mini);
 }
 
 //TODO: mudar logica para dar os error codes
 int	first_token(t_minishell *mini)
 {
-	//int		ret;
 	t_cmd	*cmdlst;
 
-	//ret = 0;
 	if (mini->commands && mini->commands->tokens && mini->commands->tokens->token)
 	{
 		cmdlst = mini->commands;
-		execute(mini,/*  &ret, */ cmdlst);
-		//printf("%d\n", ret);
+		execute(mini, cmdlst);
 	}
 	//printf("exit status: %d\n", mini->exit_status);//TODO apagar - teste
-	return (ret);
+	return (0);
 }

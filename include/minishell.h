@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/04 17:16:45 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/04 18:13:06 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ typedef struct s_minishell
 	int				i;
 	bool			disable_expand;
 	bool			has_error;
-	char			*last_command_out; //TODO fazer logica de pipe, e necessario isto?
 	int				env_count;
 	char			current_token[1024];
 }	t_minishell;
@@ -96,7 +95,8 @@ void		copy_env(char *env[], t_minishell *mini);
 char		*get_env_value(char *env_name, t_minishell *mini);
 void		print_envvar(t_minishell *mini);
 void		init_sigaction(void);
-void		handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
+void		handle_env_var(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
 void		handle_loop_parsers(t_minishell *mini, const char *input, \
 			t_token_context *tok_ctx);
 void		handle_spaces_quotes(t_minishell *mini, const char *input, \
@@ -112,7 +112,7 @@ void		restore_default_signals(void);
 //FUNCTION_ANALISE
 int			first_token(t_minishell *mini);
 void		exec_cmds(t_minishell *mini);
-void		execute(t_minishell *mini, /* int *ret, */ t_cmd *cmdlst);
+void		execute(t_minishell *mini, t_cmd *cmdlst);
 
 //SPLIT_INTO_COMMANDS
 void		split_commands(t_minishell *mini);
@@ -136,6 +136,7 @@ int			execpath_error(char *path);
 
 //EXEC_UTILS2
 int			handle_direct_path(t_minishell *mini, char **argv);
+void		feel_signals(t_minishell *mini, int status);
 
 //ERROR
 void		ft_error(char *error_msg, t_minishell *mini);

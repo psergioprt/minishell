@@ -68,6 +68,22 @@ int	update_pwd(t_minishell *mini, char *last_dir)
 	return (1);
 }
 
+int	check_cd_args(t_node **node)
+{
+	if (!(*node)->next)
+	{
+		printf("cd: missing argument\n");
+		return (1);
+	}
+	(*node) = (*node)->next;
+	if ((*node)->next)
+	{
+		printf("cd: too many arguments\n");
+		return (1);
+	}
+	return (0);
+}
+
 int	custom_cd(t_minishell *mini)
 {
 	char	*path;
@@ -75,19 +91,10 @@ int	custom_cd(t_minishell *mini)
 	char	*last_dir;
 	char	cwd[1024];
 
-	node = mini->commands->tokens; //mudei de mini->tokenlst;
+	node = mini->commands->tokens;
 	last_dir = getcwd(cwd, sizeof(cwd));
-	if (!node->next)
-	{
-		ft_error("cd: missing argument", mini);
+	if (check_cd_args(&node) == 1)
 		return (1);
-	}
-	node = node->next; //Supostamente estara aqui o path
-	if (node->next)
-	{
-		ft_error("cd: too many arguments", mini);
-		return (1);
-	}
 	path = node->token;
 	if (chdir(path) == -1)
 	{
