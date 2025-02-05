@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 06:52:56 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/03 11:21:48 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/04 23:45:28 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	mini->disable_expand = false;
 	mini->has_error = false;
 	mini->prev_node = NULL;
+	init_heredoc(mini); //FOR HEREDOC
 }
 
 void	cleanup_readline(void)
@@ -64,4 +65,13 @@ void	cleanup_readline(void)
 	rl_free_line_state();
 	rl_deprep_terminal();
 	rl_cleanup_after_signal();
+}
+
+void	cleanup_fd(t_minishell *mini)
+{
+	close(mini->saved_stdout);
+	close(mini->saved_stdin);
+	close(STDIN_FILENO);
+    	close(STDOUT_FILENO);
+    	close(STDERR_FILENO);
 }

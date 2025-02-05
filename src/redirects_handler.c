@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 07:33:17 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/03 14:34:55 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 10:33:39 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	open_file(const char *filename, t_type type)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (type == APPEND_OUTPUT)
 		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if (type == INPUT)
+	else if (type == INPUT || type == HEREDOC) //HEREDOC UPDATED
 		fd = open(filename, O_RDONLY);
 	else
 	{
@@ -103,7 +103,7 @@ void	skip_redirection_plus_target(t_minishell *mini)
 	current = mini->tokenlst;
 	while (current)
 	{
-		if (current->type != NONE && current->type != PIPE)
+		if (current->type != NONE && current->type != HEREDOC && current->type != PIPE)
 		{
 			tmp = current;
 			current = current->next;
@@ -145,7 +145,7 @@ int	check_redirect_errors(t_minishell *mini)
 			mini->has_error = true;
 			return (-1);
 		}
-		else if (mini->tokenlst->next && !mini->tokenlst->next->next)
+		else if (mini->tokenlst->next /*&& !mini->tokenlst->next->next*/)
 			handle_redirections(mini);
 		else
 			skip_redirection_plus_target(mini);

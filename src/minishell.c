@@ -6,21 +6,33 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:57:45 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/03 11:15:34 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 08:18:03 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	*g_in_prompt = NULL;
+int	g_exit_code;
 
 //TODO isto e desnecessario com o comando exit
+
+void check_open_fds()
+{
+    for (int fd = 0; fd < 256; fd++) {
+        if (fcntl(fd, F_GETFD) != -1) {
+            printf("File descriptor %d is still open\n", fd);
+        }
+    }
+}
+
 void	read_lines_exit(t_minishell *mini, char *read)
 {
 	if (read == NULL)
 	{
 		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
 		free_list(mini);
+		cleanup_fd(mini);
+		check_open_fds();
 		exit (0);
 	}
 	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
@@ -28,6 +40,8 @@ void	read_lines_exit(t_minishell *mini, char *read)
 		write(STDOUT_FILENO, "exit\n", 5);
 		free(read);
 		free_list(mini);
+		cleanup_fd(mini);
+		check_open_fds();
 		exit (0);
 	}
 }
@@ -49,15 +63,16 @@ bool	is_spaces(char *read)
 void	read_lines(t_minishell *mini)
 {
 	char	*read;
-	int	saved_stdout;
-	int	saved_stdin;
 
 	read = NULL;
 	while (1)
 	{
-		g_in_prompt = (void *)mini;
 		read = readline("\033[1;31mminishell>\033[0m ");
-		g_in_prompt = NULL;
+		if (g_exit_code == 130)
+		{
+			mini->exit_status = 130;
+			g_exit_code = 0;
+		}
 		read_lines_exit(mini, read);
 		if (*read && is_spaces(read))
 		{
@@ -69,17 +84,18 @@ void	read_lines(t_minishell *mini)
 			{
 				free(read);
 				free_list(mini);
+				clear_heredoc_list(mini);
 				continue ;
 			}
-			saved_stdout = dup(STDOUT_FILENO);
-			saved_stdin = dup(STDIN_FILENO);
+			mini->saved_stdout = dup(STDOUT_FILENO);
+			mini->saved_stdin = dup(STDIN_FILENO);
 			first_token(mini);
-			dup2(saved_stdout, STDOUT_FILENO);
-			dup2(saved_stdin, STDIN_FILENO);
-			close(saved_stdout);
-			close(saved_stdin);
-
+			dup2(mini->saved_stdout, STDOUT_FILENO);
+			dup2(mini->saved_stdin, STDIN_FILENO);
+			close(mini->saved_stdout);
+			close(mini->saved_stdin);
 			free_list(mini);
+			clear_heredoc_list(mini);
 		}
 		free(read);
 	}

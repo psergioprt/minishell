@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/02/03 14:03:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/04 14:57:51 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,18 @@ int	custom_fork(t_minishell *mini)
 //TODO: mudar logica para dar os error codes
 //
 //
-
+//
+int	has_heredoc(t_minishell *mini)
+{
+	t_node	*tmp = mini->tokenlst;
+	while (tmp)
+	{
+		if(tmp->type == HEREDOC)
+			return (1);
+		tmp = tmp->next;
+	}
+	return (0);
+}
 
 int	first_token(t_minishell *mini)
 {
@@ -75,6 +86,8 @@ int	first_token(t_minishell *mini)
 	ret = 0;
 	if (check_redirect_errors(mini))
 		return (-1);
+	if (has_heredoc(mini))
+		heredoc(mini);
 	if (mini->tokenlst && mini->tokenlst->token)
 	{
 		len = ft_strlen(mini->tokenlst->token);

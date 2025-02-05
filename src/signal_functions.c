@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/30 08:40:04 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 07:53:29 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	restore_default_signals(void)
 	rl_redisplay();
 }*/
 
-void	sigint_handler(int sig)
+/*void	sigint_handler(int sig)
 {
 	t_minishell	*mini;
 
@@ -49,6 +49,17 @@ void	sigint_handler(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
+}*/
+
+void sigint_handler(int signum)
+{
+    (void)signum;
+    write(STDOUT_FILENO, "\n", 1);
+    g_exit_code = 130;  // Set g_in_prompt to SIGINT when the signal occurs
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    write(STDOUT_FILENO, "\n", 1);
+    rl_redisplay();
 }
 
 void	init_sigaction(void)

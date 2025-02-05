@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/03 14:10:33 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 08:04:31 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 # include "../Libft/libft.h"
 # include <fcntl.h>
 
-extern void *g_in_prompt;
+//extern void *g_in_prompt;
+extern int g_exit_code;
 
 typedef enum	e_type //PS: Definition of redirection type and their values
 {
@@ -35,6 +36,17 @@ typedef enum	e_type //PS: Definition of redirection type and their values
 	HEREDOC,           // <<
 	PIPE		   // |
 } t_type;
+
+typedef struct s_heredoc
+{
+	int	fd_heredoc;
+	char	*fd_heredoc_path;
+	char	*eof;
+	bool	eof_quote;
+	int	index;
+	int	count_hd;
+	struct	s_heredoc *next;
+} t_heredoc;
 
 typedef struct s_env
 {
@@ -66,6 +78,9 @@ typedef struct s_minishell
 	int				env_count;
 	char			current_token[1024];
 	t_node			*prev_node;
+	t_heredoc		*heredoc;
+	int			saved_stdout;
+	int			saved_stdin;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -118,7 +133,10 @@ void	skip_redirection_plus_target(t_minishell *mini);
 int	check_redirect_errors(t_minishell *mini);
 void	print_nodes(t_node *command_list);
 void	print_env(char *env[]);
-
+void	init_heredoc(t_minishell *mini);
+void	heredoc(t_minishell *mini);
+void	clear_heredoc_list(t_minishell *mini);
+void	cleanup_fd(t_minishell *mini);
 
 int		first_token(t_minishell *mini);
 
