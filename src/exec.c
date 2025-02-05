@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/04 18:13:51 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 12:15:14 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int	execute_execve(t_minishell *mini)
 	pid = create_pid();
 	if (pid == 0)
 	{
+		restore_default_signals();
 		if (execve(pathname, argv, mini->envp) == -1)
 			return (handle_execve_error(mini, argv, mini->command, 126));
 	}
