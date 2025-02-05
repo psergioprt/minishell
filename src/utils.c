@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 06:52:56 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/04 23:45:28 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 13:39:54 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	mini->disable_expand = false;
 	mini->has_error = false;
 	mini->prev_node = NULL;
+	mini->unquoted = true;
 	init_heredoc(mini); //FOR HEREDOC
 }
 

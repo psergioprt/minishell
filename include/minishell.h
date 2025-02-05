@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 08:04:31 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/05 13:40:25 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef struct s_minishell
 	t_heredoc		*heredoc;
 	int			saved_stdout;
 	int			saved_stdin;
+	bool			unquoted;
 }	t_minishell;
 
 typedef struct s_parse_context
