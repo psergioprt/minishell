@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 11:52:43 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 16:04:07 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,9 @@ typedef struct s_minishell
 	char			current_token[1024];
 	t_node			*prev_node;
 	t_heredoc		*heredoc;
-	int			saved_stdout;
-	int			saved_stdin;
+	int				saved_stdout;
+	int				saved_stdin;
+	bool			unquoted;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -144,11 +145,14 @@ int			check_redirect_errors(t_minishell *mini);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
 
+//NODES_HELPER
+void		free_split(char **split);
+char		**split_by_ifs(const char *str);
+
 //HANDLE_HEREDOC
 void		heredoc(t_minishell *mini);
 int			fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
 void		save_heredoc_info(t_minishell *mini);
-
 
 //HEREDOC_UTILS
 void		handle_ctrl_c_hd(t_minishell *mini);

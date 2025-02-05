@@ -55,7 +55,7 @@ void split_commands(t_minishell *mini)
 		new_cmd = create_new_cmd();
 		if (!new_cmd)
 			return;
-		while (current && ft_strcmp(current->token, "|") != 0)
+		while (current && current->type != PIPE)
 		{
 			add_token_to_cmd(new_cmd, current);
 			current = current->next;

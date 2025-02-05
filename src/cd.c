@@ -21,7 +21,8 @@ void	add_env_variable(t_minishell *mini, char *key, char *value)
 	new_env = malloc(sizeof(t_env));
 	envvars = mini->envvars;
 	new_env->key = ft_strdup(key);
-	new_env->value = ft_strdup(value);
+	if (value)
+		new_env->value = ft_strdup(value);
 	new_env->print = true;
 	while (envvars->next)
 		envvars = envvars->next;
@@ -33,7 +34,10 @@ void	has_found_env(t_env *found_env, char *key, char *dir)
 {
 	char	*new_value;
 
-	new_value = ft_strjoin(key, dir);
+	if (dir)
+		new_value = ft_strjoin(key, dir);
+	else
+		new_value = ft_strdup(key);
 	if (!new_value)
 	{
 		printf("malloc error\n");
@@ -101,6 +105,7 @@ int	custom_cd(t_minishell *mini)
 		printf("cd: %s: No such file or directory\n", path);
 		return (1);
 	}
+	printf("Last:dir: %s\n", last_dir);
 	update_pwd(mini, last_dir);
 	return (0);
 }

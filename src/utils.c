@@ -57,6 +57,7 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	mini->disable_expand = false;
 	mini->has_error = false;
 	mini->prev_node = NULL;
+	mini->unquoted = true;
 	init_heredoc(mini);
 }
 

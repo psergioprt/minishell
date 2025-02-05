@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/05 11:33:32 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 16:06:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j)
 {
 	mini->heredoc->eof_quote = true;
+	mini->unquoted = false;
 	if (!ctx->quote)
 	{
 		ctx->quote = ctx->input[*i];

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/05 11:08:18 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 16:05:42 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,22 @@ void	add_command_node(t_minishell *mini, const char *token, \
 void	handle_command_addition(t_minishell *mini, int *j)
 {
 	char	*expanded_token;
+	char	**split_tokens;
+	int	i;
 
+	i = 0;
 	expanded_token = NULL;
 	if (*j > 0 && !mini->has_error)
 	{
 		mini->current_token[*j] = '\0';
 		expanded_token = expand_env_var(mini->current_token, mini);
-		if (mini->disable_expand)
-			add_command_node(mini, mini->current_token, NONE, &(mini->prev_node));
+		if (mini->unquoted)
+		{
+			split_tokens = split_by_ifs(expanded_token);
+			while (split_tokens[i])
+				add_command_node(mini, split_tokens[i++], NONE, &(mini->prev_node));
+			free_split(split_tokens);
+		}
 		else
 			add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
 		if (expanded_token != mini->current_token)
