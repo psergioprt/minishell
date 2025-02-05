@@ -37,6 +37,7 @@ static void add_token_to_cmd(t_cmd *cmd, t_node *current)
 	if (!*token_tail)
 		return;
 	(*token_tail)->token = ft_strdup(current->token);
+	(*token_tail)->type = current->type;
 	(*token_tail)->next = NULL;
 }
 

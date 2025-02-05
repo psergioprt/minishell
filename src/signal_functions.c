@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/22 12:11:02 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 11:32:35 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	restore_default_signals(void)
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_flags = 0;
 	sa_default.sa_handler = SIG_DFL;
-
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
 }

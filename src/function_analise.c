@@ -262,12 +262,13 @@ void exec_multiple_cmds(t_minishell *mini)
 
 void	exec_cmds(t_minishell *mini)
 {
-/* 	t_node	*tokenlst;
-
-	tokenlst = mini->tokenlst; */
+	mini->prev_node = NULL;
 	split_commands(mini);
 	print_commands(mini); //TODO apagar
-	
+	if (check_redirect_errors(mini))
+		return ;
+	if (has_heredoc(mini))
+		heredoc(mini);
 	if(mini->commands && !mini->commands->next)
 		first_token(mini);
 	else
@@ -281,6 +282,13 @@ void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 	size_t	len;
 
 	len = ft_strlen(cmdlst->tokens->token);
+	// if (handle_redirections(mini) == -1) O DO PAULO ESTA ASSIM
+	// 		return (-1);
+	if (handle_redirections(mini) == -1)
+		return ;
+	skip_redirection_plus_target(mini);
+	if (!mini->tokenlst || !mini->tokenlst->token)
+			return ;
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);//correct exit codes
 	else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))

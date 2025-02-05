@@ -18,6 +18,7 @@ void	do_exit(t_minishell *mini, int error_code)
 	free_envvars(mini);
 	free_commands(mini->commands);
 	free_list(mini);
+	cleanup_fd(mini);
 	printf("exit\n");	
 	exit(error_code);
 }

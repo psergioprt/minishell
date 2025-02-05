@@ -1,16 +1,6 @@
 #include "../include/minishell.h"
 
-void	print_env(char *env[])
-{
-	int	i;
-
-	i = 0;
-	while (env[i] != NULL)
-	{
-		printf("%s\n", env[i]);
-		i++;
-	}
-}
+int	g_exit_code;
 
 void	print_nodes(t_node *command_list)
 {
@@ -36,6 +26,7 @@ void	read_lines_exit(t_minishell *mini, char *read)
 	{
 		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
 		free_list(mini);
+		cleanup_fd(mini);
 		exit (0);
 	}
 /* 	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
@@ -69,6 +60,11 @@ void	read_lines(t_minishell *mini)
 	while (1)
 	{
 		read = readline("\033[1;31mminishell>\033[0m ");
+		if (g_exit_code != 0)
+		{
+			mini->exit_status = g_exit_code;
+			g_exit_code = 0;
+		}
 		read_lines_exit(mini, read); //TODO da segfault quando comentada no cntrl D	
 		if (*read && is_spaces(read))
 		{
@@ -80,12 +76,19 @@ void	read_lines(t_minishell *mini)
 			{
 				free(read);
 				free_list(mini);
+				clear_heredoc_list(mini);
 				continue ;
 			}
-			//first_token(mini);
+			mini->saved_stdout = dup(STDOUT_FILENO);
+			mini->saved_stdin = dup(STDIN_FILENO);
 			exec_cmds(mini);
+			dup2(mini->saved_stdout, STDOUT_FILENO);
+			dup2(mini->saved_stdin, STDIN_FILENO);
+			close(mini->saved_stdout);
+			close(mini->saved_stdin);
 			free_commands(mini->commands);
 			free_list(mini);
+			clear_heredoc_list(mini);
 		}
 		free(read);
 	}
@@ -99,7 +102,7 @@ int	main(int argc, char *argv[], char *env[])
 
 	init_sigaction();
 	(void)argc;
-	(void)argv;
+	(void)argv;	
 	if (argc != 1 || argv[1])
 	{
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
@@ -107,11 +110,10 @@ int	main(int argc, char *argv[], char *env[])
 	}
 	mini.tokenlst = NULL;
 	mini.exit_status = 0;
-	mini.i = 0;
+	mini.i = 0; //TODO checkar se e preciso
 	parse_env(&mini, env);
 	copy_env(env, &mini);
 	read_lines(&mini);
-	cleanup_readline();
 	free_envvars(&mini);
 	return (0);
 }

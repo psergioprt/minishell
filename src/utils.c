@@ -56,24 +56,15 @@ void	init_variables(t_minishell *mini, t_parse_context *ctx, \
 	mini->has_pipe = 0;
 	mini->disable_expand = false;
 	mini->has_error = false;
+	mini->prev_node = NULL;
+	init_heredoc(mini);
 }
 
-void	cleanup_readline(void)
+void	cleanup_fd(t_minishell *mini)
 {
-	rl_clear_history();
-	rl_free_line_state();
-	rl_deprep_terminal();
-	rl_cleanup_after_signal();
-}
-
-void	print_envvar(t_minishell *mini)
-{
-	t_env	*current;
-
-	current = mini->envvars;
-	while (current)
-	{
-		printf("Key: %s, Value: %s\n", current->key, current->value);
-		current = current->next;
-	}
+	close(mini->saved_stdout);
+	close(mini->saved_stdin);
+	close(STDIN_FILENO);
+    	close(STDOUT_FILENO);
+    	close(STDERR_FILENO);
 }

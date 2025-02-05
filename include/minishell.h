@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/04 18:13:06 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/05 11:52:43 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,29 @@
 # include "../Libft/libft.h"
 # include <fcntl.h>
 
+extern int g_exit_code;
+
+typedef enum	e_type //PS: Definition of redirection type and their values
+{
+	NONE = -1,         // No redirection
+	OUTPUT = 1,        // >
+	APPEND_OUTPUT,     // <
+	INPUT,             // >>
+	HEREDOC,           // <<
+	PIPE		   // |
+} t_type;
+
+typedef struct s_heredoc
+{
+	int	fd_heredoc;
+	char	*fd_heredoc_path;
+	char	*eof;
+	bool	eof_quote;
+	int	index;
+	int	count_hd;
+	struct	s_heredoc *next;
+} t_heredoc;
+
 typedef struct s_env
 {
 	char			*key;
@@ -37,6 +60,8 @@ typedef struct s_node
 {
 	char			*token;
 	struct s_node	*next;
+	t_type			type; //PS:Redirection type (OUTPUT, APPEND_OUTPUT, ETC)
+	char			*target;
 }	t_node;
 
 typedef struct s_cmd
@@ -61,6 +86,10 @@ typedef struct s_minishell
 	bool			has_error;
 	int				env_count;
 	char			current_token[1024];
+	t_node			*prev_node;
+	t_heredoc		*heredoc;
+	int			saved_stdout;
+	int			saved_stdin;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -81,19 +110,17 @@ typedef struct s_token_context
 	t_parse_context	*ctx;
 }	t_token_context;
 
-t_node		*create_command_node(const char *command);
-void		add_command_node(t_minishell *mini, const char *command);
+t_node		*create_command_node(const char *token, t_type type, t_node **prev_node);
+void		add_command_node(t_minishell *mini, const char *token, t_type type, t_node **prev_node);
 void		free_list(t_minishell *mini);
 void		split_and_add_commands(t_minishell *mini, const char *input);
 void		init_variables(t_minishell *mini, t_parse_context *ctx, \
 			const char *input, char *current_token);
-void		cleanup_readline(void);
 void		free_envvars(t_minishell *mini);
 void		parse_env(t_minishell *mini, char *env[]);
 char		*expand_env_var(char *token, t_minishell *mini);
 void		copy_env(char *env[], t_minishell *mini);
 char		*get_env_value(char *env_name, t_minishell *mini);
-void		print_envvar(t_minishell *mini);
 void		init_sigaction(void);
 void		handle_env_var(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
@@ -105,9 +132,44 @@ void		handle_open_close_quotes(t_minishell *mini, \
 			t_parse_context *ctx, int *i, int *j);
 void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
+int			handle_redirections(t_minishell *mini);
+void		restore_default_signals(void);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
-void		restore_default_signals(void);
+
+//5/2 - Added
+int			identify_redirection_type(char *token);
+void		skip_redirection_plus_target(t_minishell *mini);
+int			check_redirect_errors(t_minishell *mini);
+void		print_nodes(t_node *command_list);
+void		cleanup_fd(t_minishell *mini);
+
+//HANDLE_HEREDOC
+void		heredoc(t_minishell *mini);
+int			fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
+void		save_heredoc_info(t_minishell *mini);
+
+
+//HEREDOC_UTILS
+void		handle_ctrl_c_hd(t_minishell *mini);
+void		handle_heredoc_signal(int signal);
+void		set_signals_to_here_doc(void);
+char		*ft_strjoin_free(char *s1, const char *s2);
+int			check_malloc(void *ptr);
+
+//HEREDOC_UTILS2
+void		init_heredoc(t_minishell *mini);
+void		clear_heredoc_list(t_minishell *mini);
+void		include_hd_path(t_minishell *mini);
+int			find_next_env(char *line);
+char		*append_expanded_env(t_minishell *mini, char *result, char **pline, int pos);
+
+//HEREDOC_UTILS3
+char		*expand_env_vars_in_line(t_minishell *mini, char *line);
+void		check_hd_expand(char **line, t_minishell *mini);
+void		handle_heredoc_child(t_heredoc *tmp_hd, t_minishell *mini);
+int			has_heredoc(t_minishell *mini);
+
 
 //FUNCTION_ANALISE
 int			first_token(t_minishell *mini);
