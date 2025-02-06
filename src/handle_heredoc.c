@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/06 15:01:31 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/06 18:28:49 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	heredoc(t_minishell *mini)
 	}
 	include_hd_path(mini);
 	
-
+	//TODO: FAZER ISTO
 	t_node *tokenlst = mini->tokenlst;
 
 	printf("UWU\n");
