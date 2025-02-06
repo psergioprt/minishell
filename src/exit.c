@@ -19,6 +19,8 @@ void	do_exit(t_minishell *mini, int error_code)
 	free_commands(mini->commands);
 	free_list(mini);
 	cleanup_fd(mini);
+	// close(mini->saved_stdin);
+	// close(mini->saved_stdout);
 	printf("exit\n");	
 	exit(error_code);
 }

@@ -12,54 +12,6 @@
 
 #include "../include/minishell.h"
 
-/* int	custom_fork(t_minishell *mini)
-{
-	pid_t	pid;
-	int		status;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		printf("Fork error");
-		exit(EXIT_FAILURE);
- 		//perror("fork");
-	}
-	else if (pid == 0) {
-		// Child process
-		printf("Executing command in child process (PID: %d)\n", getpid()); //TODO apagar
-		restore_default_signals();
-		// Execute the command using execve
-		if (execute_execve(mini) == -1) {
-			printf("execve error\n"); //TODO apagar
-			exit(mini->exit_status); // Exit the child process if execve fails
-		}
-	} else {
-		// Parent process
-		printf("Parent process waiting for child (PID: %d)\n", pid);
-
-		// Wait for the child process to finish
-		if (waitpid(pid, &status, 0) == -1) {
-			printf("waitpid error");
-			exit(EXIT_FAILURE);
-		}
-
-		 // Check child's exit status
-		if (WIFEXITED(status))
-		{
-			mini->exit_status = WEXITSTATUS(status);
-			printf("mini->exit_status: %d\n", mini->exit_status);//TODO apagar testes
-		}
-		else if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == SIGQUIT)
-				write(1, "Quit (core dumped)\n", 19);
-			mini->exit_status = 128 + WTERMSIG(status);
-			printf("Child process terminated by signal: %d\n", WTERMSIG(status));//TODO apagar testes
-		}
-	}
-	return (0);
-} */
-
 //TODO apagar: funcao de testes para ver se cmds estao a ficar bem guardados
 void print_commands(t_minishell *mini)
 {
@@ -80,44 +32,28 @@ void print_commands(t_minishell *mini)
         cmd = cmd->next;
     }
 }
+//TODO nao esta a ser usada? APAGAR?
+// void run_cmd(t_minishell *mini, int *prev_fd)
+// {
+//     if (*prev_fd != -1)
+//         redir_fds(*prev_fd, STDIN_FILENO);
+//     if (mini->commands->next)
+//         redir_fds(mini->commands->fd[1], STDOUT_FILENO);
+//     if (mini->commands->fd[0] != -1)
+//         close(mini->commands->fd[0]);
 
-void run_cmd(t_minishell *mini, int *prev_fd)
-{
-    if (*prev_fd != -1)
-        redir_fds(*prev_fd, STDIN_FILENO);
-    if (mini->commands->next)
-        redir_fds(mini->commands->fd[1], STDOUT_FILENO);
-    if (mini->commands->fd[0] != -1)
-        close(mini->commands->fd[0]);
-
-    // Execute command
-    execute_execve(mini);
+//     // Execute command
+//     execute_execve(mini);
     
-    // If execve fails, exit child process
-    perror("execve failed");
-    exit(1);
-}
-
-
-
-
-/* void	run_cmd(t_minishell *mini, int *prev_fd)
-{
-	if (*prev_fd != -1)
-		redir_fds(*prev_fd, STDIN_FILENO);
-	if (mini->commands->next)
-		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
-	if (mini->commands->fd[0] != -1)
-		close(mini->commands->fd[0]);
-	first_token(mini);
-	//free_list(mini);
-	//free_commands(mini);
-} */
+//     // If execve fails, exit child process
+//     perror("execve failed");
+//     exit(1);
+// }
 
 void	exec_commands(t_minishell *mini, int *prev_fd)
 {
     pid_t	pid;
-	int		status;
+	//int		status;
 
     pid = create_pid();
     if (pid == 0) // Child process
@@ -140,9 +76,11 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
             close(mini->commands->fd[1]);
 
         first_token(mini); // Execute command (execve or builtin)
+		close(mini->saved_stdin);
+		close(mini->saved_stdout);
         exit(mini->exit_status); // Ensure child exits
     }
-	waitpid(pid, &status, 0);
+	//waitpid(pid, &status, 0);
     // Parent process
     if (*prev_fd != -1)
     {
@@ -226,10 +164,12 @@ void exec_multiple_cmds(t_minishell *mini)
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
 		free(old_cmd);
-	}
-	
-	close(prev_fd);
+		init_sigaction();
+	}	
 	wait_childs(mini, n_cmds);
+	mini->i = 0;
+	if (prev_fd != -1)
+		close(prev_fd);
 }
 
 
@@ -267,14 +207,13 @@ void	exec_cmds(t_minishell *mini)
 	print_commands(mini); //TODO apagar
 	if (check_redirect_errors(mini))
 		return ;
-	if (has_heredoc(mini))
-		heredoc(mini);
+	// if (has_heredoc(mini))
+	// 	heredoc(mini);
+	
 	if(mini->commands && !mini->commands->next)
 		first_token(mini);
 	else
 		exec_multiple_cmds(mini);
-	//logica se tem pipe -> exec multiple commands
-	//else first token
 }
 
 void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
@@ -282,11 +221,15 @@ void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 	size_t	len;
 
 	len = ft_strlen(cmdlst->tokens->token);
-	// if (handle_redirections(mini) == -1) O DO PAULO ESTA ASSIM
-	// 		return (-1);
+	if (has_heredoc(mini))
+		heredoc(mini);
 	if (handle_redirections(mini) == -1)
 		return ;
 	skip_redirection_plus_target(mini);
+	//redir_fds(mini->saved_stdout, STDOUT_FILENO);
+	//redir_fds(mini->saved_stdin, STDIN_FILENO);
+	//close(mini->saved_stdin);
+	//close(mini->saved_stdout);
 	if (!mini->tokenlst || !mini->tokenlst->token)
 			return ;
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))

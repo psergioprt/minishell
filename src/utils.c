@@ -66,6 +66,6 @@ void	cleanup_fd(t_minishell *mini)
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
 	close(STDIN_FILENO);
-    	close(STDOUT_FILENO);
-    	close(STDERR_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
 }

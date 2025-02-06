@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 16:04:07 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/06 15:29:16 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,9 @@ void		skip_redirection_plus_target(t_minishell *mini);
 int			check_redirect_errors(t_minishell *mini);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
+
+//SIGNALS_FUNCTIONS
+void	sigint_handler(int sig);
 
 //NODES_HELPER
 void		free_split(char **split);

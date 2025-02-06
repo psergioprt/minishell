@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 11:15:38 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/06 15:01:31 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	heredoc(t_minishell *mini)
 {
 	t_heredoc	*tmp_hd;
 	char		*num;
-	int		status;
+	int			status;
 	pid_t		pid;
 	
 	save_heredoc_info(mini);
@@ -126,4 +126,22 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = tmp_hd->next;
 	}
 	include_hd_path(mini);
+	
+
+	t_node *tokenlst = mini->tokenlst;
+
+	printf("UWU\n");
+
+	while (tokenlst->type != HEREDOC && tokenlst)
+	{
+		printf("owo\n");
+		printf("token: %s\n", tokenlst->token);
+		printf("token->type: %d\n", tokenlst->type);
+		if (tokenlst->token && tokenlst->type == HEREDOC)
+			printf("tou ken: %s\n", tokenlst->token);
+		tokenlst = tokenlst->next;
+	}
+	
+
+
 }

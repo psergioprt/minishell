@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 12:15:14 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/06 17:46:16 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,20 @@ static int	handle_path(t_minishell *mini, char **argv, char **pathname)
 	}
 	return (0);
 }
+void	child_handler(int sig)
+{
+	(void)sig;
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	write(STDOUT_FILENO, "\n", 1);
+	//rl_redisplay();
+}
+
+void	ignore_signals(void)
+{
+	signal(SIGINT, child_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
 
 int	execute_execve(t_minishell *mini)
 {
@@ -83,15 +97,20 @@ int	execute_execve(t_minishell *mini)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)
 		return (-1);
+	ignore_signals(); //TODO CREATED FOR THE ISSUE #10 SIGNAL ERRORS
 	pid = create_pid();
 	if (pid == 0)
 	{
+		close(mini->saved_stdin);
+		close(mini->saved_stdout);
 		restore_default_signals();
 		if (execve(pathname, argv, mini->envp) == -1)
 			return (handle_execve_error(mini, argv, mini->command, 126));
 	}
+	//ft_putnbr_fd(pid, 2);
 	waitpid(pid, &status, 0);
 	feel_signals(mini, status);
 	cleanup_execve_memory(argv, mini->command, pathname);
+	restore_default_signals();//TODO Corrige cntrl C a nao funcionar depois de cat sem arg, mas cntrl c fecha programa 
 	return (mini->exit_status);
 }

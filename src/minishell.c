@@ -29,13 +29,6 @@ void	read_lines_exit(t_minishell *mini, char *read)
 		cleanup_fd(mini);
 		exit (0);
 	}
-/* 	if (ft_strcmp(read, "exit") == 0 && !(ft_strlen(read) == 0))
-	{
-		write(STDOUT_FILENO, "exit\n", 5);
-		free(read);
-		free_list(mini);
-		exit (0);
-	} */
 }
 
 bool	is_spaces(char *read)
@@ -82,10 +75,11 @@ void	read_lines(t_minishell *mini)
 			mini->saved_stdout = dup(STDOUT_FILENO);
 			mini->saved_stdin = dup(STDIN_FILENO);
 			exec_cmds(mini);
-			dup2(mini->saved_stdout, STDOUT_FILENO);
-			dup2(mini->saved_stdin, STDIN_FILENO);
+			redir_fds(mini->saved_stdout, STDOUT_FILENO);
+			redir_fds(mini->saved_stdin, STDIN_FILENO);
 			close(mini->saved_stdout);
 			close(mini->saved_stdin);
+			printf("fechei!\n");
 			free_commands(mini->commands);
 			free_list(mini);
 			clear_heredoc_list(mini);
