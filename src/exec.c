@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/06 22:18:25 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/07 17:04:58 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,8 @@ int	execute_execve(t_minishell *mini)
 			return (handle_execve_error(mini, argv, mini->command, 126));
 	}
 	//ft_putnbr_fd(pid, 2);
-	waitpid(pid, &status, 0);
-	feel_signals(mini, status);
+	waitpid(pid, &status, 0); //PS COMMENTED
+	feel_signals(mini, status); // PS COMMENTED
 	cleanup_execve_memory(argv, mini->command, pathname);
 //	restore_default_signals();//TODO Corrige cntrl C a nao funcionar depois de cat sem arg, mas cntrl c fecha programa 
 	return (mini->exit_status);

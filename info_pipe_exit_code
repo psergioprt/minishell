@@ -1,0 +1,25 @@
+To deal with CAT | CAT -> CTRL + \ = 131 exit_code
+I have defined mini->exit_status at wait_childs function at pipes.c file
+
+I have commented the previous function and the current one is this one - to check.
+
+ 97 void    wait_childs(t_minishell *mini, int n_cmds)
+ 98 {
+ 99         int     i;
+100 
+101         i = 0;
+102         while (i < n_cmds)
+103         {
+104                 pid_t pid = waitpid(mini->child[i], &mini->exit_status, 0);
+105                 if (pid == -1)
+106                         perror("waitpid failed");
+107                 else
+108                 {
+109                         if (WIFEXITED(mini->exit_status))
+110                                 mini->exit_status = WEXITSTATUS(mini->exit_status);
+111                         else if (WIFSIGNALED(mini->exit_status))
+112                                 mini->exit_status = 128 + WTERMSIG(mini->exit_status);
+113                 }
+114                 i++;
+115         }
+116 }
