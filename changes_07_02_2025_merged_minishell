@@ -7,4 +7,141 @@ Neither case quits prompt after entering CTRL + C
 
 What has been done:
 Created a variable which will check state if outside command, which is 1, or after a command which is 0.
-The variable is assigned to 1
+The variable interactive is assigned to 1 in which case, init_sigaction function, chooses 
+sigint_handler function to run, case is 0, or running command, it reads the other function child.
+init_sigaction has now an argument interactive
+
+Changes or updates
+1 - MINISHELL.H - Add new variable at minishell struct
+ 94         int                     interactive;
+ 95 
+ 96 }       t_minishell;
+
+2 - SIGNAL_FUNCTIONS.C
+
+ 15 void    restore_default_signals(void) //NOT CHANGED FROM WHAT I HAD BEFORE
+ 
+ 26 void    sigint_handler(int sig) //NOT CHANGED FROM WHAT I HAD BEFORE
+ 
+ 36 void    sigint_handler_child(int sig) //NEW FUNCTION for CTRL + C AFTER CAT
+ 37 {
+ 38         (void)sig;
+ 39         write(STDOUT_FILENO, "\n", 1);
+ 40         g_exit_code = 130;
+ 41 }
+
+ 43 void    init_sigaction(int interactive) //UPDATED FUNCTION TO RECEIVE VALUE 1 OR 0, AND IF CLAUSE
+ 44 {
+ 45         struct sigaction        sa_int;
+ 46         struct sigaction        sa_quit;
+ 47 
+ 48         sigemptyset(&sa_int.sa_mask);
+ 49         sigemptyset(&sa_quit.sa_mask);
+ 50         sa_int.sa_flags = SA_RESTART;
+ 51         sa_quit.sa_flags = SA_RESTART;
+ 52         if (interactive)
+ 53                 sa_int.sa_handler = sigint_handler;
+ 54         else
+ 55                 sa_int.sa_handler = sigint_handler_child;
+ 56         sa_quit.sa_handler = SIG_IGN;
+ 57         sigaction(SIGINT, &sa_int, NULL);
+ 58         sigaction(SIGQUIT, &sa_quit, NULL);
+ 59 }
+
+3 - MINISHELL.C
+
+3A- AT MAIN
+
+ 98 int     main(int argc, char *argv[], char *env[])
+ 99 {
+100         t_minishell     mini;
+101 
+102         mini.interactive = 1; //inicialized variable to default
+103         init_sigaction(mini.interactive); //updated argument
+
+3B - AT READLINES
+
+LINES 55, 76, 77, 89, 90
+Starts with 1 (default), then immediately before entering commands is set to 0, executes
+init_sigaction function to get the new value (0). After leaving the commands function, the value is
+reset to 1.
+
+ 48 void    read_lines(t_minishell *mini)
+ 49 {
+ 50         char    *read;
+ 51 
+ 52         read = NULL;
+ 53         while (1)
+ 54         {
+ 55                 mini->interactive = 1;
+ 56                 read = readline("\033[1;31mminishell>\033[0m ");
+ 57                 if (g_exit_code != 0)
+ 58                 {
+ 59                         mini->exit_status = g_exit_code;
+ 60                         g_exit_code = 0;
+ 61                 }
+ 62                 read_lines_exit(mini, read); //TODO da segfault quando comentada no cntrl D     
+ 63                 if (*read && is_spaces(read))
+ 64                 {
+ 65                         split_and_add_commands(mini, read);
+ 66                         add_history(read);
+ 67                         if (!mini->has_error)
+ 68                                 print_nodes(mini->tokenlst);
+ 69                         if (mini->has_error)
+ 70                         {
+ 71                                 free(read);
+ 72                                 free_list(mini);
+ 73                                 clear_heredoc_list(mini);
+ 74                                 continue ;
+ 75                         }
+ 76                         mini->interactive = 0;
+ 77                         init_sigaction(mini->interactive);
+ 78                         mini->saved_stdout = dup(STDOUT_FILENO);
+ 79                         mini->saved_stdin = dup(STDIN_FILENO);
+ 80                         exec_cmds(mini);
+ 81                         redir_fds(mini->saved_stdout, STDOUT_FILENO);
+ 82                         redir_fds(mini->saved_stdin, STDIN_FILENO);
+ 83                         close(mini->saved_stdout);
+ 84                         close(mini->saved_stdin);
+ 85 //                      printf("fechei!\n");
+ 86                         free_commands(mini->commands);
+ 87                         free_list(mini);
+ 88                         clear_heredoc_list(mini);
+ 89                         mini->interactive = 1;
+ 90                         init_sigaction(mini->interactive);
+ 91                 }
+ 92                 free(read);
+ 93         }
+ 94         free_commands(mini->commands);
+ 95         free_list(mini);
+ 96 }
+
+WHAT I HAVE COMMENTED:
+FILE: EXEC.C FUNCTION: EXECUTE_EXECVE
+BECAUSE IT IS ALREADY BEING DEALT, FUNCTIONS AT LINES 69 TO 82 ARE NOT NEEDED
+
+ 69 /*void  child_handler(int sig)
+ 70 {
+ 71         (void)sig;
+ 72         rl_replace_line("", 0);
+ 73         rl_on_new_line();
+ 74         write(STDOUT_FILENO, "\n", 1);
+ 75         //rl_redisplay();
+ 76 }*/
+ 77 
+ 78 /*void  ignore_signals(void)
+ 79 {
+ 80         signal(SIGINT, child_handler);
+ 81         signal(SIGQUIT, SIG_IGN);
+ 82 }*/
+
+COMMENTED LINES 100 AND 114 - 
+100 //      ignore_signals(); //TODO CREATED FOR THE ISSUE #10 SIGNAL ERRORS
+114 //      restore_default_signals();//TODO Corrige cntrl C a nao funcionar depois de cat sem arg,
+ mas     cntrl c fecha programa 
+
+FILE: FUNCTION_ANALISE.C FUNCTION: EXEC_MULTIPLE_CMDS
+
+Don't know if this line is needed. My test cases worked with or without this function call.
+167                 init_sigaction(mini->interactive);
+
