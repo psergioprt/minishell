@@ -100,12 +100,8 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 	int	i;
 
 	i = 0;
-    write(2, "\n\n", 2);
-    ft_putnbr_fd(n_cmds, 2);
-    write(2, "\n\n", 2);
 	while (i < n_cmds)
 	{
-        printf("I waited for: %d\n", mini->child[i]);
 		waitpid(mini->child[i], &mini->exit_status, 0);
 		i++;
 	}

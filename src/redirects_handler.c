@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 17:10:37 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/07 12:12:20 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	handle_redirections(t_minishell *mini)
 
 int	identify_redirection_type(char *token)
 {
-	printf("Current_token: %s\n", token);
+	//printf("Current_token: %s\n", token);
 	if (!ft_strcmp(token, ">"))
 		return (OUTPUT);
 	if (!ft_strcmp(token, ">>"))

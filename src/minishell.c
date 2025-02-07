@@ -52,6 +52,7 @@ void	read_lines(t_minishell *mini)
 	read = NULL;
 	while (1)
 	{
+		mini->interactive = 1;
 		read = readline("\033[1;31mminishell>\033[0m ");
 		if (g_exit_code != 0)
 		{
@@ -63,8 +64,8 @@ void	read_lines(t_minishell *mini)
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
-			if (!mini->has_error)
-				print_nodes(mini->tokenlst);
+			/* if (!mini->has_error)
+				print_nodes(mini->tokenlst); */
 			if (mini->has_error)
 			{
 				free(read);
@@ -72,6 +73,8 @@ void	read_lines(t_minishell *mini)
 				clear_heredoc_list(mini);
 				continue ;
 			}
+			mini->interactive = 0;
+			init_sigaction(mini->interactive);
 			mini->saved_stdout = dup(STDOUT_FILENO);
 			mini->saved_stdin = dup(STDIN_FILENO);
 			exec_cmds(mini);
@@ -79,10 +82,11 @@ void	read_lines(t_minishell *mini)
 			redir_fds(mini->saved_stdin, STDIN_FILENO);
 			close(mini->saved_stdout);
 			close(mini->saved_stdin);
-			printf("fechei!\n");
 			free_commands(mini->commands);
 			free_list(mini);
 			clear_heredoc_list(mini);
+			mini->interactive = 1;
+			init_sigaction(mini->interactive);
 		}
 		free(read);
 	}
@@ -94,7 +98,8 @@ int	main(int argc, char *argv[], char *env[])
 {
 	t_minishell	mini;
 
-	init_sigaction();
+	mini.interactive = 1;
+	init_sigaction(mini.interactive);
 	(void)argc;
 	(void)argv;	
 	if (argc != 1 || argv[1])

@@ -164,7 +164,7 @@ void exec_multiple_cmds(t_minishell *mini)
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
 		free(old_cmd);
-		init_sigaction();
+		init_sigaction(mini->interactive);
 	}	
 	wait_childs(mini, n_cmds);
 	mini->i = 0;
