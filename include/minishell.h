@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:04:45 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/06 15:29:16 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/06 22:40:08 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ typedef struct s_minishell
 	int				saved_stdout;
 	int				saved_stdin;
 	bool			unquoted;
+	int			interactive;
+
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -122,7 +124,7 @@ void		parse_env(t_minishell *mini, char *env[]);
 char		*expand_env_var(char *token, t_minishell *mini);
 void		copy_env(char *env[], t_minishell *mini);
 char		*get_env_value(char *env_name, t_minishell *mini);
-void		init_sigaction(void);
+void		init_sigaction(int interactive);
 void		handle_env_var(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 void		handle_loop_parsers(t_minishell *mini, const char *input, \

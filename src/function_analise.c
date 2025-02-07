@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/06 22:50:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void exec_multiple_cmds(t_minishell *mini)
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
 		free(old_cmd);
-		init_sigaction();
+		//init_sigaction();
 	}	
 	wait_childs(mini, n_cmds);
 	mini->i = 0;
