@@ -1,0 +1,10 @@
+SIGNALS UPDATE PAULO SÉRGIO 07_02_2028
+Deals with CTRL + C OK ... 130 OK
+Deals with CTRL + \ OK ... Does nothing OK
+Deals with ECHO + CTRL + \ ... Displays message and 131 OK
+Deals with ECHO + CTRL + C ... Single prompt OK and 130 OK
+Neither case quits prompt after entering CTRL + C
+
+What has been done:
+Created a variable which will check state if outside command, which is 1, or after a command which is 0.
+The variable is assigned to 1
