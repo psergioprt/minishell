@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/06 18:28:49 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/07 14:52:16 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void	heredoc(t_minishell *mini)
 	
 	//TODO: FAZER ISTO
 	t_node *tokenlst = mini->tokenlst;
+	t_cmd	*cmds = mini->commands;
 
 	printf("UWU\n");
 
@@ -137,9 +138,22 @@ void	heredoc(t_minishell *mini)
 		printf("owo\n");
 		printf("token: %s\n", tokenlst->token);
 		printf("token->type: %d\n", tokenlst->type);
-		if (tokenlst->token && tokenlst->type == HEREDOC)
+		printf("Command: %s\n", cmds->tokens->token);
+		if (tokenlst->token && tokenlst->type == 3)
+		{
+			free(tokenlst->token);
+			tokenlst->token = ft_strdup("<");
+			free(cmds->tokens->token);
+			cmds->tokens->token = ft_strdup("<");
 			printf("tou ken: %s\n", tokenlst->token);
-		tokenlst = tokenlst->next;
+			printf("cu mand: %s\n", cmds->tokens->token);
+		}
+		if (cmds->tokens->next)
+			cmds->tokens = cmds->tokens->next;
+		if (tokenlst->next)
+			tokenlst = tokenlst->next;
+		else
+			break;
 	}
 	
 

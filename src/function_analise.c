@@ -223,6 +223,10 @@ void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 	len = ft_strlen(cmdlst->tokens->token);
 	if (has_heredoc(mini))
 		heredoc(mini);
+		//TODO esta a dar skip, o token esta como EOF em vez de cat
+	ft_putstr_fd("Executing: ", 2);
+	ft_putstr_fd(mini->commands->tokens->token, 2);
+	ft_putstr_fd("\n", 2);
 	if (handle_redirections(mini) == -1)
 		return ;
 	skip_redirection_plus_target(mini);

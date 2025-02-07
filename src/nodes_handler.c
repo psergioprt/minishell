@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/07 12:12:05 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/07 12:33:19 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_node	*create_command_node(const char *token, t_type type, \
 	}
 	if (prev_node)
 		*prev_node = new_node;
-	//printf("Node created: token='%s', type=%d, target='%s'\n", new_node->token, new_node->type, new_node->target);
+	printf("Node created: token='%s', type=%d, target='%s'\n", new_node->token, new_node->type, new_node->target);
 	return (new_node);
 }
 

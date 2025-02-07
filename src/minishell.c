@@ -64,8 +64,8 @@ void	read_lines(t_minishell *mini)
 		{
 			split_and_add_commands(mini, read);
 			add_history(read);
-			/* if (!mini->has_error)
-				print_nodes(mini->tokenlst); */
+			if (!mini->has_error)
+				print_nodes(mini->tokenlst);
 			if (mini->has_error)
 			{
 				free(read);
