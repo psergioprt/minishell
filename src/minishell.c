@@ -84,6 +84,8 @@ void	read_lines(t_minishell *mini)
 			close(mini->saved_stdin);
 			free_commands(mini->commands);
 			free_list(mini);
+			if (mini->heredoc->fd_heredoc_path)
+				unlink(mini->heredoc->fd_heredoc_path); //Added to remove heredoc after use
 			clear_heredoc_list(mini);
 			mini->interactive = 1;
 			init_sigaction(mini->interactive);
@@ -107,6 +109,7 @@ int	main(int argc, char *argv[], char *env[])
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
 		exit (1);
 	}
+	//mini.disable_expand = false;
 	mini.tokenlst = NULL;
 	mini.exit_status = 0;
 	mini.i = 0; //TODO checkar se e preciso

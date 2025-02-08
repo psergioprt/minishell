@@ -221,19 +221,12 @@ void execute(t_minishell *mini,/*  int *ret, */ t_cmd *cmdlst)
 	size_t	len;
 
 	len = ft_strlen(cmdlst->tokens->token);
+
 	if (has_heredoc(mini))
 		heredoc(mini);
-		//TODO esta a dar skip, o token esta como EOF em vez de cat
-	ft_putstr_fd("Executing: ", 2);
-	ft_putstr_fd(mini->commands->tokens->token, 2);
-	ft_putstr_fd("\n", 2);
 	if (handle_redirections(mini) == -1)
 		return ;
 	skip_redirection_plus_target(mini);
-	//redir_fds(mini->saved_stdout, STDOUT_FILENO);
-	//redir_fds(mini->saved_stdin, STDIN_FILENO);
-	//close(mini->saved_stdin);
-	//close(mini->saved_stdout);
 	if (!mini->tokenlst || !mini->tokenlst->token)
 			return ;
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))

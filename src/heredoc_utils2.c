@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 11:14:18 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 14:24:13 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	find_next_env(char *line)
 	while (line[i])
 	{
 		if (line[i] == '$')
-		return (i);
+			return (i);
 		i++;
 	}
 	return (-1);

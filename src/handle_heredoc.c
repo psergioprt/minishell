@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/07 14:52:16 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 14:58:14 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,54 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	return (0);
 }
 
+
+
+void	remove_heredoc_token(t_minishell *mini)
+{
+	t_node	*prev_token = NULL;
+	t_node	*current_token = mini->tokenlst;
+	t_node	*prev_cmd = NULL;
+	t_node	*current_cmd = mini->commands->tokens;
+
+	// Remove from tokenlst
+	while (current_token)
+	{
+		if (current_token->type == HEREDOC) // Found "<<"
+		{
+			if (prev_token)
+				prev_token->next = current_token->next;
+			else
+				mini->tokenlst = current_token->next;
+			
+			free(current_token->token);
+			free(current_token);
+			current_token = (prev_token) ? prev_token->next : mini->tokenlst;
+			continue;
+		}
+		prev_token = current_token;
+		current_token = current_token->next;
+	}
+
+	// Remove from commands->tokens
+	while (current_cmd)
+	{
+		if (current_cmd->type == HEREDOC) // Found "<<"
+		{
+			if (prev_cmd)
+				prev_cmd->next = current_cmd->next;
+			else
+				mini->commands->tokens = current_cmd->next;
+			
+			free(current_cmd->token);
+			free(current_cmd);
+			current_cmd = (prev_cmd) ? prev_cmd->next : mini->commands->tokens;
+			continue;
+		}
+		prev_cmd = current_cmd;
+		current_cmd = current_cmd->next;
+	}
+}
+
 void	heredoc(t_minishell *mini)
 {
 	t_heredoc	*tmp_hd;
@@ -111,8 +159,13 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = mini->heredoc;
 	while (tmp_hd)
 	{
+		char	cwd[1024];
+		char	*directory;
+		directory = getcwd(cwd, sizeof(cwd));
+		tmp_hd->fd_heredoc_path = ft_strjoin(directory, "/");
+		tmp_hd->fd_heredoc_path = ft_strjoin(tmp_hd->fd_heredoc_path, mini->heredoc->eof);
 		num = ft_itoa(tmp_hd->index);
-		tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
+		//tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
 		free(num);
 		pid = fork();
 		if (pid == 0)
@@ -126,36 +179,5 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = tmp_hd->next;
 	}
 	include_hd_path(mini);
-	
-	//TODO: FAZER ISTO
-	t_node *tokenlst = mini->tokenlst;
-	t_cmd	*cmds = mini->commands;
-
-	printf("UWU\n");
-
-	while (tokenlst->type != HEREDOC && tokenlst)
-	{
-		printf("owo\n");
-		printf("token: %s\n", tokenlst->token);
-		printf("token->type: %d\n", tokenlst->type);
-		printf("Command: %s\n", cmds->tokens->token);
-		if (tokenlst->token && tokenlst->type == 3)
-		{
-			free(tokenlst->token);
-			tokenlst->token = ft_strdup("<");
-			free(cmds->tokens->token);
-			cmds->tokens->token = ft_strdup("<");
-			printf("tou ken: %s\n", tokenlst->token);
-			printf("cu mand: %s\n", cmds->tokens->token);
-		}
-		if (cmds->tokens->next)
-			cmds->tokens = cmds->tokens->next;
-		if (tokenlst->next)
-			tokenlst = tokenlst->next;
-		else
-			break;
-	}
-	
-
-
+	remove_heredoc_token(mini);
 }

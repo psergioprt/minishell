@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/01/26 17:07:44 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:05:04 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,12 @@ void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
+	//added for HEREDOC delimiter expansion	
+	if (mini->disable_expand == true)
+	{
+		mini->disable_expand = false;
+		return ;
+	}
 	(*i)++;
 	if (ctx->input[*i] == '?')
 	{

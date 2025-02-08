@@ -17,19 +17,19 @@
 
 void create_pipes(t_cmd *cmd)
 {
-    if (!cmd)
-        return;
-    if (cmd->next)
-    {
-        if (pipe(cmd->fd) == -1)
-        {
-            perror("Error creating pipes");
-            exit(1);
-        }
-        //printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
-    }
-    //cmd = cmd->next;
-    
+	if (!cmd)
+		return;
+	if (cmd->next)
+	{
+		if (pipe(cmd->fd) == -1)
+		{
+			perror("Error creating pipes");
+			exit(1);
+		}
+		//printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
+	}
+	//cmd = cmd->next;
+	
 }
 
 
@@ -51,58 +51,68 @@ void create_pipes(t_cmd *cmd)
 
 void redir_fds(int redir, int local)
 {
-    if (redir < 0 || local < 0)
-    {
-        perror("Invalid file descriptor");
-        return;
-    }
-    //printf("Redirecting %d -> %d\n", redir, local);
-    
-    if (fcntl(redir, F_GETFD) == -1)
-    {
-        perror("FD check failed before dup2");
-        return;
-    }
+	if (redir < 0 || local < 0)
+	{
+		perror("Invalid file descriptor");
+		return;
+	}
+	//printf("Redirecting %d -> %d\n", redir, local);
+	
+	if (fcntl(redir, F_GETFD) == -1)
+	{
+		perror("FD check failed before dup2");
+		return;
+	}
 
-    if (dup2(redir, local) < 0)
-    {
-        perror("dup2 failed");
-        printf("Failed to redirect %d -> %d\n", redir, local);
-        close(redir);
-        return;
-    }
-    close(redir);
+	if (dup2(redir, local) < 0)
+	{
+		perror("dup2 failed");
+		printf("Failed to redirect %d -> %d\n", redir, local);
+		close(redir);
+		return;
+	}
+	close(redir);
 }
 
 
 /* void redir_fds(int redir, int local)
 {
-    if (redir < 0 || local < 0)
-    {
-        perror("Invalid file descriptor");
-        return;
-    }
-    printf("Redirecting %d -> %d\n", redir, local);
-    
-    if (dup2(redir, local) < 0)
-    {
-        perror("dup2 failed");
-        printf("Failed to redirect %d -> %d\n", redir, local);
-        close(redir);
-        return;
-    }
-    close(redir);
+	if (redir < 0 || local < 0)
+	{
+		perror("Invalid file descriptor");
+		return;
+	}
+	printf("Redirecting %d -> %d\n", redir, local);
+	
+	if (dup2(redir, local) < 0)
+	{
+		perror("dup2 failed");
+		printf("Failed to redirect %d -> %d\n", redir, local);
+		close(redir);
+		return;
+	}
+	close(redir);
 } */
 
 
 void	wait_childs(t_minishell *mini, int n_cmds)
 {
-	int	i;
+	int     i;
+	pid_t   pid;
 
 	i = 0;
 	while (i < n_cmds)
 	{
-		waitpid(mini->child[i], &mini->exit_status, 0);
+		pid = waitpid(mini->child[i], &mini->exit_status, 0);
+		if (pid == -1)
+			perror("waitpid failed");
+		else
+		{
+			if (WIFEXITED(mini->exit_status))
+				mini->exit_status = WEXITSTATUS(mini->exit_status);
+			else if (WIFSIGNALED(mini->exit_status))
+				mini->exit_status = 128 + WTERMSIG(mini->exit_status);
+		}
 		i++;
 	}
 }

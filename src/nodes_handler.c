@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/07 12:33:19 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:05:56 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	handle_command_addition(t_minishell *mini, int *j)
 	{
 		mini->current_token[*j] = '\0';
 		expanded_token = expand_env_var(mini->current_token, mini);
-		if (mini->unquoted)
+		if (mini->unquoted && mini->disable_expand == false)
 		{
 			split_tokens = split_by_ifs(expanded_token);
 			while (split_tokens[i])
@@ -97,7 +97,7 @@ void	handle_command_addition(t_minishell *mini, int *j)
 			free_split(split_tokens);
 		}
 		else
-			add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
+			add_command_node(mini, mini->current_token, NONE, &(mini->prev_node));
 		if (expanded_token != mini->current_token)
 			free(expanded_token);
 		mini->disable_expand = false;

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/05 16:06:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 16:39:36 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		double_op[2] = '\0';
 		redir_token = double_op;
 		(*i)++;
+		//ADDED FOR EXPANSION IN HEREDOC DELIMITER
+		if (ft_strcmp(redir_token, "<<") == 0)
+			mini->disable_expand = true;
 	}
 	else
 	{
