@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/08 16:55:09 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:56:47 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 			tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
 		(*tok_ctx->i)++;
 	}
-	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$')
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && !mini->disable_expand)
 		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else
 		tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];

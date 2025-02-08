@@ -26,7 +26,10 @@ void	read_lines_exit(t_minishell *mini, char *read)
 	{
 		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
 		free_list(mini);
-		cleanup_fd(mini);
+		//cleanup_fd(mini);
+		/* close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO); */ //TODO PERGUNTAR SE DEVE TER ISTO
 		exit (0);
 	}
 }
@@ -109,7 +112,6 @@ int	main(int argc, char *argv[], char *env[])
 		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
 		exit (1);
 	}
-	//mini.disable_expand = false;
 	mini.tokenlst = NULL;
 	mini.exit_status = 0;
 	mini.i = 0; //TODO checkar se e preciso
