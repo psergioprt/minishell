@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/08 19:17:31 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 23:49:52 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,11 @@ char	*append_expanded_env(t_minishell *mini, char *result, char **pline, int pos
 			j++;
 	varToken = ft_substr(*pline, pos, j - pos);
 	expanded = expand_env_var(varToken, mini);
-	free(varToken);
+	if (varToken)
+		free(varToken);
 	result = ft_strjoin_free(result, expanded);
-	free(expanded);
+	if (expanded)
+		free(expanded);
 	rest = ft_strdup(*pline + j);
 	free(*pline);
 	*pline = rest;

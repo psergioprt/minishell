@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/08 14:58:14 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 22:23:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	char	*line;
 
 	tmp_hd->fd_heredoc = open(tmp_hd->fd_heredoc_path, O_CREAT | O_RDWR | O_TRUNC, 0644);
+
 	if (tmp_hd->fd_heredoc == -1)
 		return (-1);
 	while (1)
@@ -94,10 +95,14 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	}
 	if (close(tmp_hd->fd_heredoc) == -1)
 		perror("Failed to close heredoc file");
+	close(mini->saved_stdout);
+	close(mini->saved_stdin);
+	//TODO precisa destes?
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	return (0);
 }
-
-
 
 void	remove_heredoc_token(t_minishell *mini)
 {

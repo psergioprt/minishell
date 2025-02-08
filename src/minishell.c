@@ -27,9 +27,9 @@ void	read_lines_exit(t_minishell *mini, char *read)
 		write(STDOUT_FILENO, "\033[1G\033[2kexit\0\n", 15);
 		free_list(mini);
 		//cleanup_fd(mini);
-		/* close(STDIN_FILENO);
+		close(STDIN_FILENO);
 		close(STDOUT_FILENO);
-		close(STDERR_FILENO); */ //TODO PERGUNTAR SE DEVE TER ISTO
+		close(STDERR_FILENO);//TODO PERGUNTAR SE DEVE TER ISTO (fecha 3 open 3(std))
 		exit (0);
 	}
 }
