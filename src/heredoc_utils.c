@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:10:16 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 11:39:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 19:30:00 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	handle_heredoc_signal(int signal)
 void	set_signals_to_here_doc(void)
 {
 	signal(SIGINT, handle_heredoc_signal);
-	signal(SIGQUIT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 char	*ft_strjoin_free(char *s1, const char *s2)

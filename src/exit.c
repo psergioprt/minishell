@@ -15,20 +15,17 @@
 void	do_exit(t_minishell *mini, int error_code)
 {
 	mini->exit_status = error_code;
+	printf("exit\n");
 	free_envvars(mini);
 	free_commands(mini->commands);
 	free_list(mini);
 	cleanup_fd(mini);
-	// close(mini->saved_stdin);
-	// close(mini->saved_stdout);
-	printf("exit\n");	
 	exit(error_code);
 }
 
-void	get_exit(t_minishell *mini, t_node  *nodelst)
+void	get_exit(t_minishell *mini, t_node *nodelst)
 {
 	nodelst = nodelst->next;
-
 	if (!is_num(nodelst->token) || m_long(nodelst->token))
 	{
 		printf("exit: %s: numeric argument required\n", nodelst->token);
@@ -48,12 +45,11 @@ void	get_exit(t_minishell *mini, t_node  *nodelst)
 	}
 }
 
-//o maximo que aceita sao 18 numeros 9
-int custom_exit(t_minishell *mini)
+int	custom_exit(t_minishell *mini)
 {
-	t_node  *nodelst;
+	t_node	*nodelst;
 
-	nodelst = mini->commands->tokens; //mudei de mini->tokenlst;
+	nodelst = mini->commands->tokens;
 	if (!nodelst->next)
 	{
 		do_exit(mini, 0);

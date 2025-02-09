@@ -12,9 +12,6 @@
 
 #include "../include/minishell.h"
 
-//cat test.txt | grep "apple" | wc -l
-//2 pipes, 3 comandos
-
 void create_pipes(t_cmd *cmd)
 {
 	if (!cmd)
@@ -26,28 +23,8 @@ void create_pipes(t_cmd *cmd)
 			perror("Error creating pipes");
 			exit(1);
 		}
-		//printf("Pipe created: fd[0]=%d, fd[1]=%d\n", cmd->fd[0], cmd->fd[1]);
-	}
-	//cmd = cmd->next;
-	
+	}	
 }
-
-
-/* void	create_pipes(t_cmd *cmd)
-{
-	if (!cmd)
-		return ;
-	while (cmd)
-	{
-		if (cmd->next && pipe(cmd->fd) == -1)
-		{
-			printf("Error creating pipes\n");
-			return ;
-		}
-		cmd = cmd->next;
-	}
-	return ;
-} */
 
 void redir_fds(int redir, int local)
 {
@@ -56,14 +33,11 @@ void redir_fds(int redir, int local)
 		perror("Invalid file descriptor");
 		return;
 	}
-	//printf("Redirecting %d -> %d\n", redir, local);
-	
 	if (fcntl(redir, F_GETFD) == -1)
 	{
 		perror("FD check failed before dup2");
 		return;
 	}
-
 	if (dup2(redir, local) < 0)
 	{
 		perror("dup2 failed");
@@ -73,27 +47,6 @@ void redir_fds(int redir, int local)
 	}
 	close(redir);
 }
-
-
-/* void redir_fds(int redir, int local)
-{
-	if (redir < 0 || local < 0)
-	{
-		perror("Invalid file descriptor");
-		return;
-	}
-	printf("Redirecting %d -> %d\n", redir, local);
-	
-	if (dup2(redir, local) < 0)
-	{
-		perror("dup2 failed");
-		printf("Failed to redirect %d -> %d\n", redir, local);
-		close(redir);
-		return;
-	}
-	close(redir);
-} */
-
 
 void	wait_childs(t_minishell *mini, int n_cmds)
 {
@@ -115,6 +68,8 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 		}
 		i++;
 	}
+	if (WIFSIGNALED(mini->exit_status) && WTERMSIG(mini->exit_status) == SIGQUIT)
+		write(1, "Quit (core dumped)\n", 19);
 }
 
 int	get_ncmds(t_cmd *cmd)
@@ -142,15 +97,3 @@ pid_t	create_pid(void)
 	}
 	return (child);
 }
-
-/* int	checking_pipes(t_minishell *mini)
-{
-	t_node	nodelst;
-
-	nodelst = mini->tokenlst;
-	//Fazer ciclo de enquanto tiver pipes
-	//O primeiro manda o output
-	//Os do meio redirecionam o input do anterior e o output do proximo
-	//O ultimo redireciona o input do anterior
-}
- */

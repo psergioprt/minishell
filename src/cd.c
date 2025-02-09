@@ -56,7 +56,7 @@ int	update_pwd(t_minishell *mini, char *last_dir)
 	current_dir = getcwd(cwd, sizeof(cwd));
 	if (!current_dir)
 	{
-		printf("getcwd error\n");
+		printf("pwd error\n");
 		return (-1);
 	}
 	found_env = find_key(mini, "OLDPWD");
@@ -105,7 +105,6 @@ int	custom_cd(t_minishell *mini)
 		printf("cd: %s: No such file or directory\n", path);
 		return (1);
 	}
-	printf("Last:dir: %s\n", last_dir);
 	update_pwd(mini, last_dir);
 	return (0);
 }

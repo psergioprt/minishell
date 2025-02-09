@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/08 23:49:52 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 19:28:17 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	init_heredoc(t_minishell *mini)
 {
 	mini->heredoc = ft_calloc(1, sizeof(t_heredoc));
 	if (check_malloc(mini->heredoc))
-		return;
+		return ;
 	mini->heredoc->index = 0;
 	mini->heredoc->count_hd = 0;
 	mini->heredoc->fd_heredoc_path = NULL;
@@ -27,7 +27,7 @@ void	init_heredoc(t_minishell *mini)
 
 void	clear_heredoc_list(t_minishell *mini)
 {
-	t_heredoc *tmp_hd;
+	t_heredoc	*tmp_hd;
 	while (mini->heredoc)
 	{
 		tmp_hd = mini->heredoc;
@@ -43,9 +43,11 @@ void	clear_heredoc_list(t_minishell *mini)
 
 void	include_hd_path(t_minishell *mini)
 {
-	t_node	*tmp_token = mini->tokenlst;
-	t_heredoc	*tmp_hd = mini->heredoc;
-	
+	t_node		*tmp_token;
+	t_heredoc	*tmp_hd;
+
+	tmp_token = mini->tokenlst;
+	tmp_hd = mini->heredoc;
 	while (tmp_token)
 	{
 		if (tmp_token->type == HEREDOC)
@@ -74,25 +76,38 @@ int	find_next_env(char *line)
 char	*append_expanded_env(t_minishell *mini, char *result, char **pline, int pos)
 {
 	char	*before;
-	int	j;
+	int		j;
 	char	*varToken;
 	char	*expanded;
 	char 	*rest;
-	
+
 	before = ft_substr(*pline, 0, pos);
+	if (!before)
+		return (result);
 	result = ft_strjoin_free(result, before);
 	free(before);
 	j = pos + 1;
 	while ((*pline)[j] && (ft_isalnum((*pline)[j]) || (*pline)[j] == '_'))
-			j++;
+		j++;
 	varToken = ft_substr(*pline, pos, j - pos);
+	if (!varToken)
+		return (result);
 	expanded = expand_env_var(varToken, mini);
-	if (varToken)
-		free(varToken);
-	result = ft_strjoin_free(result, expanded);
-	if (expanded)
+	if (expanded && expanded[0] != '$')
+	{
+		char *tmp = ft_strjoin_free(result, expanded);
 		free(expanded);
+		result = tmp;
+	}
+	else
+	{
+		char *tmp = ft_strjoin_free(result, " ");
+		free(expanded);
+		result = tmp;
+	}
 	rest = ft_strdup(*pline + j);
+	if (!rest)
+		return (result);
 	free(*pline);
 	*pline = rest;
 	return (result);
