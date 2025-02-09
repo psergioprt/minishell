@@ -20,14 +20,14 @@ int	export_no_args(t_minishell *mini)
 	while (envvars)
 	{
 		printf("declare -x %s", envvars->key);
-		if(envvars->print)
+		if (envvars->print)
 		{
 			printf("=");
 			printf("\"%s\"", envvars->value);
 		}
 		printf("\n");
 		envvars = envvars->next;
-	}	
+	}
 	return (0);
 }
 
@@ -38,7 +38,6 @@ t_env	*export_args(char *var)
 
 	i = 0;
 	new_env = malloc(sizeof(t_env));
-	printf("var: %s\n", var); //TODO apagar testes
 	while (var[i] != '=' && var[i] != '\0')
 		i++;
 	new_env->key = malloc(i + 1);
@@ -53,20 +52,9 @@ t_env	*export_args(char *var)
 		new_env->print = false;
 		new_env->value = ft_strdup("");
 	}
-
-	//TODO apagar testes
- 	printf("KEY: %s\n", new_env->key); 
-	printf("Value: %s\n", new_env->value); 
-	if (new_env->print)
-		printf("Has print\n");
-	else
-		printf("Doesn't have print\n");
-	//TODO apagar testes
-
 	return (new_env);
 }
- 
-//tem que adicionar mais que uma se tiver mais que uma
+
 void	argumentate(t_minishell *mini, t_env *new_env)
 {
 	t_env	*envvars;
@@ -80,7 +68,7 @@ void	argumentate(t_minishell *mini, t_env *new_env)
 	new_env->next = NULL;
 }
 
-void loop_node(t_minishell *mini, t_node *node, int *ret)
+void	loop_node(t_minishell *mini, t_node *node, int *ret)
 {
 	t_env	*found_env;
 	t_env	*new_env;
@@ -89,9 +77,9 @@ void loop_node(t_minishell *mini, t_node *node, int *ret)
 	{
 		new_env = export_args(node->token);
 		found_env = find_key(mini, new_env->key);
-		if (check_valid_key(node->token) == 0) //analisar chars especiais - Key nao pode ter
+		if (check_valid_key(node->token) == 0)
 		{
-			if (found_env != NULL) //key ja existe, fazer troca de valor
+			if (found_env != NULL)
 				replace_env_value(found_env, node->token);
 			else
 				argumentate(mini, new_env);
@@ -111,10 +99,10 @@ int	custom_export(t_minishell *mini)
 	int		ret;
 
 	ret = 0;
-	node = mini->commands->tokens;//mudei de mini->tokenlst;
+	node = mini->commands->tokens;
 	if (!node->next)
 		return (export_no_args(mini));
-	node = node->next; //Passar o comando em si a frente
+	node = node->next;
 	if (node->token[0] == '-' && node->token[1])
 	{
 		printf("export: %s: invalid option\n", node->token);

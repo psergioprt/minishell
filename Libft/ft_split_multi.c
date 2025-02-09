@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 15:59:32 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 16:00:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 18:10:04 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static	int	is_delim(char c, const char *delims)
 {
 	size_t	i;
-	
+
 	i = 0;
 	while (delims[i])
 	{
@@ -45,7 +45,6 @@ static int	ft_wordcount(char const *s, const char *delims)
 	return (words);
 }
 
-
 static void	ft_freemalloc(char **tab)
 {
 	size_t	i;
@@ -61,8 +60,8 @@ static void	ft_freemalloc(char **tab)
 
 static char	**ft_tudo(char const *s, char **tab, const char *delims, size_t j)
 {
-	size_t i;
-	size_t k;
+	size_t	i;
+	size_t	k;
 
 	i = 0;
 	k = 0;
@@ -91,7 +90,7 @@ static char	**ft_tudo(char const *s, char **tab, const char *delims, size_t j)
 char	**ft_split_multi(char const *s, const char *delims)
 {
 	char	**tab;
-	size_t 	j;
+	size_t	j;
 
 	j = 0;
 	if (!s)

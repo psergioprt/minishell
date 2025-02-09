@@ -40,8 +40,7 @@ int custom_pwd(t_minishell *mini)
 			printf("pwd: %s: invalid option\n", nodes->token);
 			return (2);
 		}
-/* 		else if (nodes->token[0] == '|')
-			printf("FAZ A MERDA DOS PIPES\n"); */ //TODO: isto e necessario?
+
 		else
 			return (pwd_execute());
 	}

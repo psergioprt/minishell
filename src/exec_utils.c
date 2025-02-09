@@ -24,15 +24,15 @@ char	*find_path(t_minishell *mini)
 	while (envvars != NULL)
 	{
 		if (ft_strncmp(envvars->key, "PATH", 4) == 0)
-			break;
+			break ;
 		envvars = envvars->next;
 	}
 	if (envvars == NULL || envvars->value == NULL)
 		return (NULL);
 	paths = ft_split(envvars->value, ':');
 	while (paths[i])
-	{	
-  		pathname = ft_strjoin(paths[i], "/");
+	{
+		pathname = ft_strjoin(paths[i], "/");
 		pathname = ft_strjoin(pathname, mini->command);
 		if (access(pathname, F_OK) == 0)
 			return (pathname);
@@ -73,11 +73,12 @@ char	**get_argv(t_minishell *mini, int i, t_node *node)
 	i = 0;
 	if (!argv)
 		return (NULL);
-	while (node) {
+	while (node)
+	{
 		len = ft_strlen(node->token);
 		argv[i] = (char *)malloc(sizeof(char) * (len + 1));
-		if (!argv[i]) {
-			perror("Error allocating argv[i]");
+		if (!argv[i])
+		{
 			while (i > 0)
 				free(argv[--i]);
 			free(argv);
@@ -97,37 +98,38 @@ void	get_command(t_minishell *mini)
 	int		len;
 	t_node	*node;
 
-	node = mini->commands->tokens;//mudei de mini->tokenlst;
+	node = mini->commands->tokens;
 	len = ft_strlen(node->token);
 	mini->command = (char *)malloc(sizeof(char) * (len + 1));
-	if (!mini->command) {
+	if (!mini->command)
+	{
 		perror("Error allocating command");
 		return ;
 	}
 	ft_strlcpy(mini->command, node->token, len + 1);
 }
 
-int execpath_error(char *path)
+int	execpath_error(char *path)
 {
-	struct stat path_stat;
+	struct stat	path_stat;
 
 	if (ft_strchr(path, '/') || path[0] == '.')
 	{
-		if (access(path, F_OK) < 0) // Check if the file exists
+		if (access(path, F_OK) < 0)
 		{
 			printf("No such file or directory\n");
 			return (127);
 		}
-		if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode)) // Check if it's a directory
+		if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
 		{
 			printf("Is a directory\n");
 			return (126);
 		}
-		if (access(path, X_OK) < 0) // Check if the file is executable
+		if (access(path, X_OK) < 0)
 		{
 			printf("Permission denied\n");
 			return (126);
 		}
 	}
-	return (0); // No error
+	return (0);
 }

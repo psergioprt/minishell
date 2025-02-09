@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/05 16:05:42 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 17:08:44 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,10 @@ t_node	*create_command_node(const char *token, t_type type, \
 	{
 		prev = *prev_node;
 		if (prev->type != NONE && prev->target == NULL)
-		{
 			prev->target = new_node->token;
-			printf("Assigned target '%s' to node with token '%s'\n", prev->target, prev->token);
-		}
 	}
 	if (prev_node)
 		*prev_node = new_node;
-	printf("Node created: token='%s', type=%d, target='%s'\n", new_node->token, new_node->type, new_node->target);
 	return (new_node);
 }
 
@@ -89,7 +85,7 @@ void	handle_command_addition(t_minishell *mini, int *j)
 	{
 		mini->current_token[*j] = '\0';
 		expanded_token = expand_env_var(mini->current_token, mini);
-		if (mini->unquoted)
+		if (mini->unquoted && mini->disable_expand == false)
 		{
 			split_tokens = split_by_ifs(expanded_token);
 			while (split_tokens[i])
@@ -97,7 +93,7 @@ void	handle_command_addition(t_minishell *mini, int *j)
 			free_split(split_tokens);
 		}
 		else
-			add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
+			add_command_node(mini, mini->current_token, NONE, &(mini->prev_node));
 		if (expanded_token != mini->current_token)
 			free(expanded_token);
 		mini->disable_expand = false;

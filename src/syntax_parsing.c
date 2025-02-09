@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/05 16:06:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/08 18:15:00 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		double_op[2] = '\0';
 		redir_token = double_op;
 		(*i)++;
+		//ADDED FOR EXPANSION IN HEREDOC DELIMITER
+		if (ft_strcmp(redir_token, "<<") == 0)
+			mini->disable_expand = true;
 	}
 	else
 	{
@@ -65,33 +68,32 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		perror("Error: Invalid redirection operator\n");
 }
 
-void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
+void process_quoted_content(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
-	if (ctx->quote == '"' && ctx->input[*i] == '$' && \
-		ctx->input[*i + 1] == '\\')
-		ctx->current_token[(*j)++] = ctx->input[*i];
-	else if (ctx->quote == '"' && ctx->input[*i] == '\\')
-	{
-		if (ctx->input[*i + 1] == '$' || ctx->input[*i + 1] == '"' || \
-				ctx->input[*i + 1] == '\\')
-		{
-			mini->disable_expand = true;
-			(*i)++;
-			ctx->current_token[(*j)++] = ctx->input[*i];
-		}
-		else
-			ctx->current_token[(*j)++] = ctx->input[*i];
-	}
-	else if (ctx->quote == '"' && ctx->input[*i] == '$')
-	{
-		if (*i > 0 && ctx->input[*i - 1] == '\\')
-			ctx->current_token[(*j)++] = ctx->input[*i];
-		else
-			handle_env_var(mini, ctx, i, j);
-	}
-	else
-		ctx->current_token[(*j)++] = ctx->input[*i];
+    if (mini->disable_expand == true && ctx->input[*i] == '$')
+        ctx->current_token[(*j)++] = ctx->input[*i];
+    else if (ctx->quote == '"' && ctx->input[*i] == '$' && ctx->input[*i + 1] == '\\')
+        ctx->current_token[(*j)++] = ctx->input[*i];
+    else if (ctx->quote == '"' && ctx->input[*i] == '\\')
+    {
+        if (ctx->input[*i + 1] == '$' || ctx->input[*i + 1] == '"' || ctx->input[*i + 1] == '\\')
+        {
+            mini->disable_expand = true;
+            (*i)++;
+            ctx->current_token[(*j)++] = ctx->input[*i];
+        }
+        else
+            ctx->current_token[(*j)++] = ctx->input[*i];
+    }
+    else if (ctx->quote == '"' && ctx->input[*i] == '$')
+    {
+        if (*i > 0 && ctx->input[*i - 1] == '\\')
+            ctx->current_token[(*j)++] = ctx->input[*i];
+        else
+            handle_env_var(mini, ctx, i, j);
+    }
+    else
+        ctx->current_token[(*j)++] = ctx->input[*i];
 }
 
 void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
@@ -104,6 +106,8 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
 		ctx->quote = ctx->input[*i];
 		(*i)++;
 		if (ctx->input[*i - 1] == '\'')
+			mini->disable_expand = true;
+		if (ctx->input[*i - 1] == '"' && mini->disable_expand)
 			mini->disable_expand = true;
 		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
 		{
