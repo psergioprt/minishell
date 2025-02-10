@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 19:28:17 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 22:53:20 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	init_heredoc(t_minishell *mini)
 void	clear_heredoc_list(t_minishell *mini)
 {
 	t_heredoc	*tmp_hd;
+
 	while (mini->heredoc)
 	{
 		tmp_hd = mini->heredoc;
@@ -62,8 +63,9 @@ void	include_hd_path(t_minishell *mini)
 
 int	find_next_env(char *line)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	while (line[i])
 	{
 		if (line[i] == '$')
@@ -73,13 +75,14 @@ int	find_next_env(char *line)
 	return (-1);
 }
 
-char	*append_expanded_env(t_minishell *mini, char *result, char **pline, int pos)
+char	*append_expanded_env(t_minishell *mini, char *result, \
+		char **pline, int pos)
 {
 	char	*before;
 	int		j;
-	char	*varToken;
+	char	*vartoken;
 	char	*expanded;
-	char 	*rest;
+	char	*rest;
 
 	before = ft_substr(*pline, 0, pos);
 	if (!before)
@@ -89,10 +92,10 @@ char	*append_expanded_env(t_minishell *mini, char *result, char **pline, int pos
 	j = pos + 1;
 	while ((*pline)[j] && (ft_isalnum((*pline)[j]) || (*pline)[j] == '_'))
 		j++;
-	varToken = ft_substr(*pline, pos, j - pos);
-	if (!varToken)
+	vartoken = ft_substr(*pline, pos, j - pos);
+	if (!vartoken)
 		return (result);
-	expanded = expand_env_var(varToken, mini);
+	expanded = expand_env_var(vartoken, mini);
 	if (expanded && expanded[0] != '$')
 	{
 		char *tmp = ft_strjoin_free(result, expanded);

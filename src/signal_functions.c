@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:10 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/07 12:31:35 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 23:24:27 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	restore_default_signals(void) //Function kept
 {
-	struct	sigaction sa_default;
+	struct sigaction	sa_default;
 
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_flags = 0;
@@ -32,27 +32,27 @@ void	sigint_handler(int sig) //Function kept
 	write(STDOUT_FILENO, "\n", 1);
 	rl_redisplay();
 }
- 
-void	sigint_handler_child(int sig) //NEW FUNCTION for CTRL + C AFTER CAT
+
+void	sigint_handler_child(int sig)
 {
 	(void)sig;
 	write(STDOUT_FILENO, "\n", 1);
 	g_exit_code = 130;
 }
 
-void	init_sigaction(int interactive) //UPDATED FUNCTION TO RECEIVE VALUE 1 OR 0, AND IF CLAUSE
+void	init_sigaction(int interactive)
 {
-	struct sigaction        sa_int;
-	struct sigaction        sa_quit;
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
 	sigemptyset(&sa_int.sa_mask);
 	sigemptyset(&sa_quit.sa_mask);
 	sa_int.sa_flags = SA_RESTART;
 	sa_quit.sa_flags = SA_RESTART;
 	if (interactive)
-			sa_int.sa_handler = sigint_handler;
+		sa_int.sa_handler = sigint_handler;
 	else
-			sa_int.sa_handler = sigint_handler_child;
+		sa_int.sa_handler = sigint_handler_child;
 	sa_quit.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);

@@ -6,13 +6,12 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/08 18:15:00 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/10 00:18:40 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-//function created to handle redirectinal signs
 void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	sep[2];
@@ -33,7 +32,6 @@ void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j)
 {
-	char	double_op[3];
 	char	single_op[2];
 	char	*redir_token;
 	int		redir_type;
@@ -45,16 +43,7 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		*j = 0;
 	}
 	if (ctx->input[(*i) + 1] == ctx->input[*i])
-	{
-		double_op[0] = ctx->input[*i];
-		double_op[1] = ctx->input[(*i) + 1];
-		double_op[2] = '\0';
-		redir_token = double_op;
-		(*i)++;
-		//ADDED FOR EXPANSION IN HEREDOC DELIMITER
-		if (ft_strcmp(redir_token, "<<") == 0)
-			mini->disable_expand = true;
-	}
+		handle_double_redir(mini, ctx, i, &redir_token);
 	else
 	{
 		single_op[0] = ctx->input[*i];
@@ -68,32 +57,25 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		perror("Error: Invalid redirection operator\n");
 }
 
-void process_quoted_content(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j)
 {
-    if (mini->disable_expand == true && ctx->input[*i] == '$')
-        ctx->current_token[(*j)++] = ctx->input[*i];
-    else if (ctx->quote == '"' && ctx->input[*i] == '$' && ctx->input[*i + 1] == '\\')
-        ctx->current_token[(*j)++] = ctx->input[*i];
-    else if (ctx->quote == '"' && ctx->input[*i] == '\\')
-    {
-        if (ctx->input[*i + 1] == '$' || ctx->input[*i + 1] == '"' || ctx->input[*i + 1] == '\\')
-        {
-            mini->disable_expand = true;
-            (*i)++;
-            ctx->current_token[(*j)++] = ctx->input[*i];
-        }
-        else
-            ctx->current_token[(*j)++] = ctx->input[*i];
-    }
-    else if (ctx->quote == '"' && ctx->input[*i] == '$')
-    {
-        if (*i > 0 && ctx->input[*i - 1] == '\\')
-            ctx->current_token[(*j)++] = ctx->input[*i];
-        else
-            handle_env_var(mini, ctx, i, j);
-    }
-    else
-        ctx->current_token[(*j)++] = ctx->input[*i];
+	if (mini->disable_expand == true && ctx->input[*i] == '$')
+		ctx->current_token[(*j)++] = ctx->input[*i];
+	else if (ctx->quote == '"' && ctx->input[*i] == '$' && \
+			ctx->input[*i + 1] == '\\')
+		ctx->current_token[(*j)++] = ctx->input[*i];
+	else if (ctx->quote == '"' && ctx->input[*i] == '\\')
+		process_quoted_helper(mini, ctx, i, j);
+	else if (ctx->quote == '"' && ctx->input[*i] == '$')
+	{
+		if (*i > 0 && ctx->input[*i - 1] == '\\')
+			ctx->current_token[(*j)++] = ctx->input[*i];
+		else
+			handle_env_var(mini, ctx, i, j);
+	}
+	else
+		ctx->current_token[(*j)++] = ctx->input[*i];
 }
 
 void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
@@ -137,10 +119,7 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 		{
 			tok_ctx->current_token[*tok_ctx->j] = '\0';
 			expanded_token = expand_env_var(tok_ctx->current_token, mini);
-			if (mini->disable_expand == true)
-				add_command_node(mini, tok_ctx->current_token, NONE, &(mini->prev_node));
-			else
-				add_command_node(mini, expanded_token, NONE, &(mini->prev_node));
+			handle_spaces_helper(mini, expanded_token, tok_ctx);
 			if (expanded_token != tok_ctx->current_token)
 				free(expanded_token);
 			*tok_ctx->j = 0;

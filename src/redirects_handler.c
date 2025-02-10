@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 17:24:06 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 23:41:40 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	open_file(const char *filename, t_type type)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (type == APPEND_OUTPUT)
 		fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if (type == INPUT || type == HEREDOC) //HEREDOC UPDATED
+	else if (type == INPUT || type == HEREDOC)
 		fd = open(filename, O_RDONLY);
 	else
 	{

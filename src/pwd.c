@@ -27,22 +27,21 @@ int	pwd_execute(void)
 	return (0);
 }
 
-int custom_pwd(t_minishell *mini)
+int	custom_pwd(t_minishell *mini)
 {
-	t_node  *nodes;
+	t_node	*nodes;
 
-	nodes = mini->commands->tokens; //mudei de mini->tokenlst;
+	nodes = mini->commands->tokens;
 	if (nodes->next != NULL)
 	{
-		nodes = nodes->next;//flag ou pipe
-		if (nodes->token[0] == '-' && nodes->token[1])//tinha feito  && !(nodes->token[1] == 'L' || nodes->token[1] == 'P'), mas diz "no options" no subject entao assumo que nao deva ter
+		nodes = nodes->next;
+		if (nodes->token[0] == '-' && nodes->token[1])
 		{
 			printf("pwd: %s: invalid option\n", nodes->token);
 			return (2);
 		}
-
 		else
 			return (pwd_execute());
 	}
 	return (pwd_execute());
-} 
+}

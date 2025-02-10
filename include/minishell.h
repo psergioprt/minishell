@@ -148,6 +148,14 @@ int			check_redirect_errors(t_minishell *mini);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
 
+//SYNTAX_HELPER
+void		handle_spaces_helper(t_minishell *mini, char *expanded_token, \
+			t_token_context *tok_ctx);
+void		process_quoted_helper(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
+void		handle_double_redir(t_minishell *mini, t_parse_context *ctx, \
+			int *i, char **redir_token);
+
 //SIGNALS_FUNCTIONS
 void		sigint_handler(int sig);
 
