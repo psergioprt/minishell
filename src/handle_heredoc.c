@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 16:50:09 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/10 17:27:32 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,9 @@ void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 		perror("Failed to close heredoc file");
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+	// close(STDIN_FILENO);
+	// close(STDOUT_FILENO);
+	// close(STDERR_FILENO);
 }
 
 int	open_heredoc(t_heredoc *tmp_hd)
