@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/10 11:24:41 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,11 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 {
 	size_t	len;
 
-	len = ft_strlen(cmdlst->tokens->token);
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
+	len = ft_strlen(cmdlst->tokens->token);
+	//if (!mini->tokenlst || !mini->tokenlst->token)
+	//	return ;
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);
 	else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))

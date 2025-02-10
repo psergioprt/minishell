@@ -11,7 +11,7 @@ SRC = $(SRCDIR)/minishell.c $(SRCDIR)/nodes_handler.c $(SRCDIR)/function_analise
 	  $(SRCDIR)/syntax_parsing.c $(SRCDIR)/exit.c $(SRCDIR)/exit_utils.c $(SRCDIR)/split_into_commands.c \
 	  $(SRCDIR)/handle_heredoc.c $(SRCDIR)/heredoc_utils.c $(SRCDIR)/heredoc_utils2.c $(SRCDIR)/heredoc_utils3.c \
 	  $(SRCDIR)/redirects_handler.c $(SRCDIR)/nodes_helper.c $(SRCDIR)/syntax_helper.c $(SRCDIR)/handle_heredoc_2.c \
-	  $(SRCDIR)/handle_heredoc_3.c
+	  $(SRCDIR)/handle_heredoc_3.c $(SRCDIR)/redirects_check_errors.c $(SRCDIR)/redirects_skip_functions.c
 LIBFT = $(LIBFTDIR)/libft.a
 CFLAGS = -Wall -Wextra -Werror 	-g -O0# -fsanitize=address
 LFLAGS = -lreadline -L$(LIBFTDIR) -lft #-fsanitize=address

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 23:41:40 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/10 18:17:07 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,35 @@ int	open_file(const char *filename, t_type type)
 	return (fd);
 }
 
+int	handle_redirection_action(int fd, t_node *current)
+{
+	if (fd == -1)
+	{
+		perror("Failed to open file");
+		return (-1);
+	}
+	if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
+	{
+		if (dup2(fd, STDOUT_FILENO) == -1)
+		{
+			perror("dup2");
+			close(fd);
+			return (-1);
+		}
+	}
+	else if (current->type == INPUT || current->type == HEREDOC)
+	{
+		if (dup2(fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2");
+			close(fd);
+			return (-1);
+		}
+	}
+	close(fd);
+	return (0);
+}
+
 int	handle_redirections(t_minishell *mini)
 {
 	int		fd;
@@ -45,31 +74,8 @@ int	handle_redirections(t_minishell *mini)
 				current->target != NULL)
 		{
 			fd = open_file(current->target, current->type);
-			if (fd == -1)
-			{
-				perror("Failed to open file");
+			if (handle_redirection_action(fd, current) == -1)
 				return (-1);
-			}
-			if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
-			{
-				if (dup2(fd, STDOUT_FILENO) == -1)
-				{
-					perror("dup2");
-					close(fd);
-					return (-1);
-				}
-				fflush(stdout);
-			}
-			else if (current->type == INPUT || current->type == HEREDOC)
-			{
-				if (dup2(fd, STDIN_FILENO) == -1)
-				{
-					perror("dup2");
-					close(fd);
-					return (-1);
-				}
-			}
-			close(fd);
 		}
 		current = current->next;
 	}
@@ -89,128 +95,4 @@ int	identify_redirection_type(char *token)
 	if (!ft_strcmp(token, "|"))
 		return (PIPE);
 	return (-1);
-}
-
-void skip_redirection_plus_target_cmd(t_cmd *cmd_list)
-{
-	t_cmd  *cmd;
-	t_node *prev;
-	t_node *current;
-	t_node *tmp;
-	t_node *target_node;
-
-	cmd = cmd_list;
-	while (cmd)
-	{
-		prev = NULL;
-		current = cmd->tokens;
-		while (current)
-		{
-			if (current->type != NONE && current->type != HEREDOC && current->type != PIPE)
-			{
-				tmp = current;
-				current = current->next;
-				if (current)
-				{
-					target_node = current;
-					current = current->next;
-					free(target_node->token);
-					free(target_node);
-				}
-				free(tmp->token);
-				free(tmp);
-				if (prev)
-					prev->next = current;
-				else
-					cmd->tokens = current;
-			}
-			else
-			{
-				prev = current;
-				current = current->next;
-			}
-		}
-		cmd = cmd->next;
-	}
-}
-
-void	skip_redirection_plus_target(t_minishell *mini)
-{
-	t_node	*prev;
-	t_node	*current;
-	t_node	*tmp;
-	t_node	*target_node;
-
-	prev = NULL;
-	current = mini->tokenlst;
-	skip_redirection_plus_target_cmd(mini->commands);
-	while (current)
-	{
-		if (current->type != NONE && current->type != HEREDOC && current->type != PIPE)
-		{
-			tmp = current;
-			current = current->next;
-			if (current)
-			{
-				target_node = current;
-				current = current->next;
-				free(target_node->token);
-				free(target_node);
-			}
-			free(tmp->token);
-			free(tmp);
-			if (prev)
-				prev->next = current;
-			else
-				mini->tokenlst = current;
-		}
-		else
-		{
-			prev = current;
-			current = current->next;
-		}
-	}
-	current = mini->tokenlst;
-}
-
-int	check_redirect_errors(t_minishell *mini)
-{
-	if (!mini->tokenlst || !mini->tokenlst->token)
-		return (-1);
-	if (!ft_strncmp(mini->tokenlst->token, ">", 1) || \
-			!ft_strncmp(mini->tokenlst->token, ">>", 2) || \
-			!ft_strncmp(mini->tokenlst->token, "<", 1) || \
-			!ft_strncmp(mini->tokenlst->token, "<<", 2))
-	{
-		if (!mini->tokenlst->next)
-		{
-			perror("minishell: syntax error near unexpected token 'newline'");
-			mini->has_error = true;
-			return (-1);
-		}
-		else if (mini->tokenlst->next /*&& !mini->tokenlst->next->next*/)
-			handle_redirections(mini);
-		else
-			skip_redirection_plus_target(mini);
-	}
-	else if ((ft_strncmp(mini->tokenlst->token, ">", 1) || \
-				 ft_strncmp(mini->tokenlst->token, ">>", 2) || \
-				 ft_strncmp(mini->tokenlst->token, "<", 1) || \
-				 ft_strncmp(mini->tokenlst->token, "<<", 2)) && \
-			 mini->tokenlst->next)
-	{
-		if (((!ft_strncmp(mini->tokenlst->next->token, ">", 1) || \
-						!ft_strncmp(mini->tokenlst->next->token, ">>", 2) || \
-						!ft_strncmp(mini->tokenlst->next->token, "<", 1) || \
-						!ft_strncmp(mini->tokenlst->next->token, "<<", 2))  && \
-					!mini->tokenlst->next->next))
-		{
-			perror("minishell: syntax error near unexpected token 'newline'");
-			mini->has_error = true;
-			return (-1);
-		}
-		else
-			return (0);
-	}
-	return (0);
 }
