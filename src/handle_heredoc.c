@@ -6,65 +6,110 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 09:55:11 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/10 21:04:23 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
+		t_node **prev_token, bool *keep_next)
+{
+	t_node	*heredoc_token;
+	t_node	*delim_token;
+
+	heredoc_token = *current_token;
+	*current_token = (*current_token)->next;
+	if (!*current_token)
+		return ;
+	if (*keep_next)
+		*keep_next = false;
+	else
+	{
+		delim_token = *current_token;
+		*current_token = (*current_token)->next;
+		free(delim_token->token);
+		free(delim_token);
+	}
+	if (*prev_token)
+		(*prev_token)->next = *current_token;
+	else
+		mini->tokenlst = *current_token;
+	free(heredoc_token->token);
+	free(heredoc_token);
+}
+
 void	support_heredoc_token_tokens(t_minishell *mini)
 {
 	t_node	*prev_token;
 	t_node	*current_token;
+	bool	keep_next;
 
 	prev_token = NULL;
 	current_token = mini->tokenlst;
+	keep_next = true;
 	while (current_token)
 	{
+		if (current_token->type == PIPE)
+			break ;
 		if (current_token->type == HEREDOC)
+			process_heredoc_token(mini, &current_token, &prev_token, \
+					&keep_next);
+		else
 		{
-			if (prev_token)
-				prev_token->next = current_token->next;
-			else
-				mini->tokenlst = current_token->next;
-			free(current_token->token);
-			free(current_token);
-			if (prev_token)
-				current_token = prev_token->next;
-			else
-				current_token = mini->tokenlst;
-			continue ;
+			prev_token = current_token;
+			current_token = current_token->next;
 		}
-		prev_token = current_token;
-		current_token = current_token->next;
 	}
+}
+
+void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+		t_node **prev_cmd, bool *keep_next)
+{
+	t_node	*heredoc_cmd;
+	t_node	*delim_cmd;
+
+	heredoc_cmd = *current_cmd;
+	*current_cmd = (*current_cmd)->next;
+	if (!*current_cmd)
+		return ;
+	if (*keep_next)
+		*keep_next = false;
+	else
+	{
+		delim_cmd = *current_cmd;
+		*current_cmd = (*current_cmd)->next;
+		free(delim_cmd->token);
+		free(delim_cmd);
+	}
+	if (*prev_cmd)
+		(*prev_cmd)->next = *current_cmd;
+	else
+		mini->commands->tokens = *current_cmd;
+	free(heredoc_cmd->token);
+	free(heredoc_cmd);
 }
 
 void	support_heredoc_token_commands(t_minishell *mini)
 {
 	t_node	*prev_cmd;
 	t_node	*current_cmd;
+	bool	keep_next;
 
 	prev_cmd = NULL;
 	current_cmd = mini->commands->tokens;
+	keep_next = true;
 	while (current_cmd)
 	{
+		if (current_cmd->type == PIPE)
+			break ;
 		if (current_cmd->type == HEREDOC)
+			process_heredoc_command(mini, &current_cmd, &prev_cmd, &keep_next);
+		else
 		{
-			if (prev_cmd)
-				prev_cmd->next = current_cmd->next;
-			else
-				mini->commands->tokens = current_cmd->next;
-			free(current_cmd->token);
-			free(current_cmd);
-			if (prev_cmd)
-				current_cmd = prev_cmd->next;
-			else
-				current_cmd = mini->commands->tokens;
-			continue ;
+			prev_cmd = current_cmd;
+			current_cmd = current_cmd->next;
 		}
-		prev_cmd = current_cmd;
-		current_cmd = current_cmd->next;
 	}
 }
 
