@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 17:27:32 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/10 21:57:31 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,6 @@ void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 		perror("Failed to close heredoc file");
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
-	// close(STDIN_FILENO);
-	// close(STDOUT_FILENO);
-	// close(STDERR_FILENO);
 }
 
 int	open_heredoc(t_heredoc *tmp_hd)
@@ -86,6 +83,15 @@ int	open_heredoc(t_heredoc *tmp_hd)
 	if (tmp_hd->fd_heredoc == -1)
 		return (-1);
 	return (0);
+}
+
+void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
+{
+	free(line);
+	close(tmp_hd->fd_heredoc);
+	close(mini->heredoc->fd_heredoc);
+	close(mini->saved_stdin);
+	close(mini->saved_stdout);
 }
 
 int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
@@ -98,7 +104,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 		line = readline("> ");
 		if (!line)
 		{
-			free(line);
+			close_fds(mini, tmp_hd, line);
 			return (0);
 		}
 		if (ft_strcmp(line, tmp_hd->eof) == 0)
@@ -224,6 +230,9 @@ void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
+		close(mini->saved_stdout);
+		close(mini->saved_stdout);
+		close(mini->heredoc->fd_heredoc);
 		handle_ctrl_c_hd(mini);
 		return ;
 	}

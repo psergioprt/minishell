@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:14:49 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 16:06:16 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/10 22:08:32 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char	*expand_env_vars_in_line(t_minishell *mini, char *line)
 		result = append_expanded_env(mini, result, &line, pos);
 	}
 	result = ft_strjoin_free(result, line);
-	//free(line); Comentar isto resovle o double free
 	return (result);
 }
 
