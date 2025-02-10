@@ -16,6 +16,11 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 {
 	pid_t	pid;
 
+	if (has_heredoc(mini))
+		heredoc(mini);
+	if (handle_redirections(mini) == -1)
+		return ;
+	skip_redirection_plus_target(mini);
 	pid = create_pid();
 	if (pid == 0)
 	{
@@ -57,7 +62,7 @@ void	exec_multiple_cmds(t_minishell *mini)
 		free_tokens(mini->commands->tokens);
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
-		free(old_cmd);
+		free(old_cmd); 
 		init_sigaction(mini->interactive);
 	}
 	wait_childs(mini, n_cmds);
@@ -73,7 +78,14 @@ void	exec_cmds(t_minishell *mini)
 	if (check_redirect_errors(mini))
 		return ;
 	if (mini->commands && !mini->commands->next)
+	{
+		if (has_heredoc(mini))
+			heredoc(mini);
+		if (handle_redirections(mini) == -1)
+			return ;
+		skip_redirection_plus_target(mini);
 		first_token(mini);
+	}
 	else
 		exec_multiple_cmds(mini);
 }
@@ -111,12 +123,8 @@ int	first_token(t_minishell *mini)
 		&& mini->commands->tokens->token)
 	{
 		cmdlst = mini->commands;
-		if (has_heredoc(mini))
-			heredoc(mini);
-		if (handle_redirections(mini) == -1)
-			return (1);
-		skip_redirection_plus_target(mini);
 		execute(mini, cmdlst);
 	}
 	return (0);
 }
+
