@@ -82,9 +82,9 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 {
 	size_t	len;
 
-	len = ft_strlen(cmdlst->tokens->token);
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
+	len = ft_strlen(cmdlst->tokens->token);
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);
 	else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))
