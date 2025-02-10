@@ -23,20 +23,7 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 	skip_redirection_plus_target(mini);
 	pid = create_pid();
 	if (pid == 0)
-	{
-		if (*prev_fd != -1)
-			redir_fds(*prev_fd, STDIN_FILENO);
-		if (mini->commands->next)
-			redir_fds(mini->commands->fd[1], STDOUT_FILENO);
-		if (mini->commands->fd[0] != -1)
-			close(mini->commands->fd[0]);
-		if (mini->commands->fd[1] != -1)
-			close(mini->commands->fd[1]);
-		first_token(mini);
-		close(mini->saved_stdin);
-		close(mini->saved_stdout);
-		exit(mini->exit_status);
-	}
+		handle_child_process(mini, prev_fd);
 	if (*prev_fd != -1)
 		close(*prev_fd);
 	if (mini->commands->next)
@@ -62,7 +49,7 @@ void	exec_multiple_cmds(t_minishell *mini)
 		free_tokens(mini->commands->tokens);
 		old_cmd = mini->commands;
 		mini->commands = temp_cmd;
-		free(old_cmd); 
+		free(old_cmd);
 		init_sigaction(mini->interactive);
 	}
 	wait_childs(mini, n_cmds);
@@ -127,4 +114,3 @@ int	first_token(t_minishell *mini)
 	}
 	return (0);
 }
-

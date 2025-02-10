@@ -136,7 +136,6 @@ void		handle_open_close_quotes(t_minishell *mini, \
 			t_parse_context *ctx, int *i, int *j);
 void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
-int			handle_redirections(t_minishell *mini);
 void		restore_default_signals(void);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
@@ -144,9 +143,29 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 //5/2 - Added
 int			identify_redirection_type(char *token);
 void		skip_redirection_plus_target(t_minishell *mini);
-int			check_redirect_errors(t_minishell *mini);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
+
+//REDIRECTS_HANDLER
+int			handle_redirections(t_minishell *mini);
+int			open_file(const char *filename, t_type type);
+int			handle_redirection_action(int fd, t_node *current);
+int			identify_redirection_type(char *token);
+
+//REDIRECTS_CHECK_ERRORS
+int			check_redirect_errors_support(t_minishell *mini);
+int			check_redirect_errors_support_1(t_minishell *mini);
+int			check_redirect_errors(t_minishell *mini);
+
+void		remove_heredoc_token(t_minishell *mini);
+
+//REDIRECTS_SKIP_FUNCTIONS
+void		skip_redirection_plus_target_cmd_support(t_node **current, \
+			t_node **tmp, t_node **prev, t_node **tokens);
+void		skip_redirection_plus_target_cmd(t_cmd *cmd_list);
+void		skip_redirection_plus_target_support(t_node **current, \
+			t_node **tmp);
+void		skip_redirection_plus_target(t_minishell *mini);
 
 //SYNTAX_HELPER
 void		handle_spaces_helper(t_minishell *mini, char *expanded_token, \
@@ -164,8 +183,26 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
+void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
+			t_node **prev_token, bool *keep_next);
+void		support_heredoc_token_tokens(t_minishell *mini);
+void		process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+			t_node **prev_cmd, bool *keep_next);
+void		support_heredoc_token_commands(t_minishell *mini);
+void		remove_heredoc_token(t_minishell *mini);
+void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
 void		heredoc(t_minishell *mini);
+
+//HANDLE_HEREDOC2
+void		support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
+int			open_heredoc(t_heredoc *tmp_hd);
+void		close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line);
 int			fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
+void		handle_child_process(t_minishell *mini, int *prev_fd);
+
+//HANDLE_HEREDOC3
+void		initialize_heredoc(t_minishell *mini, t_node *tmp);
+void		append_heredoc(t_minishell *mini, t_node *tmp);
 void		save_heredoc_info(t_minishell *mini);
 
 //HEREDOC_UTILS
@@ -176,14 +213,14 @@ char		*ft_strjoin_free(char *s1, const char *s2);
 int			check_malloc(void *ptr);
 
 //HEREDOC_UTILS2
-void		init_heredoc(t_minishell *mini);
 void		clear_heredoc_list(t_minishell *mini);
 void		include_hd_path(t_minishell *mini);
 int			find_next_env(char *line);
-char		*append_expanded_env(t_minishell *mini, char *result, \
-			char **pline, int pos);
+char		*append_expanded_env(t_minishell *mini, char *result, char **pline, \
+			int pos);
 
 //HEREDOC_UTILS3
+void		init_heredoc(t_minishell *mini);
 char		*expand_env_vars_in_line(t_minishell *mini, char *line);
 void		check_hd_expand(char **line, t_minishell *mini);
 void		handle_heredoc_child(t_heredoc *tmp_hd, t_minishell *mini);
