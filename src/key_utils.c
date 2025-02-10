@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/05 15:37:57 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/09 22:55:11 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@ int	count_node(t_minishell *mini)
 	t_node	*temp;
 
 	i = 0;
-	temp = mini->commands->tokens; //mudei de mini->tokenlst;
-	while (temp) {
+	temp = mini->commands->tokens;
+	while (temp)
+	{
 		i++;
 		temp = temp->next;
 	}
@@ -31,13 +32,13 @@ t_env	*find_key(t_minishell *mini, char *key)
 	t_env	*envvars;
 
 	envvars = mini->envvars;
- 	while (envvars)
+	while (envvars)
 	{
 		if (ft_strcmp(key, envvars->key) == 0)
-			return(envvars);
+			return (envvars);
 		envvars = envvars->next;
-	} 
-	return(NULL);
+	}
+	return (NULL);
 }
 
 int	check_valid_key(char *str)
@@ -51,7 +52,7 @@ int	check_valid_key(char *str)
 		return (1);
 	while (str[i] != '=' && str[i])
 	{
-		if(!ft_isalnum(str[i]) && str[i] != '_')
+		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (1);
 		i++;
 	}

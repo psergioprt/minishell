@@ -12,9 +12,9 @@
 
 #include "../include/minishell.h"
 
-static t_cmd *create_new_cmd()
+static t_cmd	*create_new_cmd(void)
 {
-	t_cmd *cmd;
+	t_cmd	*cmd;
 
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
@@ -26,27 +26,27 @@ static t_cmd *create_new_cmd()
 	return (cmd);
 }
 
-static void add_token_to_cmd(t_cmd *cmd, t_node *current)
+static void	add_token_to_cmd(t_cmd *cmd, t_node *current)
 {
-	t_node **token_tail;
+	t_node	**token_tail;
 
 	token_tail = &cmd->tokens;
 	while (*token_tail)
 		token_tail = &((*token_tail)->next);
 	*token_tail = malloc(sizeof(t_node));
 	if (!*token_tail)
-		return;
+		return ;
 	(*token_tail)->token = ft_strdup(current->token);
 	(*token_tail)->type = current->type;
 	(*token_tail)->next = NULL;
 }
 
-void split_commands(t_minishell *mini)
+void	split_commands(t_minishell *mini)
 {
-	t_node *current;
-	t_cmd *last_cmd;
-	t_cmd *new_cmd;
-	
+	t_node	*current;
+	t_cmd	*last_cmd;
+	t_cmd	*new_cmd;
+
 	current = mini->tokenlst;
 	last_cmd = NULL;
 	mini->commands = NULL;
@@ -54,7 +54,7 @@ void split_commands(t_minishell *mini)
 	{
 		new_cmd = create_new_cmd();
 		if (!new_cmd)
-			return;
+			return ;
 		while (current && current->type != PIPE)
 		{
 			add_token_to_cmd(new_cmd, current);

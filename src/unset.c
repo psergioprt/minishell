@@ -12,27 +12,21 @@
 
 #include "../include/minishell.h"
 
-//TODO : If you attempt to unset a variable that does not exist, unset does nothing and does not return an error.
-//TODO: Se tiver mais que uma variavel da unset a todas 
-//EX: unset VAR1 VAR2
-
 void	delete_env(t_minishell *mini, t_env **envvars, t_env **prev_envvar)
 {
-	t_env *temp;
-	
-	temp = *envvars;
-	if (*prev_envvar) // Not the first node
-		(*prev_envvar)->next = (*envvars)->next;
-	else // First node, update head of the list
-		mini->envvars = (*envvars)->next;
+	t_env	*temp;
 
-	// Free the memory for the current node
+	temp = *envvars;
+	if (*prev_envvar)
+		(*prev_envvar)->next = (*envvars)->next;
+	else
+		mini->envvars = (*envvars)->next;
 	free(temp->key);
 	free(temp->value);
 	free(temp);
 }
 
-void run_varlst(t_minishell *mini, t_node *varlst)
+void	run_varlst(t_minishell *mini, t_node *varlst)
 {
 	t_env		*envvars;
 	t_env		*prev_envvar;
@@ -45,10 +39,11 @@ void run_varlst(t_minishell *mini, t_node *varlst)
 		var_len = ft_strlen(varlst->token);
 		while (envvars)
 		{
-			if (ft_strlen(envvars->key) == var_len && ft_strncmp(envvars->key, varlst->token, var_len) == 0)
+			if (ft_strlen(envvars->key) == var_len && \
+			ft_strncmp(envvars->key, varlst->token, var_len) == 0)
 			{
 				delete_env(mini, &envvars, &prev_envvar);
-				break;
+				break ;
 			}
 			prev_envvar = envvars;
 			envvars = envvars->next;
@@ -61,7 +56,7 @@ int	custom_unset(t_minishell *mini)
 {
 	t_node		*varlst;
 
-	varlst = mini->commands->tokens;//mudei de mini->tokenlst;
+	varlst = mini->commands->tokens;
 	if (varlst->next)
 		varlst = varlst->next;
 	if (varlst->token && varlst->token[0] == '-' && varlst->token[1])

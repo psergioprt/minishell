@@ -12,7 +12,6 @@
 
 #include "../include/minishell.h"
 
-//function created to free the linked list
 void	free_list(t_minishell *mini)
 {
 	t_node	*current;
@@ -27,7 +26,6 @@ void	free_list(t_minishell *mini)
 		current = next;
 	}
 	mini->tokenlst = NULL;
-	//free_commands(mini->commands);
 }
 
 void	free_envvars(t_minishell *mini)
@@ -66,6 +64,6 @@ void	cleanup_fd(t_minishell *mini)
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
 	close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 }

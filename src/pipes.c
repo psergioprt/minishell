@@ -12,10 +12,10 @@
 
 #include "../include/minishell.h"
 
-void create_pipes(t_cmd *cmd)
+void	create_pipes(t_cmd *cmd)
 {
 	if (!cmd)
-		return;
+		return ;
 	if (cmd->next)
 	{
 		if (pipe(cmd->fd) == -1)
@@ -23,35 +23,35 @@ void create_pipes(t_cmd *cmd)
 			perror("Error creating pipes");
 			exit(1);
 		}
-	}	
+	}
 }
 
-void redir_fds(int redir, int local)
+void	redir_fds(int redir, int local)
 {
 	if (redir < 0 || local < 0)
 	{
 		perror("Invalid file descriptor");
-		return;
+		return ;
 	}
 	if (fcntl(redir, F_GETFD) == -1)
 	{
 		perror("FD check failed before dup2");
-		return;
+		return ;
 	}
 	if (dup2(redir, local) < 0)
 	{
 		perror("dup2 failed");
 		printf("Failed to redirect %d -> %d\n", redir, local);
 		close(redir);
-		return;
+		return ;
 	}
 	close(redir);
 }
 
 void	wait_childs(t_minishell *mini, int n_cmds)
 {
-	int     i;
-	pid_t   pid;
+	int		i;
+	pid_t	pid;
 
 	i = 0;
 	while (i < n_cmds)
@@ -68,7 +68,8 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 		}
 		i++;
 	}
-	if (WIFSIGNALED(mini->exit_status) && WTERMSIG(mini->exit_status) == SIGQUIT)
+	if (WIFSIGNALED(mini->exit_status) && \
+		WTERMSIG(mini->exit_status) == SIGQUIT)
 		write(1, "Quit (core dumped)\n", 19);
 }
 
@@ -93,7 +94,7 @@ pid_t	create_pid(void)
 	if (child < 0)
 	{
 		printf("Fork error");
-		exit(EXIT_FAILURE);	
+		exit(EXIT_FAILURE);
 	}
 	return (child);
 }
