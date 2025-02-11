@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/09 18:10:37 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/11 22:50:13 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,6 @@ void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 		ctx->current_token[(*j)++] = '$';
 		(*i)--;
 	}
-	else if (ctx->input[*i] == '"')
-	{
+	else if (ctx->input[*i] == '"' || ctx->input[*i] == '\'')
 		(*i)--;
-		ctx->current_token[(*j)++] = '$';
-	}
 }

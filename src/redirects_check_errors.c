@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:16:09 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/11 10:49:10 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/11 22:51:33 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,29 +78,29 @@ int	check_last_token(t_minishell *mini)
 
 int	check_redirect_errors(t_minishell *mini)
 {
+	char	*token;
+
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return (-1);
-	if (check_last_token(mini))
-		return (-1);
-	if (!ft_strncmp(mini->tokenlst->token, ">", 1) || \
-			!ft_strncmp(mini->tokenlst->token, ">>", 2) || \
-			!ft_strncmp(mini->tokenlst->token, "<", 1) || \
-			!ft_strncmp(mini->tokenlst->token, "<<", 2))
+	token = mini->tokenlst->token;
+	if (mini->unquoted == true)
 	{
-		if (!mini->tokenlst->next)
-			check_redirect_errors_support_1(mini);
-		else if (mini->tokenlst->next)
-			handle_redirections(mini);
-		else
-			skip_redirection_plus_target(mini);
-	}
-	else if ((ft_strncmp(mini->tokenlst->token, ">", 1) || \
-		ft_strncmp(mini->tokenlst->token, ">>", 2) || \
-		ft_strncmp(mini->tokenlst->token, "<", 1) || \
-		ft_strncmp(mini->tokenlst->token, "<<", 2)) && \
-		mini->tokenlst->next)
-	{
-		return (check_redirect_errors_support(mini));
+		if (check_last_token(mini))
+			return (-1);
+		if (!ft_strncmp(token, ">", 1) || !ft_strncmp(token, ">>", 2) || \
+			!ft_strncmp(token, "<", 1) || !ft_strncmp(token, "<<", 2))
+		{
+			if (!mini->tokenlst->next)
+				check_redirect_errors_support_1(mini);
+			else if (mini->tokenlst->next)
+				handle_redirections(mini);
+			else
+				skip_redirection_plus_target(mini);
+		}
+		else if ((ft_strncmp(token, ">", 1) || ft_strncmp(token, ">>", 2) || \
+			ft_strncmp(token, "<", 1) || ft_strncmp(token, "<<", 2)) && \
+			mini->tokenlst->next)
+			return (check_redirect_errors_support(mini));
 	}
 	return (0);
 }
