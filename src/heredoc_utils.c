@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:10:16 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 21:12:37 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/10 22:30:08 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	handle_ctrl_c_hd(t_minishell *mini)
 {
-	(void)mini;
+	close(mini->saved_stdout);
+	close(mini->saved_stdout);
+	close(mini->heredoc->fd_heredoc);
 }
 
 void	handle_heredoc_signal(int signal)

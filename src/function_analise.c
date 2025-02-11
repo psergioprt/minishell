@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/02/10 11:24:41 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,14 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 {
 	pid_t	pid;
 
+	if (has_heredoc(mini))
+		heredoc(mini);
+	if (handle_redirections(mini) == -1)
+		return ;
+	skip_redirection_plus_target(mini);
 	pid = create_pid();
 	if (pid == 0)
-	{
-		if (*prev_fd != -1)
-			redir_fds(*prev_fd, STDIN_FILENO);
-		if (mini->commands->next)
-			redir_fds(mini->commands->fd[1], STDOUT_FILENO);
-		if (mini->commands->fd[0] != -1)
-			close(mini->commands->fd[0]);
-		if (mini->commands->fd[1] != -1)
-			close(mini->commands->fd[1]);
-		first_token(mini);
-		close(mini->saved_stdin);
-		close(mini->saved_stdout);
-		exit(mini->exit_status);
-	}
+		handle_child_process(mini, prev_fd);
 	if (*prev_fd != -1)
 		close(*prev_fd);
 	if (mini->commands->next)
@@ -73,7 +65,14 @@ void	exec_cmds(t_minishell *mini)
 	if (check_redirect_errors(mini))
 		return ;
 	if (mini->commands && !mini->commands->next)
+	{
+		if (has_heredoc(mini))
+			heredoc(mini);
+		if (handle_redirections(mini) == -1)
+			return ;
+		skip_redirection_plus_target(mini);
 		first_token(mini);
+	}
 	else
 		exec_multiple_cmds(mini);
 }
@@ -85,8 +84,6 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
 	len = ft_strlen(cmdlst->tokens->token);
-	//if (!mini->tokenlst || !mini->tokenlst->token)
-	//	return ;
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);
 	else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))
@@ -113,11 +110,6 @@ int	first_token(t_minishell *mini)
 		&& mini->commands->tokens->token)
 	{
 		cmdlst = mini->commands;
-		if (has_heredoc(mini))
-			heredoc(mini);
-		if (handle_redirections(mini) == -1)
-			return (1);
-		skip_redirection_plus_target(mini);
 		execute(mini, cmdlst);
 	}
 	return (0);

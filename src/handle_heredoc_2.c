@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc_2.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/10 10:13:13 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/11 10:37:35 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	handle_child_process(t_minishell *mini, int *prev_fd)
+{
+	if (*prev_fd != -1)
+		redir_fds(*prev_fd, STDIN_FILENO);
+	if (mini->commands->next)
+		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
+	first_token(mini);
+	close(mini->saved_stdin);
+	close(mini->saved_stdout);
+	exit(mini->exit_status);
+}
 
 void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
@@ -32,6 +48,15 @@ int	open_heredoc(t_heredoc *tmp_hd)
 	return (0);
 }
 
+void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
+{
+	free(line);
+	close(tmp_hd->fd_heredoc);
+	close(mini->heredoc->fd_heredoc);
+	close(mini->saved_stdin);
+	close(mini->saved_stdout);
+}
+
 int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
 	char	*line;
@@ -42,7 +67,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 		line = readline("> ");
 		if (!line)
 		{
-			free(line);
+			close_fds(mini, tmp_hd, line);
 			return (0);
 		}
 		if (ft_strcmp(line, tmp_hd->eof) == 0)

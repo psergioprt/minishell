@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:14:49 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 22:06:45 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/10 23:08:39 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,17 @@ int	has_heredoc(t_minishell *mini)
 		tmp = tmp->next;
 	}
 	return (0);
+}
+
+void	init_heredoc(t_minishell *mini)
+{
+	mini->heredoc = ft_calloc(1, sizeof(t_heredoc));
+	if (check_malloc(mini->heredoc))
+		return ;
+	mini->heredoc->index = 0;
+	mini->heredoc->count_hd = 0;
+	mini->heredoc->fd_heredoc_path = NULL;
+	mini->heredoc->eof = NULL;
+	mini->heredoc->eof_quote = false;
+	mini->heredoc->next = NULL;
 }

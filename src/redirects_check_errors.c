@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirects_check_errors.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:16:09 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/11 09:03:25 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/11 10:49:10 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
