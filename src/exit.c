@@ -15,7 +15,6 @@
 void	do_exit(t_minishell *mini, int error_code)
 {
 	mini->exit_status = error_code;
-	printf("exit\n");
 	free_envvars(mini);
 	free_commands(mini->commands);
 	free_list(mini);
@@ -23,26 +22,40 @@ void	do_exit(t_minishell *mini, int error_code)
 	exit(error_code);
 }
 
-void	get_exit(t_minishell *mini, t_node *nodelst)
+void	calculate_exit(t_minishell *mini, t_node *nodelst)
+{
+	if (ft_atoll(nodelst->token) < 0)
+	{
+		printf("exit\n");
+		do_exit(mini, (256 + ft_atoll(nodelst->token)));
+	}
+	else
+	{
+		printf("exit\n");
+		do_exit(mini, (ft_atoll(nodelst->token) % 256));
+	}
+}
+
+int	get_exit(t_minishell *mini, t_node *nodelst)
 {
 	nodelst = nodelst->next;
 	if (!is_num(nodelst->token) || m_long(nodelst->token))
 	{
+		printf("exit\n");
 		printf("exit: %s: numeric argument required\n", nodelst->token);
 		do_exit(mini, 2);
+		return (2);
 	}
 	else if (nodelst->next)
 	{
+		printf("exit\n");
 		printf("exit: too many arguments\n");
 		mini->exit_status = 1;
+		return (1);
 	}
 	else
-	{
-		if (ft_atoll(nodelst->token) < 0)
-			do_exit(mini, (256 + ft_atoll(nodelst->token)));
-		else
-			do_exit(mini, (ft_atoll(nodelst->token) % 256));
-	}
+		calculate_exit(mini, nodelst);
+	return (0);
 }
 
 int	custom_exit(t_minishell *mini)
@@ -52,10 +65,11 @@ int	custom_exit(t_minishell *mini)
 	nodelst = mini->commands->tokens;
 	if (!nodelst->next)
 	{
+		printf("exit\n");
 		do_exit(mini, 0);
 		return (0);
 	}
 	else
-		get_exit(mini, nodelst);
+		return (get_exit(mini, nodelst));
 	return (0);
 }
