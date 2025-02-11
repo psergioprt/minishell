@@ -142,7 +142,6 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 
 //5/2 - Added
 int			identify_redirection_type(char *token);
-void		skip_redirection_plus_target(t_minishell *mini);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
 
@@ -156,7 +155,6 @@ int			identify_redirection_type(char *token);
 int			check_redirect_errors_support(t_minishell *mini);
 int			check_redirect_errors_support_1(t_minishell *mini);
 int			check_redirect_errors(t_minishell *mini);
-
 void		remove_heredoc_token(t_minishell *mini);
 
 //REDIRECTS_SKIP_FUNCTIONS
