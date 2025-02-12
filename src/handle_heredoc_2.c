@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/12 10:10:21 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/12 12:40:04 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 	if (handle_redirections(mini) == -1)
 		return ;
 	skip_redirection_plus_target(mini);
+	remove_heredoc_token(mini);
 	first_token(mini);
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
