@@ -68,27 +68,62 @@ void	argumentate(t_minishell *mini, t_env *new_env)
 	new_env->next = NULL;
 }
 
+void	cat_env_value(t_env *found_env, t_env *new_env, t_node *node)
+{
+	char	*new_value;
+
+	if (!found_env->value || found_env->value[0] == '\0')
+		replace_env_value(found_env, node->token);
+	else
+	{
+		new_value = ft_strjoin(found_env->value, new_env->value);
+		free(found_env->value);
+		found_env->value = new_value;
+	}
+}
+
+void	handle_value(t_minishell *mini, t_node *node, t_env *found_env, \
+		t_env *new_env, bool cat)
+{
+	if (cat == false)
+	{
+		if (found_env != NULL)
+			replace_env_value(found_env, node->token);
+		else
+			argumentate(mini, new_env);
+	}
+	else
+	{
+		if (found_env != NULL)
+			cat_env_value(found_env, new_env, node);
+		else
+			argumentate(mini, new_env);
+	}
+}
+
 void	loop_node(t_minishell *mini, t_node *node, int *ret)
 {
 	t_env	*found_env;
 	t_env	*new_env;
+	bool	cat;
 
+	cat = false;
 	while (node)
 	{
-		new_env = export_args(node->token);
-		found_env = find_key(mini, new_env->key);
-		if (check_valid_key(node->token) == 0)
+		if (check_valid_key(node->token, &cat) == 0)
 		{
-			if (found_env != NULL)
-				replace_env_value(found_env, node->token);
-			else
-				argumentate(mini, new_env);
+			if (cat == true)
+				node->token = skip_plus(node->token);
+			new_env = export_args(node->token);
+			found_env = find_key(mini, new_env->key);
+			handle_value(mini, node, found_env, new_env, cat);
 		}
 		else
 		{
 			printf("export: '%s' is not a valid identifier\n", node->token);
 			*ret = 1;
 		}
+		cat = false;
 		node = node->next;
 	}
 }

@@ -270,13 +270,16 @@ int			custom_env(t_minishell *mini);
 int			custom_export(t_minishell *mini);
 //int		replace_value(t_env *found_env, char *value);
 
+//EXPORT_UTILS
+char		*skip_plus(char *str)
+
 //UNSET
 int			custom_unset(t_minishell *mini);
 
 //KEY_UTILS
 int			count_node(t_minishell *mini);
 t_env		*find_key(t_minishell *mini, char *key);
-int			check_valid_key(char *str);
+int			check_valid_key(char *str, bool *cat);
 int			replace_env_value(t_env *found_env, char *value);
 
 //PWD
