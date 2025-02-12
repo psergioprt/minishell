@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/12 17:34:34 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/12 17:37:33 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,10 @@ void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
 	close(mini->heredoc->fd_heredoc);
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
-	close(mini->commands->fd[1]);
-	close(mini->commands->fd[0]);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
 }
 
 int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
