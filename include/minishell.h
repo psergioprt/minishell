@@ -271,7 +271,9 @@ int			custom_export(t_minishell *mini);
 //int		replace_value(t_env *found_env, char *value);
 
 //EXPORT_UTILS
-char		*skip_plus(char *str)
+char		*skip_plus(char *str);
+int			export_no_args(t_minishell *mini);
+t_env		*export_args(char *var);
 
 //UNSET
 int			custom_unset(t_minishell *mini);
