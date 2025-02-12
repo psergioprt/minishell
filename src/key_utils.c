@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 22:55:11 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/12 11:12:13 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,28 @@ t_env	*find_key(t_minishell *mini, char *key)
 	return (NULL);
 }
 
-int	check_valid_key(char *str)
+int	check_valid_key(char *str, bool *cat)
 {
-	int	i;
+	int		i;
+	bool	has_char;
 
 	i = 0;
+	has_char = false;
 	if (!str || !str[i])
 		return (1);
 	if (str[i] == '=' || ft_isdigit(str[i]))
 		return (1);
 	while (str[i] != '=' && str[i])
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+		if (!ft_isalnum(str[i]) && str[i] != '_' && str[i] != '+')
+			return (1);
+		if (str[i] == '+' && *cat == false && has_char == true)
+			*cat = true;
+		else if ((str[i] == '+' && *cat == true) || \
+				(str[i] == '+' && has_char == false))
 			return (1);
 		i++;
+		has_char = true;
 	}
 	return (0);
 }
