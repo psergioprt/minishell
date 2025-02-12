@@ -24,6 +24,12 @@ void	add_env_variable(t_minishell *mini, char *key, char *value)
 	if (value)
 		new_env->value = ft_strdup(value);
 	new_env->print = true;
+	if (!envvars)
+	{
+		new_env->next = NULL;
+		mini->envvars = new_env;
+		return ;
+	}
 	while (envvars->next)
 		envvars = envvars->next;
 	envvars->next = new_env;
