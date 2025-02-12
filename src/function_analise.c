@@ -17,7 +17,10 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 	pid_t	pid;
 
 	if (has_heredoc(mini))
+	{
 		heredoc(mini);
+		wait(NULL);
+	}
 	/* if (handle_redirections(mini) == -1)
 		return ;
 	skip_redirection_plus_target(mini); */

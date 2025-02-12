@@ -69,6 +69,7 @@ typedef struct s_cmd
 	t_node			*tokens;
 	int				fd[2];
 	struct s_cmd	*next;
+	int				is_first_command;
 }	t_cmd;
 
 typedef struct s_minishell

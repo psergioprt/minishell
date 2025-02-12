@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/12 12:40:04 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/12 17:34:34 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		redir_fds(*prev_fd, STDIN_FILENO);
 	if (mini->commands->next)
 		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
+	if (mini->heredoc->fd_heredoc)
+		close(mini->heredoc->fd_heredoc);
 	if (mini->commands->fd[0] != -1)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
@@ -36,11 +38,16 @@ void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
 	if (close(tmp_hd->fd_heredoc) == -1)
 		perror("Failed to close heredoc file");
+	close(mini->heredoc->fd_heredoc);
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
-	close(STDIN_FILENO);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
+	/* 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+	close(STDERR_FILENO); */
 }
 
 int	open_heredoc(t_heredoc *tmp_hd)
@@ -59,6 +66,8 @@ void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
 	close(mini->heredoc->fd_heredoc);
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
+	close(mini->commands->fd[1]);
+	close(mini->commands->fd[0]);
 }
 
 int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
