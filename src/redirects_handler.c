@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/13 10:00:33 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 11:55:20 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	open_file(const char *filename, t_type type)
 		return (-1);
 	}
 	if (fd == -1)
-		perror("open");
+		printf("%s: no such file or directory\n", filename);
 	return (fd);
 }
 
@@ -36,7 +36,7 @@ int	handle_redirection_action(int fd, t_node *current)
 {
 	if (fd == -1)
 	{
-		perror("Failed to open file");
+		/* perror("Failed to open file"); */
 		return (-1);
 	}
 	if (current->type == OUTPUT || current->type == APPEND_OUTPUT)

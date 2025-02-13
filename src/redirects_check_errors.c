@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:16:09 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/11 22:51:33 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 12:06:05 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,11 @@ int	check_redirect_errors(t_minishell *mini)
 		{
 			if (!mini->tokenlst->next)
 				check_redirect_errors_support_1(mini);
-			else if (mini->tokenlst->next)
-				handle_redirections(mini);
+ 			else if (mini->tokenlst->next)
+			{
+				if (handle_redirections(mini) == -1)
+					return (-1);
+			}	
 			else
 				skip_redirection_plus_target(mini);
 		}

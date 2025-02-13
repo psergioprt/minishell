@@ -57,15 +57,15 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 	while (i < n_cmds)
 	{
 		pid = waitpid(mini->child[i], &mini->exit_status, 0);
-		if (pid == -1)
-			perror("waitpid failed");
-		else
-		{
+/* 		if (pid == -1)
+			perror("waitpid failed"); */
+/* 		else
+		{ */
 			if (WIFEXITED(mini->exit_status))
 				mini->exit_status = WEXITSTATUS(mini->exit_status);
 			else if (WIFSIGNALED(mini->exit_status))
 				mini->exit_status = 128 + WTERMSIG(mini->exit_status);
-		}
+		//}
 		i++;
 	}
 	if (WIFSIGNALED(mini->exit_status) && \
