@@ -182,11 +182,11 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
-void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
-			t_node **prev_token, bool *keep_next);
+void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
+	t_node **prev_token);
 void		support_heredoc_token_tokens(t_minishell *mini);
-void		process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
-			t_node **prev_cmd, bool *keep_next);
+void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+	t_node **prev_cmd);
 void		support_heredoc_token_commands(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
 void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
