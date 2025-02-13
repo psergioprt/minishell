@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:19:26 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/13 00:52:59 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 10:53:17 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ void skip_redirection_plus_target_cmd(t_cmd *cmd_list)
 		while (current)
 		{
 			if (current->type == PIPE)
-				break;
-
+				break ;
 			if (current->type != NONE && current->type != HEREDOC)
 				skip_redirection_plus_target_cmd_support(&current, &tmp, &prev, &cmd->tokens);
 			else
@@ -92,7 +91,7 @@ void skip_redirection_plus_target(t_minishell *mini)
 	while (current)
 	{
 		if (current->type == PIPE)
-			break;
+			break ;
 		if (current->type != NONE && current->type != HEREDOC)
 		{
 			skip_redirection_plus_target_support(&current, &tmp);
@@ -108,4 +107,5 @@ void skip_redirection_plus_target(t_minishell *mini)
 		}
 	}
 	current = mini->tokenlst;
+	remove_heredoc_token(mini);
 }

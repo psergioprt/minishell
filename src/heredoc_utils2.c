@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 23:08:35 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 10:30:04 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	include_hd_path(t_minishell *mini)
 	{
 		if (tmp_token->type == HEREDOC)
 		{
-			tmp_token->type = INPUT;
+			tmp_token->type = HEREDOC;
 			tmp_token->target = tmp_hd->fd_heredoc_path;
 			tmp_hd = tmp_hd->next;
 		}

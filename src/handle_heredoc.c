@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/12 17:37:15 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 11:09:49 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,5 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = tmp_hd->next;
 	}
 	include_hd_path(mini);
-	remove_heredoc_token(mini);
+	//remove_heredoc_token(mini);
 }
