@@ -64,7 +64,7 @@ void	exec_cmds(t_minishell *mini)
 	split_commands(mini);
 	if (check_redirect_errors(mini))
 	{
-		mini->exit_status = 1;
+		mini->exit_status = 2;
 		return ;
 	}
 	if (mini->commands && !mini->commands->next)

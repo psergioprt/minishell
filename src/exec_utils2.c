@@ -48,7 +48,8 @@ int	handle_search_path(t_minishell *mini, t_node *node, char **pathname)
 	*pathname = find_path(mini);
 	if (!*pathname)
 	{
-		printf("%s: command not found\n", node->token);
+		ft_putstr_fd(node->token, 2);
+		ft_putstr_fd(" : command not found\n", 2);
 		mini->exit_status = 127;
 		return (-1);
 	}
