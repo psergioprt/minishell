@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/10 00:18:40 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 00:08:02 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,33 @@ void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
 		ctx->current_token[(*j)++] = ctx->input[*i];
 }
 
+void	add_token_to_list(t_minishell *mini, t_node *new_token)
+{
+	t_node *current;
+	if (!mini->tokenlst)
+		mini->tokenlst = new_token;
+	else
+	{
+		current = mini->tokenlst;
+		while (current->next)
+			current = current->next;
+		current->next = new_token;
+	}
+}
+
+void	 add_empty_token(t_minishell *mini)
+{
+	t_node *new_token;
+
+	new_token = malloc(sizeof(t_node));
+	check_malloc(new_token);
+	new_token->token = strdup("");
+	check_malloc(new_token->token);
+	new_token->type = NONE;
+	new_token->next = NULL;
+	add_token_to_list(mini, new_token);
+}
+
 void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
 		int *i, int *j)
 {
@@ -85,23 +112,32 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
 	mini->unquoted = false;
 	if (!ctx->quote)
 	{
-		ctx->quote = ctx->input[*i];
-		(*i)++;
-		if (ctx->input[*i - 1] == '\'')
-			mini->disable_expand = true;
-		if (ctx->input[*i - 1] == '"' && mini->disable_expand)
-			mini->disable_expand = true;
-		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+		if (ctx->input[*i + 1] == ctx->input[*i])
 		{
-			process_quoted_content(mini, ctx, i, j);
-			(*i)++;
+			add_empty_token(mini);
+			(*i) += 2;
+			return ;
 		}
-		if (ctx->input[*i] == ctx->quote)
-			ctx->quote = 0;
 		else
 		{
-			printf("Error: Unclosed quote detected!\n");
-			mini->has_error = true;
+			ctx->quote = ctx->input[*i];
+			(*i)++;
+			if (ctx->input[*i - 1] == '\'')
+				mini->disable_expand = true;
+			if (ctx->input[*i - 1] == '"' && mini->disable_expand)
+				mini->disable_expand = true;
+			while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+			{
+				process_quoted_content(mini, ctx, i, j);
+				(*i)++;
+			}
+			if (ctx->input[*i] == ctx->quote)
+				ctx->quote = 0;
+			else
+			{
+				printf("Error: Unclosed quote detected!\n");
+				mini->has_error = true;
+			}
 		}
 	}
 }

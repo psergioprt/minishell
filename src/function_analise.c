@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
+/*   Updated: 2025/02/13 23:49:25 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,14 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 {
 	size_t	len;
 
+	if (!cmdlst || !cmdlst->tokens || !cmdlst->tokens->token)
+		return ;
+	if (cmdlst->tokens->token[0] == '\0')
+	{
+		write(2, "'': command not found\n", 23);
+		mini->exit_status = 127;
+		return ;
+	}
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
 	len = ft_strlen(cmdlst->tokens->token);

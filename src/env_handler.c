@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/11 22:50:13 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 00:02:31 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 		while (env_value[ctx->m])
 			ctx->current_token[(*j)++] = env_value[(ctx->m)++];
 	}
+	else
+		add_empty_token(mini);
 }
 
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)

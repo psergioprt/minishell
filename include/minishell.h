@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 17:50:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 17:50:35 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/13 23:37:04 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
 void		restore_default_signals(void);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
+void		add_empty_token(t_minishell *mini);
 
 //5/2 - Added
 int			identify_redirection_type(char *token);
