@@ -1,0 +1,273 @@
+INPUT: echo '$USER'$USER or echo '$USER'"$USER" (One single token)
+ISSUE: Any expanded variables that would expand, after singles quotes didn't. 
+
+FIX: UPDATED at syntax_parsing.c handle_open_close_quotes.
+NOTE: This fix already has the fix for "" or '' LINES 115-120
+108 void    handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+109 {
+110         mini->heredoc->eof_quote = true;
+111         mini->unquoted = false;
+112 
+113         if (!ctx->quote)
+114         {
+115                 if (ctx->input[*i + 1] == ctx->input[*i])
+116                 {
+117                         add_empty_token(mini);
+118                         (*i) += 2;
+119                         return;
+120                 }
+121                 else
+122                 {
+123                         ctx->quote = ctx->input[*i];
+124                         (*i)++;
+125 
+126                         if (ctx->quote == '\'')
+127                                 mini->disable_expand = true;
+128                         else if (ctx->quote == '"')
+129                                 mini->disable_expand = false;
+130                         while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+131                         {
+132                                 process_quoted_content(mini, ctx, i, j);
+133                                 (*i)++;
+134                         }
+135                         if (ctx->input[*i] == ctx->quote)
+136                         {
+137                                 ctx->quote = 0;
+138                                 if (ctx->input[*i] == '"')
+139                                         mini->disable_expand = false;
+140                                 else if (ctx->input[*i] == '\'')
+141                                         mini->disable_expand = true;
+142                         }
+143                         else
+144                         {
+145                                 ft_putstr_fd("Error: Unclosed quote detected!\n", 2);
+146                                 mini->has_error = true;
+147                                 mini->exit_status = 2;
+148                         }
+149                 }
+150         }
+151 }
+
+FIX: ADDED ELSE IF function handle_loop_parsers at parser_handler.c
+ 47 void    handle_loop_parsers(t_minishell *mini, const char *input, \
+ 48                 t_token_context *tok_ctx)
+ 49 {
+ 50         if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+ 51                 handle_spaces_quotes(mini, input, tok_ctx);
+ 52         else if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == '>' || \
+ 53                                 input[*tok_ctx->i] == '<'))
+ 54                 handle_redirectional(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 55         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '|')
+ 56                 handle_pipes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 57         else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
+ 58                 handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 59         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
+ 60         {
+ 61                 mini->disable_expand = true;
+ 62                 if (input[*tok_ctx->i + 1])
+ 63                         tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
+ 64                 (*tok_ctx->i)++;
+ 65         }
+ 66         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && mini->disable_expand)
+ 67         {
+ 68                 mini->disable_expand = false;
+ 69                 handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 70         }
+ 71         else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' \
+ 72                         && !mini->disable_expand)
+ 73                 handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
+ 74         else    
+ 75                 tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i];
+ 76 }
+
+-----------------------------------------------------------------------------------
+ISSUE: "" '' or !envvars, etc display error message
+
+fix examples:
+"", '', "" | ls, "" | cat << eof, '$US', "$US", > "$US", > '$US'
+
+FIX: UPDATED FUNCTION handle_open_close_quotes (SEE ABOVE)
+ADDED FUNCTIONS AT syntax_parsing.c:
+
+ 81 void    add_token_to_list(t_minishell *mini, t_node *new_token)
+ 82 {
+ 83         t_node *current;
+ 84         if (!mini->tokenlst)
+ 85                 mini->tokenlst = new_token;
+ 86         else
+ 87         {
+ 88                 current = mini->tokenlst;
+ 89                 while (current->next)
+ 90                         current = current->next;
+ 91                 current->next = new_token;
+ 92         }
+ 93 }
+ 94 
+ 95 void     add_empty_token(t_minishell *mini)
+ 96 {
+ 97         t_node *new_token;
+ 98 
+ 99         new_token = malloc(sizeof(t_node));
+100         check_malloc(new_token);
+101         new_token->token = strdup("");
+102         check_malloc(new_token->token);
+103         new_token->type = NONE;
+104         new_token->next = NULL;
+105         add_token_to_list(mini, new_token);
+106 }
+
+ADDED LINES 84 - 91 at execute function at function_analise.c
+
+ 80 void    execute(t_minishell *mini, t_cmd *cmdlst)
+ 81 {
+ 82         size_t  len;
+ 83 
+ 84         if (!cmdlst || !cmdlst->tokens || !cmdlst->tokens->token)
+ 85                 return ;
+ 86         if (cmdlst->tokens->token[0] == '\0')
+ 87         {
+ 88                 write(2, "'': command not found\n", 23);
+ 89                 mini->exit_status = 127;
+ 90                 return ;
+ 91         }
+ 92         if (!mini->tokenlst || !mini->tokenlst->token)
+ 93                 return ;
+ 94         len = ft_strlen(cmdlst->tokens->token);
+ 95         if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
+ 96                 mini->exit_status = custom_echo(mini);
+ 97         else if (!ft_strncmp(cmdlst->tokens->token, "cd", len))
+ 98                 mini->exit_status = custom_cd(mini);
+ 99         else if (!ft_strncmp(cmdlst->tokens->token, "pwd", len))
+100                 mini->exit_status = custom_pwd(mini);
+101         else if (!ft_strncmp(cmdlst->tokens->token, "export", len))
+102                 mini->exit_status = custom_export(mini);
+103         else if (!ft_strncmp(cmdlst->tokens->token, "unset", len))
+104                 mini->exit_status = custom_unset(mini);
+105         else if (!ft_strncmp(cmdlst->tokens->token, "env", len))
+106                 mini->exit_status = custom_env(mini);
+107         else if (!ft_strncmp(cmdlst->tokens->token, "exit", len))
+108                 mini->exit_status = custom_exit(mini);
+109         else
+110                 mini->exit_status = execute_execve(mini);
+111 }
+
+UPDATE parse_env_name function at env_handler.c function (I think from LINE 79)
+
+ 60 void    parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+ 61 {
+ 62         int             k;
+ 63         char    *env_value;
+ 64         char    env_var_name[256];
+ 65 
+ 66         k = 0;
+ 67         env_value = NULL;
+ 68         while (ft_isalnum(ctx->input[*i]) || ctx->input[*i] == '_')
+ 69                 env_var_name[k++] = ctx->input[(*i)++];
+ 70         env_var_name[k] = '\0';
+ 71         (*i)--;
+ 72         env_value = get_env_value(env_var_name, mini);
+ 73         if (env_value)
+ 74         {
+ 75                 ctx->m = 0;
+ 76                 while (env_value[ctx->m])
+ 77                         ctx->current_token[(*j)++] = env_value[(ctx->m)++];
+ 78         }
+ 79         else if (mini->unquoted == false)
+ 80         {
+ 81                 if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || !ft_strcmp(mini->    prev_node->token, "<") || !ft_strcmp(mini->prev_node->token, ">>")))
+ 82                 {
+ 83                         ft_putstr_fd("No such file or directory\n");
+ 84                         mini->exit_status = 1;
+ 85                         mini->has_error = true;
+ 86                 }
+ 87                 add_empty_token(mini);
+ 88         }
+ 89         else if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || !ft_strcmp(mini->pre    v_node->token, "<") || !ft_strcmp(mini->prev_node->token, ">>")))
+ 90         {
+ 91                 ft_putstr_fd("ambiguos redirect\n", 2);
+ 92                 mini->exit_status = 1;
+ 93                 mini->has_error = true;
+ 94         }
+ 95  
+ 96 }
+
+-----------------------------------------------------------------------------------
+ISSUE: PIPE + command ... should display error message and stop run.
+FIX: Updated function handle_pipes at parser_handler.c
+
+ 15 void    handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+ 16 {
+ 17         int     saved_index;
+ 18         int     k = 0;
+ 19 
+ 20         while (ctx->input[k] && ctx->input[k] == ' ')
+ 21                 k++;
+ 22         if (ctx->input[k] == '|')
+ 23         {
+ 24                 ft_putstr_fd("syntax error near unexpected token '|'\n", 1);
+ 25                 mini->has_error = true;
+ 26                 mini->exit_status = 2;
+ 27                 return ;
+ 28         }
+ 29         mini->has_pipe += 1;
+ 30         saved_index = *i;
+ 31         (*i)++;
+ 32         while (ctx->input[*i])
+ 33         {
+ 34                 if (ctx->input[*i] != ' ' && !(ctx->input[*i] >= 9 \
+ 35                         && ctx->input[*i] <= 13))
+ 36                 {
+ 37                         *i = saved_index;
+ 38                         handle_sep(mini, ctx, i, j);
+ 39                         return ;
+ 40                 }
+ 41                 (*i)++;
+ 42         }
+ 43         ft_putstr_fd("Error: Pipe sign without further input\n", 2);
+ 44         mini->has_error = true;
+ 45         mini->exit_status = 2;
+ 46 }
+
+------------------------------------------------------------------------------------
+
+ISSUE: TRIPLE redirect should display error message
+FIX:
+UPDATE function handle_redirectional at syntax_parsing.c LINES 39 - 47
+
+32 void    handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
+ 33                 int *i, int *j)
+ 34 {
+ 35         char    single_op[2];
+ 36         char    *redir_token;
+ 37         int             redir_type;
+ 38 
+ 39         if (ctx->input[(*i) + 1] && ctx->input[(*i) + 2])
+ 40         {
+ 41                 if((ctx->input[(*i) + 1] == '<' || ctx->input[(*i) + 1] == '>') && (ctx->input[(*i)     + 2] == '<' || ctx->input[(*i) + 2] == '>'))
+ 42                 {
+ 43                         ft_putstr_fd("syntax error near unexpected token\n", 2);
+ 44                         mini->has_error = true;
+ 45                         mini->exit_status = 2;
+ 46                 }       
+ 47         }       
+ 48         if (*j > 0)
+ 49         {
+ 50                 ctx->current_token[*j] = '\0';
+ 51                 add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
+ 52                 *j = 0;
+ 53         }       
+ 54         if (ctx->input[(*i) + 1] == ctx->input[*i])
+ 55                 handle_double_redir(mini, ctx, i, &redir_token);
+ 56         else
+ 57         {
+ 58                 single_op[0] = ctx->input[*i];
+ 59                 single_op[1] = '\0';
+ 60                 redir_token = single_op;
+ 61         }
+ 62         redir_type = identify_redirection_type(redir_token);
+ 63         if (redir_type != -1)
+ 64                 add_command_node(mini, redir_token, redir_type, &(mini->prev_node));
+ 65         else
+ 66                 perror("Error: Invalid redirection operator\n");
+ 67 }
+

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 08:47:50 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/14 16:34:19 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	{
 		ft_putstr_fd("syntax error near unexpected token '|'\n", 1);
 		mini->has_error = true;
-		(*i)++;
+		mini->exit_status = 2;
 		return ;
 	}
 	mini->has_pipe += 1;
@@ -40,8 +40,9 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 		}
 		(*i)++;
 	}
-	printf("Error: Pipe sign without further input\n");
+	ft_putstr_fd("Error: Pipe sign without further input\n", 2);
 	mini->has_error = true;
+	mini->exit_status = 2;
 }
 
 void	handle_loop_parsers(t_minishell *mini, const char *input, \
@@ -62,6 +63,11 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 		if (input[*tok_ctx->i + 1])
 			tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
 		(*tok_ctx->i)++;
+	}
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && mini->disable_expand)
+        {
+		mini->disable_expand = false;
+		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	}
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' \
 			&& !mini->disable_expand)

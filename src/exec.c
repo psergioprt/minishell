@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/14 01:09:57 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/14 10:46:23 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,12 @@ int	execute_execve(t_minishell *mini)
 	int		i;
 	int		status;
 	pid_t	pid;
-	printf("Inside function execute_execve\n");
+//	printf("Inside function execute_execve\n");
 	pathname = NULL;
 	get_command(mini);
 	i = count_node(mini);
 	argv = get_argv(mini, i, mini->commands->tokens);
-	print_tokens(mini);
+//	print_tokens(mini);
 	if (!argv)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)

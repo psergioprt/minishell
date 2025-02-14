@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 00:08:02 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/14 18:06:20 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,15 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 	char	*redir_token;
 	int		redir_type;
 
+	if (ctx->input[(*i) + 1] && ctx->input[(*i) + 2])
+	{
+		if((ctx->input[(*i) + 1] == '<' || ctx->input[(*i) + 1] == '>') && (ctx->input[(*i) + 2] == '<' || ctx->input[(*i) + 2] == '>'))
+		{
+			ft_putstr_fd("syntax error near unexpected token\n", 2);
+			mini->has_error = true;
+			mini->exit_status = 2;
+		}
+	}
 	if (*j > 0)
 	{
 		ctx->current_token[*j] = '\0';
@@ -105,38 +114,46 @@ void	 add_empty_token(t_minishell *mini)
 	add_token_to_list(mini, new_token);
 }
 
-void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
+void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	mini->heredoc->eof_quote = true;
 	mini->unquoted = false;
+
 	if (!ctx->quote)
 	{
 		if (ctx->input[*i + 1] == ctx->input[*i])
 		{
 			add_empty_token(mini);
 			(*i) += 2;
-			return ;
+			return;
 		}
 		else
 		{
 			ctx->quote = ctx->input[*i];
 			(*i)++;
-			if (ctx->input[*i - 1] == '\'')
+
+			if (ctx->quote == '\'')
 				mini->disable_expand = true;
-			if (ctx->input[*i - 1] == '"' && mini->disable_expand)
-				mini->disable_expand = true;
+			else if (ctx->quote == '"')
+				mini->disable_expand = false;
 			while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
 			{
 				process_quoted_content(mini, ctx, i, j);
 				(*i)++;
 			}
 			if (ctx->input[*i] == ctx->quote)
+			{
 				ctx->quote = 0;
+				if (ctx->input[*i] == '"') 
+					mini->disable_expand = false;
+				else if (ctx->input[*i] == '\'') 
+					mini->disable_expand = true;
+			}
 			else
 			{
-				printf("Error: Unclosed quote detected!\n");
+				ft_putstr_fd("Error: Unclosed quote detected!\n", 2);
 				mini->has_error = true;
+				mini->exit_status = 2;
 			}
 		}
 	}
