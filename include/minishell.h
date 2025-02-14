@@ -25,6 +25,8 @@
 # include "../Libft/libft.h"
 # include <fcntl.h>
 
+#include <sys/ioctl.h>
+
 extern int	g_exit_code;
 
 typedef enum e_type //PS: Definition of redirection type and their values

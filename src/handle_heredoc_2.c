@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/13 16:55:34 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 00:36:34 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]);
-	if (handle_redirections(mini) == -1)
+ 	if (handle_redirections(mini) == -1)
 		return ;
-	skip_redirection_plus_target(mini);
+	skip_redirection_plus_target(mini); //Comentar isto funciona cat Makefile | grep NAME > file mas estraga ls | grep a < Makefile
 	remove_heredoc_token(mini);
 	first_token(mini);
 	close(mini->saved_stdin);
@@ -76,6 +76,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
 	char	*line;
 
+	//set_signals_to_here_doc();
 	open_heredoc(tmp_hd);
 	while (1)
 	{
@@ -97,6 +98,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 			perror("Error writing heredoc line");
 		free (line);
 	}
+	restore_default_signals();
 	support_fill_fr_heredoc(tmp_hd, mini);
 	return (0);
 }

@@ -18,9 +18,9 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 
 	if (has_heredoc(mini))
 		heredoc(mini);
- 	if (handle_redirections(mini) == -1)
+	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
 		return ;
-	skip_redirection_plus_target(mini); 
+	skip_redirection_plus_target(mini);//Comentar esta linha especifica estraga cat << eof | ls | grep a
 	pid = create_pid();
 	if (pid == 0)
 		handle_child_process(mini, prev_fd);
