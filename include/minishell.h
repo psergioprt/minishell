@@ -150,7 +150,7 @@ void		cleanup_fd(t_minishell *mini);
 
 //REDIRECTS_HANDLER
 int			handle_redirections(t_minishell *mini);
-int			open_file(const char *filename, t_type type);
+int			open_file(char *filename, t_type type);
 int			handle_redirection_action(int fd, t_node *current);
 int			identify_redirection_type(char *token);
 

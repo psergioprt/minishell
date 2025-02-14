@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 00:36:34 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 16:11:45 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,14 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]);
- 	if (handle_redirections(mini) == -1)
+	if (has_heredoc(mini))
+		heredoc(mini);
+/* 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
 		return ;
-	skip_redirection_plus_target(mini); //Comentar isto funciona cat Makefile | grep NAME > file mas estraga ls | grep a < Makefile
+	skip_redirection_plus_target(mini); */
+/*  	if (handle_redirections(mini) == -1)
+		return ;
+	skip_redirection_plus_target(mini); */ //Comentar isto funciona cat Makefile | grep NAME > file mas estraga ls | grep a < Makefile
 	remove_heredoc_token(mini);
 	first_token(mini);
 	close(mini->saved_stdin);

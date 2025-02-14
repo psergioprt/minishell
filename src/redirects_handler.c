@@ -6,13 +6,13 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/13 16:41:12 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 16:20:57 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	open_file(const char *filename, t_type type)
+int	open_file(char *filename, t_type type)
 {
 	int	fd;
 
@@ -28,7 +28,10 @@ int	open_file(const char *filename, t_type type)
 		return (-1);
 	}
 	if (fd == -1)
-		printf("%s: no such file or directory\n", filename);
+	{
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(": no such file or directory\n", 2);
+	}
 	return (fd);
 }
 
@@ -61,12 +64,14 @@ int	handle_redirection_action(int fd, t_node *current)
 	return (0);
 }
 
-int	handle_redirections(t_minishell *mini)
+int	handle_redirections(t_minishell *mini) //CHECKAR PORQUE NAO ESTA A FAZER O REDIRECT DIREITO
 {
 	int		fd;
+	t_cmd	*cmd;
 	t_node	*current;
 
-	current = mini->tokenlst;
+	cmd = mini->commands;
+	current = cmd->tokens;
 	fd = -1;
 	while (current)
 	{
@@ -76,6 +81,10 @@ int	handle_redirections(t_minishell *mini)
 			fd = open_file(current->target, current->type);
 			if (handle_redirection_action(fd, current) == -1)
 				return (-1);
+			if (fd == -1)
+			{
+				printf("UWU\n");
+			}
 		}
 		current = current->next;
 	}
