@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 17:35:17 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 01:09:57 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,25 @@ int	exec_child(t_minishell *mini, char **argv, char *pathname)
 		return (handle_execve_error(mini, argv, mini->command, 126));
 	return (mini->exit_status);
 }
+void print_tokens(t_minishell *mini)
+{
+	t_cmd *cmd = mini->commands;
+    
+	while (cmd)
+	{
+		t_node *token = cmd->tokens;
+		while (token)
+		{
+			if (ft_strncmp(token->token, "ls", 2))
+				printf("isnull");
+			ft_putstr_fd("Token: [", 1);
+			ft_putstr_fd(token->token, 1);
+			ft_putstr_fd("]\n", 1);
+			token = token->next;
+		}
+		cmd = cmd->next;
+	}
+}
 
 int	execute_execve(t_minishell *mini)
 {
@@ -72,11 +91,12 @@ int	execute_execve(t_minishell *mini)
 	int		i;
 	int		status;
 	pid_t	pid;
-
+	printf("Inside function execute_execve\n");
 	pathname = NULL;
 	get_command(mini);
 	i = count_node(mini);
 	argv = get_argv(mini, i, mini->commands->tokens);
+	print_tokens(mini);
 	if (!argv)
 		return (handle_execve_error(mini, NULL, mini->command, 1));
 	if (handle_path(mini, argv, &pathname) != 0)

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/09 23:42:20 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/14 08:47:50 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,17 @@
 void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	int	saved_index;
-
+	int	k = 0;
+	
+	while (ctx->input[k] && ctx->input[k] == ' ')
+		k++;
+	if (ctx->input[k] == '|')
+	{
+		ft_putstr_fd("syntax error near unexpected token '|'\n", 1);
+		mini->has_error = true;
+		(*i)++;
+		return ;
+	}
 	mini->has_pipe += 1;
 	saved_index = *i;
 	(*i)++;
