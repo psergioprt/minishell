@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 13:10:49 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/15 21:26:38 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 				return ;
 			}
 		}
-
 		handle_command_addition(mini, &j);
 	}
 }

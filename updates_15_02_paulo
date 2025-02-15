@@ -1,0 +1,18 @@
+To deal with several errors messages (pipes, quotes, redirects)
+https://github.com/danielarjordao/minishell/blob/main/material/test_syntax.sh
+
+File: syntax_parsing.c
+
+updated function: handle_redirectional
+New functions:
+check_redirection_errors
+redir_error_message_2
+redir_error_message_1
+
+File: parser_handler.c
+
+updated function: handle_pipes
+New functions:
+check_pipes_errors
+check_malformed_operators
+print_pipes_errors

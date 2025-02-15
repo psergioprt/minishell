@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 17:26:27 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/15 21:24:50 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 		mini->exit_status = 1;
 		mini->has_error = true;
 	}
-	
 }
 
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
