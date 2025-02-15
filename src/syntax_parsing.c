@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 18:06:20 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/15 09:44:37 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,24 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 	char	single_op[2];
 	char	*redir_token;
 	int		redir_type;
+	int	k = *i;
+	
+	(*i)++;
+	if (ctx->input[(*i)] == '>' || ctx->input[(*i)] == '<')
+		(*i)++;
+	while (ctx->input[*i] == ' ' || (ctx->input[*i] >= 9 && ctx->input[*i] <= 13))
+	{
+		(*i)++;
+	}
+	if (ctx->input[*i] == '\0') //added 15-02
+	{
 
+		ft_putstr_fd("syntax error near unexpected token 'newline'\n", 2);
+		mini->has_error = true;
+		mini->exit_status = 2;
+		return ;
+	}
+	*i = k;
 	if (ctx->input[(*i) + 1] && ctx->input[(*i) + 2])
 	{
 		if((ctx->input[(*i) + 1] == '<' || ctx->input[(*i) + 1] == '>') && (ctx->input[(*i) + 2] == '<' || ctx->input[(*i) + 2] == '>'))
@@ -43,6 +60,7 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			ft_putstr_fd("syntax error near unexpected token\n", 2);
 			mini->has_error = true;
 			mini->exit_status = 2;
+			return ;
 		}
 	}
 	if (*j > 0)

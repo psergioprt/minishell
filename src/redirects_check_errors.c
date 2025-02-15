@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:16:09 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 17:13:45 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/15 09:40:34 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	check_redirect_errors_support_1(t_minishell *mini)
 	return (-1);
 }
 
-int	check_last_token(t_minishell *mini)
+/*int	check_last_token(t_minishell *mini)
 {
 	t_node	*current;
 	t_node	*last_token;
@@ -74,20 +74,20 @@ int	check_last_token(t_minishell *mini)
 		return (-1);
 	}
 	return (0);
-}
+}*/
 
 int	check_redirect_errors(t_minishell *mini)
 {
-	char	*token;
+//	char	*token;
 
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return (-1);
-	token = mini->tokenlst->token;
-	if (mini->unquoted == true)
+//	token = mini->tokenlst->token;
+/*	if (mini->unquoted == true)
 	{
 		if (check_last_token(mini))
-			return (-1);
-		if (!ft_strncmp(token, ">", 1) || !ft_strncmp(token, ">>", 2) || \
+			return (-1);*/
+		/*if (!ft_strncmp(token, ">", 1) || !ft_strncmp(token, ">>", 2) || \
 			!ft_strncmp(token, "<", 1) || !ft_strncmp(token, "<<", 2))
 		{
 			if (!mini->tokenlst->next)
@@ -96,11 +96,11 @@ int	check_redirect_errors(t_minishell *mini)
 				handle_redirections(mini);
 			else
 				skip_redirection_plus_target(mini);
-		}
-		else if ((ft_strncmp(token, ">", 1) || ft_strncmp(token, ">>", 2) || \
+			}*/
+/*			if ((ft_strncmp(token, ">", 1) || ft_strncmp(token, ">>", 2) || \
 			ft_strncmp(token, "<", 1) || ft_strncmp(token, "<<", 2)) && \
 			mini->tokenlst->next)
-			return (check_redirect_errors_support(mini));
-	}
+			return (check_redirect_errors_support(mini));*/
+//	}
 	return (0);
 }
