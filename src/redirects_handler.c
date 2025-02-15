@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/14 16:20:57 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/15 12:57:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,10 @@ int	handle_redirections(t_minishell *mini) //CHECKAR PORQUE NAO ESTA A FAZER O R
 				current->target != NULL)
 		{
 			fd = open_file(current->target, current->type);
+			if (fd == -1)
+				return (-1);
 			if (handle_redirection_action(fd, current) == -1)
 				return (-1);
-			if (fd == -1)
-			{
-				printf("UWU\n");
-			}
 		}
 		current = current->next;
 	}

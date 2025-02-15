@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/14 16:11:45 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/15 13:49:08 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,28 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		redir_fds(*prev_fd, STDIN_FILENO);
 	if (mini->commands->next)
 		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
-	if (mini->heredoc->fd_heredoc)
+ 	if (mini->heredoc->fd_heredoc)
 		close(mini->heredoc->fd_heredoc);
+/* 	if (has_heredoc(mini))
+		heredoc(mini); */
+ 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
+	{
+		if (mini->commands->fd[0] != -1)
+			close(mini->commands->fd[0]);
+		if (mini->commands->fd[1] != -1)
+			close(mini->commands->fd[1]);
+		close(mini->saved_stdin);
+		close(mini->saved_stdout);
+		exit(mini->exit_status);
+	}
+	skip_redirection_plus_target(mini);
+
 	if (mini->commands->fd[0] != -1)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]);
-	if (has_heredoc(mini))
-		heredoc(mini);
-/* 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
-		return ;
-	skip_redirection_plus_target(mini); */
-/*  	if (handle_redirections(mini) == -1)
+
+/*  	if (handle_redirections(mini) == -1) 
 		return ;
 	skip_redirection_plus_target(mini); */ //Comentar isto funciona cat Makefile | grep NAME > file mas estraga ls | grep a < Makefile
 	remove_heredoc_token(mini);
