@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 08:22:23 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:11:56 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	check_pipes_errors(t_minishell *mini, t_parse_context *ctx)
 				p--;
 			if (p < 0)
 			{
+				//ft_putstr_fd("OwO\n", 2);
 				print_pipes_errors(mini);
 				return ;
 			}

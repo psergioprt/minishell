@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/14 16:47:53 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:14:01 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	execute_execve(t_minishell *mini)
 		restore_default_signals();
  	pid = create_pid();
 	if (pid == 0) 
-	exec_child(mini, argv, pathname);
+		exec_child(mini, argv, pathname);
 	waitpid(pid, &status, 0);
 	feel_signals(mini, status);
 	cleanup_execve_memory(argv, mini->command, pathname);

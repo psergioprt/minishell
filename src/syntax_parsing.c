@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:06:48 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:31:29 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void	add_empty_token(t_minishell *mini)
 
 	new_token = malloc(sizeof(t_node));
 	check_malloc(new_token);
-	new_token->token = strdup("");
+	new_token->token = ft_strdup("");
 	check_malloc(new_token->token);
 	new_token->type = NONE;
 	new_token->next = NULL;

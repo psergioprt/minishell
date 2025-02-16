@@ -90,7 +90,7 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 {
 	size_t	len;
 
-	if (!mini->tokenlst || !mini->tokenlst->token)
+	if (!cmdlst || !cmdlst->tokens || !cmdlst->tokens->token)
 		return ;
 	if (cmdlst->tokens->token[0] == '\0')
 	{
@@ -98,6 +98,8 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 		mini->exit_status = 127;
 		return ;
 	}
+	if (!mini->tokenlst || !mini->tokenlst->token)
+		return ;
 	len = ft_strlen(cmdlst->tokens->token);
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);
