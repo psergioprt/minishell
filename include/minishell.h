@@ -143,6 +143,8 @@ void		restore_default_signals(void);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 
+void		add_empty_token(t_minishell *mini);
+
 //5/2 - Added
 int			identify_redirection_type(char *token);
 void		print_nodes(t_node *command_list);

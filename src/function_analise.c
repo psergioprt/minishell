@@ -92,6 +92,12 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
+	if (cmdlst->tokens->token[0] == '\0')
+	{
+		write(2, "'': command not found\n", 23);
+		mini->exit_status = 127;
+		return ;
+	}
 	len = ft_strlen(cmdlst->tokens->token);
 	if (!ft_strncmp(cmdlst->tokens->token, "echo", len))
 		mini->exit_status = custom_echo(mini);

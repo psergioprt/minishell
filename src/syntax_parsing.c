@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/10 00:18:40 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:06:48 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,88 @@ void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	add_command_node(mini, sep, pipe_type, &(mini->prev_node));
 }
 
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
+bool	redir_error_message_1(t_minishell *mini, t_parse_context *ctx, int *i)
+{
+	char	error_token[2];
+
+	error_token[0] = ctx->input[*i];
+	error_token[1] = '\0';
+	ft_putstr_fd("syntax error near unexpected token ", 2);
+	ft_putstr_fd(error_token, 2);
+	ft_putstr_fd("\n", 2);
+	mini->has_error = true;
+	mini->exit_status = 2;
+	return (true);
+}
+
+bool	redir_error_message_2(t_minishell *mini, char *redir)
+{
+	char	error_token[2];
+
+	error_token[0] = *redir;
+	error_token[1] = '\0';
+	ft_putstr_fd("syntax error near unexpected token ", 2);
+	ft_putstr_fd(error_token, 2);
+	ft_putstr_fd("\n", 2);
+	mini->has_error = true;
+	mini->exit_status = 2;
+	return (true);
+}
+
+bool	check_redirection_errors(t_minishell *mini, t_parse_context *ctx, \
+		int *i)
+{
+	int		start;
+	char	redir;
+	int		count;
+
+	start = *i;
+	count = 0;
+	if (ctx->input[*i] != '>' && ctx->input[*i] != '<')
+		return (false);
+	redir = ctx->input[*i];
+	while (ctx->input[*i] && (ctx->input[*i] == '>' || ctx->input[*i] == '<'))
+	{
+		if (ctx->input[*i] != redir)
+		{
+			redir_error_message_1(mini, ctx, i);
+			return (true);
+		}
+		count++;
+		(*i)++;
+	}
+	if (count > 2)
+	{
+		redir_error_message_2(mini, &redir);
+		return (true);
+	}
+	while (ctx->input[*i] && (ctx->input[*i] == ' ' || (ctx->input[*i] >= 9 \
+					&& ctx->input[*i] <= 13)))
+		(*i)++;
+	if (ctx->input[*i] == '\0')
+	{
+		ft_putstr_fd("syntax error near unexpected token `newline`\n", 2);
+		mini->has_error = true;
+		mini->exit_status = 2;
+		return (true);
+	}
+	if (ctx->input[*i] == '>' || ctx->input[*i] == '<')
+	{
+		redir_error_message_1(mini, ctx, i);
+		return (true);
+	}
+	*i = start;
+	return (false);
+}
+
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	char	single_op[2];
 	char	*redir_token;
 	int		redir_type;
 
+	if (check_redirection_errors(mini, ctx, i))
+		return ;
 	if (*j > 0)
 	{
 		ctx->current_token[*j] = '\0';
@@ -57,8 +132,7 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 		perror("Error: Invalid redirection operator\n");
 }
 
-void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
+void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	if (mini->disable_expand == true && ctx->input[*i] == '$')
 		ctx->current_token[(*j)++] = ctx->input[*i];
@@ -78,30 +152,73 @@ void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
 		ctx->current_token[(*j)++] = ctx->input[*i];
 }
 
-void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
-		int *i, int *j)
+void	add_token_to_list(t_minishell *mini, t_node *new_token)
+{
+	t_node	*current;
+
+	if (!mini->tokenlst)
+		mini->tokenlst = new_token;
+	else
+	{
+		current = mini->tokenlst;
+		while (current->next)
+			current = current->next;
+		current->next = new_token;
+	}
+}
+
+void	add_empty_token(t_minishell *mini)
+{
+	t_node	*new_token;
+
+	new_token = malloc(sizeof(t_node));
+	check_malloc(new_token);
+	new_token->token = strdup("");
+	check_malloc(new_token->token);
+	new_token->type = NONE;
+	new_token->next = NULL;
+	add_token_to_list(mini, new_token);
+}
+
+void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	mini->heredoc->eof_quote = true;
 	mini->unquoted = false;
 	if (!ctx->quote)
 	{
-		ctx->quote = ctx->input[*i];
-		(*i)++;
-		if (ctx->input[*i - 1] == '\'')
-			mini->disable_expand = true;
-		if (ctx->input[*i - 1] == '"' && mini->disable_expand)
-			mini->disable_expand = true;
-		while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+		if (ctx->input[*i + 1] == ctx->input[*i])
 		{
-			process_quoted_content(mini, ctx, i, j);
-			(*i)++;
+			add_empty_token(mini);
+			(*i) += 1;
+			return ;
 		}
-		if (ctx->input[*i] == ctx->quote)
-			ctx->quote = 0;
 		else
 		{
-			printf("Error: Unclosed quote detected!\n");
-			mini->has_error = true;
+			ctx->quote = ctx->input[*i];
+			(*i)++;
+			if (ctx->quote == '\'')
+				mini->disable_expand = true;
+			else if (ctx->quote == '"')
+				mini->disable_expand = false;
+			while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+			{
+				process_quoted_content(mini, ctx, i, j);
+				(*i)++;
+			}
+			if (ctx->input[*i] == ctx->quote)
+			{
+				ctx->quote = 0;
+				if (ctx->input[*i] == '"')
+					mini->disable_expand = false;
+				else if (ctx->input[*i] == '\'')
+					mini->disable_expand = true;
+			}
+			else
+			{
+				ft_putstr_fd("syntax error near unexpected token 'open quote'\n", 2);
+				mini->has_error = true;
+				mini->exit_status = 2;
+			}
 		}
 	}
 }
