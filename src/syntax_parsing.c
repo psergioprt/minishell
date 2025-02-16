@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:31:29 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:46:46 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ void	add_empty_token(t_minishell *mini)
 	check_malloc(new_token->token);
 	new_token->type = NONE;
 	new_token->next = NULL;
+	new_token->target = NULL;
 	add_token_to_list(mini, new_token);
 }
 
