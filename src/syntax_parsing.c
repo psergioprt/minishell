@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/15 18:53:10 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/16 08:44:13 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 		if (ctx->input[*i + 1] == ctx->input[*i])
 		{
 			add_empty_token(mini);
-			(*i) += 2;
+			(*i) += 1;
 			return ;
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/15 21:26:38 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/16 08:56:27 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,19 +116,16 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	tok_ctx.j = &j;
 	tok_ctx.ctx = &ctx;
 	init_variables(mini, &ctx, input, mini->current_token);
-	if (input && input[0])
+	while (input[i] != '\0')
 	{
-		while (input[i] != '\0')
+		handle_loop_parsers(mini, input, &tok_ctx);
+		if (!mini->has_error)
+			i++;
+		if (mini->has_error)
 		{
-			handle_loop_parsers(mini, input, &tok_ctx);
-			if (!mini->has_error)
-				i++;
-			else
-			{
-				mini->exit_status = 2;
-				return ;
-			}
+			mini->exit_status = 2;
+			return ;
 		}
-		handle_command_addition(mini, &j);
 	}
+	handle_command_addition(mini, &j);
 }
