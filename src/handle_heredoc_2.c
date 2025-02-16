@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/12 10:10:21 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/16 21:24:01 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,21 @@ void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
+	t_cmd *cmd = mini->commands;
+	while (cmd)
+	{
+		if (cmd->fd[0] != -1)
+		{
+			close(cmd->fd[0]);
+			cmd->fd[0] = -1;
+		}
+		if (cmd->fd[1] != -1)
+		{
+			close(cmd->fd[1]);
+			cmd->fd[1] = -1;
+		}
+		cmd = cmd->next;
+	}
 }
 
 int	open_heredoc(t_heredoc *tmp_hd)
@@ -53,9 +68,20 @@ int	open_heredoc(t_heredoc *tmp_hd)
 
 void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
 {
+	printf("Entered here\n");
 	free(line);
-	close(tmp_hd->fd_heredoc);
-	close(mini->heredoc->fd_heredoc);
+	//close(tmp_hd->fd_heredoc);
+	//close(mini->heredoc->fd_heredoc);
+	if (tmp_hd && tmp_hd->fd_heredoc != -1)
+	{
+    		close(tmp_hd->fd_heredoc);
+    		tmp_hd->fd_heredoc = -1;
+	}
+	if (mini->heredoc && mini->heredoc->fd_heredoc != -1) 
+	{
+    		close(mini->heredoc->fd_heredoc);
+    		mini->heredoc->fd_heredoc = -1;
+	}
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
 }
