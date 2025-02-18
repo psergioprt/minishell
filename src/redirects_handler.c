@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/18 19:27:23 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/18 22:23:36 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	open_file(char *filename, t_type type)
 	if (fd == -1)
 	{
 		ft_putstr_fd(filename, 2);
-		ft_putstr_fd(": no such file or directory\n", 2); //TODO O PROBLEMA E QUE ESTA A ENTRAR AQUI PARA O 2 E DEPOIS DA ERRO E SAI NO CAT<<1<<2
+		ft_putstr_fd(": no such file or directory\n", 2);
 	}
 	return (fd);
 }
@@ -64,6 +64,59 @@ int	handle_redirection_action(int fd, t_node *current)
 	return (0);
 }
 
+void skip_hds(t_minishell *mini)
+{
+    t_node *current;
+    t_node *prev;
+    t_node *to_free;
+    t_node *delimiter;
+    int found_heredoc;
+
+    current = mini->commands->tokens;
+    prev = NULL;
+    found_heredoc = 0;
+
+    while (current)
+    {
+        if (current->type == HEREDOC)
+        {
+            if (found_heredoc) // Skip this and the next token
+            {
+                to_free = current; 
+                current = current->next; // Move to the next node
+
+                // If there's a delimiter to remove (the next node), do so
+                if (current && current->type != HEREDOC) 
+                {
+                    delimiter = current;
+                    current = current->next; // Move to the next token after the delimiter
+                    free(delimiter->token);
+                    free(delimiter);
+                }
+
+                // Free the HEREDOC token
+                free(to_free->token);
+                free(to_free);
+
+                // If prev is NULL, we're deleting the first node, so update the head of the list
+                if (prev)
+                    prev->next = current;
+                else
+                    mini->commands->tokens = current; // Update head if we deleted the first node
+
+                continue; // Skip the next iteration for the current token (since we removed it)
+            }
+            else
+            {
+                found_heredoc = 1; // Keep the first HEREDOC
+            }
+        }
+        // Move to the next node
+        prev = current;
+        current = current->next;
+    }
+}
+
 int	handle_redirections(t_minishell *mini)
 {
 	int		fd;
@@ -73,6 +126,7 @@ int	handle_redirections(t_minishell *mini)
 	cmd = mini->commands;
 	current = cmd->tokens;
 	fd = -1;
+	skip_hds(mini);
 	while (current)
 	{
 		if ((current->type != NONE && current->type != PIPE) && \

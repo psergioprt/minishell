@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc_3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/10 10:13:43 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/18 22:44:26 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,14 @@ void	save_heredoc_info(t_minishell *mini)
 {
 	t_node	*tmp;
 
-	tmp = mini->tokenlst;
+	tmp = mini->commands->tokens; //trocar de mini->tokenlst passa de 3 heredocs para 2 em cat << 1 | ls MAS da segfault em cat << a | grep a | cat << b | grep b
 	while (tmp)
 	{
+		printf("%s\n", tmp->token);
+		printf("%d\n", tmp->type);
 		if (tmp->type == HEREDOC && tmp->next)
 		{
+			printf("I was here!\n");
 			if (!mini->heredoc)
 				initialize_heredoc(mini, tmp);
 			else if (!mini->heredoc->eof)
