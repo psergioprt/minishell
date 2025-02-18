@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/15 12:57:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/18 19:27:23 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	open_file(char *filename, t_type type)
 	if (fd == -1)
 	{
 		ft_putstr_fd(filename, 2);
-		ft_putstr_fd(": no such file or directory\n", 2);
+		ft_putstr_fd(": no such file or directory\n", 2); //TODO O PROBLEMA E QUE ESTA A ENTRAR AQUI PARA O 2 E DEPOIS DA ERRO E SAI NO CAT<<1<<2
 	}
 	return (fd);
 }
@@ -64,7 +64,7 @@ int	handle_redirection_action(int fd, t_node *current)
 	return (0);
 }
 
-int	handle_redirections(t_minishell *mini) //CHECKAR PORQUE NAO ESTA A FAZER O REDIRECT DIREITO
+int	handle_redirections(t_minishell *mini)
 {
 	int		fd;
 	t_cmd	*cmd;
