@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/18 23:54:42 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:04:03 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	append_heredoc(t_minishell *mini, t_node *tmp)
 	tmp_hd->index = mini->heredoc->index + 1;
 	tmp_hd->eof = ft_strdup(tmp->next->token);
 	tmp_hd->eof_quote = false;
+	tmp_hd->done = false;
 	tmp_hd->fd_heredoc_path = NULL;
 	tmp_hd->count_hd = mini->heredoc->count_hd;
 	tmp_hd->next = NULL;
