@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/18 22:44:26 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/18 23:54:42 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,11 @@ void	save_heredoc_info(t_minishell *mini)
 	t_node	*tmp;
 
 	tmp = mini->commands->tokens; //trocar de mini->tokenlst passa de 3 heredocs para 2 em cat << 1 | ls MAS da segfault em cat << a | grep a | cat << b | grep b
+	printf("in save_heredoc_info\n"); //em cat << a | esta a entrar aqui no grep
 	while (tmp)
 	{
-		printf("%s\n", tmp->token);
-		printf("%d\n", tmp->type);
 		if (tmp->type == HEREDOC && tmp->next)
 		{
-			printf("I was here!\n");
 			if (!mini->heredoc)
 				initialize_heredoc(mini, tmp);
 			else if (!mini->heredoc->eof)

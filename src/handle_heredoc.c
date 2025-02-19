@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/18 22:42:41 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:01:27 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,17 @@ void	heredoc(t_minishell *mini)
 		directory = getcwd(cwd, sizeof(cwd));
 		tmp_hd->fd_heredoc_path = ft_strjoin(directory, "/");
 		tmp_hd->fd_heredoc_path = ft_strjoin(tmp_hd->fd_heredoc_path, \
-				mini->heredoc->eof);
-		printf("%s\n", mini->heredoc->eof);
-/* 		num = ft_itoa(tmp_hd->index);
-		tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
-		free(num); */
-		support_heredoc(tmp_hd, mini);
+		mini->heredoc->eof);
+		printf("mini->heredoc->eof: %s\n", tmp_hd->eof);
+		printf("tmp_hd->done: %d\n", tmp_hd->done);
+		/* 		num = ft_itoa(tmp_hd->index);
+			tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
+			free(num); */
+		
+		if (!tmp_hd->done)
+			support_heredoc(tmp_hd, mini);
+		tmp_hd->done = true;
+		
 		tmp_hd = tmp_hd->next;
 	}
 	include_hd_path(mini);

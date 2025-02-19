@@ -47,6 +47,7 @@ typedef struct s_heredoc
 	bool				eof_quote;
 	int					index;
 	int					count_hd;
+	bool				done;
 	struct s_heredoc	*next;
 }	t_heredoc;
 

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/18 22:43:54 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 13:59:49 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	clear_heredoc_list(t_minishell *mini)
 	{
 		tmp_hd = mini->heredoc;
 		mini->heredoc = mini->heredoc->next;
+		tmp_hd->done = false;
 		if (tmp_hd->fd_heredoc_path)
 			free(tmp_hd->fd_heredoc_path);
 		if (tmp_hd->eof)
@@ -34,7 +35,7 @@ void	include_hd_path(t_minishell *mini)
 	t_node		*tmp_token;
 	t_heredoc	*tmp_hd;
 
-	tmp_token = mini->tokenlst;
+	tmp_token = mini->commands->tokens;
 	tmp_hd = mini->heredoc;
 	while (tmp_token)
 	{
