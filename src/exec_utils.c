@@ -117,17 +117,17 @@ int	execpath_error(char *path)
 	{
 		if (access(path, F_OK) < 0)
 		{
-			printf("No such file or directory\n");
+			ft_putstr_fd("No such file or directory\n", 2);
 			return (127);
 		}
 		if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
 		{
-			printf("Is a directory\n");
+			ft_putstr_fd("Is a directory\n", 2);
 			return (126);
 		}
 		if (access(path, X_OK) < 0)
 		{
-			printf("Permission denied\n");
+			ft_putstr_fd("Permission denied\n", 2);
 			return (126);
 		}
 	}

@@ -42,14 +42,14 @@ int	get_exit(t_minishell *mini, t_node *nodelst)
 	if (!is_num(nodelst->token) || m_long(nodelst->token))
 	{
 		printf("exit\n");
-		printf("exit: %s: numeric argument required\n", nodelst->token);
+		printf("exit: %s: numeric argument required\n", nodelst->token); //TODO trocar para ft_putstr_fd 2
 		do_exit(mini, 2);
 		return (2);
 	}
 	else if (nodelst->next)
 	{
 		printf("exit\n");
-		printf("exit: too many arguments\n");
+		printf("exit: too many arguments\n"); //TODO trocar para ft_putstr_fd 2
 		mini->exit_status = 1;
 		return (1);
 	}

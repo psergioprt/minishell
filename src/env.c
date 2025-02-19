@@ -32,13 +32,17 @@ int	print_envvars(t_minishell *mini)
 
 int	option_error(char error_char)
 {
-	printf("env: invalid option -- '%c'\n", error_char);
+	ft_putstr_fd("env: invalid option -- '", 2);
+	ft_putchar_fd(error_char, 2);
+	ft_putstr_fd("'\n", 2);
 	return (125);
 }
 
 int	arg_error(char *str)
 {
-	printf("env: '%s': No such file or directory\n", str);
+	ft_putstr_fd("env: '", 2);
+	ft_putstr_fd(str, 2);
+	ft_putstr_fd("': No such file or directory\n", 2);
 	return (127);
 }
 
