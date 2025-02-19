@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/19 14:01:27 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:40:44 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = mini->heredoc->next;
 	else
 		tmp_hd = mini->heredoc;
+	
+/* 	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);	 */
+/* 	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]); */
+	
 	while (tmp_hd)
 	{
 		directory = getcwd(cwd, sizeof(cwd));

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/18 23:45:22 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:44:22 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 
 void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
+	printf("ppid: %d\n", getpid());
 	if (close(tmp_hd->fd_heredoc) == -1)
 		perror("Failed to close heredoc file");
 	close(mini->heredoc->fd_heredoc);
