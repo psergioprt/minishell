@@ -96,6 +96,7 @@ typedef struct s_minishell
 	int				saved_stdin;
 	bool			unquoted;
 	int				interactive;
+	bool			is_heredoc;
 }	t_minishell;
 
 typedef struct s_parse_context

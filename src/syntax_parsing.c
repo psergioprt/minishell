@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:46:46 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 15:23:29 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *
 		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
 		*j = 0;
 	}
+	if (ctx->input[(*i)] == '<' && ctx->input[(*i + 1)] == '<')
+		mini->is_heredoc = true;
 	if (ctx->input[(*i) + 1] == ctx->input[*i])
 		handle_double_redir(mini, ctx, i, &redir_token);
 	else
@@ -197,7 +199,7 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 		{
 			ctx->quote = ctx->input[*i];
 			(*i)++;
-			if (ctx->quote == '\'')
+			if (ctx->quote == '\'' || mini->is_heredoc)
 				mini->disable_expand = true;
 			else if (ctx->quote == '"')
 				mini->disable_expand = false;
