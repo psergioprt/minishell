@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/19 15:23:29 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:11:31 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,10 +211,13 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 			if (ctx->input[*i] == ctx->quote)
 			{
 				ctx->quote = 0;
-				if (ctx->input[*i] == '"')
-					mini->disable_expand = false;
-				else if (ctx->input[*i] == '\'')
-					mini->disable_expand = true;
+				if (!mini->is_heredoc)
+				{
+					if (ctx->input[*i] == '"')
+						mini->disable_expand = false;
+					else if (ctx->input[*i] == '\'')
+						mini->disable_expand = true;
+				}
 			}
 			else
 			{
