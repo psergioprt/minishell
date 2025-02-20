@@ -16,18 +16,8 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 {
 	pid_t	pid;
 
- 	if (has_heredoc(mini))
-		heredoc(mini);
-	printf("After has_heredoc check\n"); //TODO apagar
-/* 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
-	{
-		//close(mini->commands->fd[0]);
-		//close(mini->commands->fd[1]);
-		close(mini->saved_stdin);
-		close(mini->saved_stdout); //TODO provavelmente o grep nao esta a reeber nada, mesmo quando da erro tem de mudar os fds
-		//return ;
-	}	 */
-	//skip_redirection_plus_target(mini); //Comentar esta linha especifica estraga cat << eof | ls | grep a
+	if (has_heredoc(mini))
+		heredoc(mini, prev_fd);
 	pid = create_pid();
 	if (pid == 0)
 		handle_child_process(mini, prev_fd);
@@ -77,7 +67,7 @@ void	exec_cmds(t_minishell *mini)
 	if (mini->commands && !mini->commands->next)
 	{
 		if (has_heredoc(mini))
-			heredoc(mini);
+			heredoc(mini, NULL);
 		if (handle_redirections(mini) == -1)
 			return ;
 		skip_redirection_plus_target(mini);
@@ -91,14 +81,6 @@ void	execute(t_minishell *mini, t_cmd *cmdlst)
 {
 	size_t	len;
 
-	if (!cmdlst || !cmdlst->tokens || !cmdlst->tokens->token)
-		return ;
-	if (cmdlst->tokens->token[0] == '\0')
-	{
-		write(2, "'': command not found\n", 23);
-		mini->exit_status = 127;
-		return ;
-	}
 	if (!mini->tokenlst || !mini->tokenlst->token)
 		return ;
 	len = ft_strlen(cmdlst->tokens->token);
@@ -128,6 +110,14 @@ int	first_token(t_minishell *mini)
 		&& mini->commands->tokens->token)
 	{
 		cmdlst = mini->commands;
+		if (!cmdlst || !cmdlst->tokens || !cmdlst->tokens->token)
+			return (1);
+		if (cmdlst->tokens->token[0] == '\0')
+		{
+			write(2, "'': command not found\n", 23);
+			mini->exit_status = 127;
+			return (127);
+		}
 		execute(mini, cmdlst);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 14:46:14 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 18:08:03 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,7 @@ int	open_file(char *filename, t_type type)
 int	handle_redirection_action(int fd, t_node *current)
 {
 	if (fd == -1)
-	{
-		/* perror("Failed to open file"); */
 		return (-1);
-	}
 	if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
 	{
 		if (dup2(fd, STDOUT_FILENO) == -1)
@@ -66,52 +63,41 @@ int	handle_redirection_action(int fd, t_node *current)
 
 void	skip_hds(t_minishell *mini)
 {
-	t_node *current;
-	t_node *prev;
-	t_node *to_free;
-	t_node *delimiter;
-	int found_heredoc;
+	t_node	*current;
+	t_node	*prev;
+	t_node	*to_free;
+	t_node	*delimiter;
+	int		found_heredoc;
 
 	current = mini->commands->tokens;
 	prev = NULL;
 	found_heredoc = 0;
-
 	while (current)
 	{
 		if (current->type == HEREDOC)
 		{
-			if (found_heredoc) // Skip this and the next token
+			if (found_heredoc)
 			{
 				to_free = current; 
-				current = current->next; // Move to the next node
-
-				// If there's a delimiter to remove (the next node), do so
+				current = current->next;
 				if (current && current->type != HEREDOC) 
 				{
 					delimiter = current;
-					current = current->next; // Move to the next token after the delimiter
+					current = current->next;
 					free(delimiter->token);
 					free(delimiter);
 				}
-
-				// Free the HEREDOC token
 				free(to_free->token);
 				free(to_free);
-
-				// If prev is NULL, we're deleting the first node, so update the head of the list
 				if (prev)
 					prev->next = current;
 				else
-					mini->commands->tokens = current; // Update head if we deleted the first node
-
-				continue; // Skip the next iteration for the current token (since we removed it)
+					mini->commands->tokens = current;
+				continue ;
 			}
 			else
-			{
-				found_heredoc = 1; // Keep the first HEREDOC
-			}
+				found_heredoc = 1;
 		}
-		// Move to the next node
 		prev = current;
 		current = current->next;
 	}

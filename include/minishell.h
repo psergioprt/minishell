@@ -24,8 +24,7 @@
 # include <readline/history.h>
 # include "../Libft/libft.h"
 # include <fcntl.h>
-
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 
 extern int	g_exit_code;
 
@@ -188,15 +187,15 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
-void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
-	t_node **prev_token);
+void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
+			t_node **prev_token);
 void		support_heredoc_token_tokens(t_minishell *mini);
-void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
-	t_node **prev_cmd);
+void		process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+			t_node **prev_cmd);
 void		support_heredoc_token_commands(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
-void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
-void		heredoc(t_minishell *mini);
+void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini, int *prev_fd);
+void		heredoc(t_minishell *mini, int *prev_fd);
 
 //HANDLE_HEREDOC2
 void		support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini);

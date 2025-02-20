@@ -58,7 +58,7 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 		pid = waitpid(mini->child[i], &mini->exit_status, 0);
 		if (pid == -1)
 			ft_putstr_fd("waitpid error!\n", 2);
- 		else
+		else
 		{
 			if (WIFEXITED(mini->exit_status))
 				mini->exit_status = WEXITSTATUS(mini->exit_status);
