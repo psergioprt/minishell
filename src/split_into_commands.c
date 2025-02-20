@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:13:57 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/01/29 15:13:57 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 19:11:01 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	add_token_to_cmd(t_cmd *cmd, t_node *current)
 	(*token_tail)->token = ft_strdup(current->token);
 	(*token_tail)->type = current->type;
 	if (current->target != NULL)
-		(*token_tail)->target = ft_strdup(current->target);
+		(*token_tail)->target = current->target;
 	else
 		(*token_tail)->target = NULL;
 	(*token_tail)->next = NULL;

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 17:50:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/09 17:50:35 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 22:31:12 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,5 +308,6 @@ void		redir_fds(int redir, int local);
 void		wait_childs(t_minishell *mshell, int n_cmds);
 int			get_ncmds(t_cmd *cmd);
 pid_t		create_pid(void);
+void		check_pipes_errors(t_minishell *mini, t_parse_context *ctx);
 
 #endif
