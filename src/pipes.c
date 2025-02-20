@@ -41,7 +41,6 @@ void	redir_fds(int redir, int local)
 	if (dup2(redir, local) < 0)
 	{
 		perror("dup2 failed");
-		printf("Failed to redirect %d -> %d\n", redir, local);
 		close(redir);
 		return ;
 	}
@@ -93,7 +92,7 @@ pid_t	create_pid(void)
 	child = fork();
 	if (child < 0)
 	{
-		printf("Fork error");
+		ft_putstr_fd("Fork error", 2);
 		exit(EXIT_FAILURE);
 	}
 	return (child);

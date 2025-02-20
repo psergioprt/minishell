@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 18:16:09 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:17:52 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 14:13:08 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	check_redirect_errors_support(t_minishell *mini)
 		!ft_strncmp(mini->tokenlst->next->token, "<<", 2)) && \
 		!mini->tokenlst->next->next))
 	{
-		printf("bash: syntax error near unexpected token 'newline'\n");
+		ft_putstr_fd("bash: syntax error near unexpected token 'newline'\n", 2);
 		mini->has_error = true;
 		return (-1);
 	}
@@ -31,7 +31,7 @@ int	check_redirect_errors_support(t_minishell *mini)
 		!ft_strncmp(mini->tokenlst->next->next->token, "<<", 2)) && \
 		!mini->tokenlst->next->next->next)))
 	{
-		printf("bash: syntax error near unexpected token 'newline'\n");
+		ft_putstr_fd("bash: syntax error near unexpected token 'newline'\n", 2);
 		mini->has_error = true;
 		return (-1);
 	}
@@ -42,7 +42,7 @@ int	check_redirect_errors_support(t_minishell *mini)
 
 int	check_redirect_errors_support_1(t_minishell *mini)
 {
-	printf("bash: syntax error near unexpected token 'newline'\n");
+	ft_putstr_fd("bash: syntax error near unexpected token 'newline'\n", 2);
 	mini->has_error = true;
 	return (-1);
 }

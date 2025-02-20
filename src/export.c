@@ -77,7 +77,9 @@ void	loop_node(t_minishell *mini, t_node *node, int *ret)
 		}
 		else
 		{
-			printf("export: '%s' is not a valid identifier\n", node->token);
+			ft_putstr_fd("export: '", 2);
+			ft_putstr_fd(node->token, 2);
+			ft_putstr_fd("' is not a valid identifier\n", 2);
 			*ret = 1;
 		}
 		cat = false;
@@ -97,7 +99,9 @@ int	custom_export(t_minishell *mini)
 	node = node->next;
 	if (node->token[0] == '-' && node->token[1])
 	{
-		printf("export: %s: invalid option\n", node->token);
+		ft_putstr_fd("export: ", 2);
+		ft_putstr_fd(node->token, 2);
+		ft_putstr_fd(": invalid option\n", 2);
 		return (2);
 	}
 	loop_node(mini, node, &ret);

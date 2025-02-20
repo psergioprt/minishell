@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 22:55:20 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/19 12:44:20 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:31:42 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	main(int argc, char *argv[], char *env[])
 	init_sigaction(mini.interactive);
 	if (argc != 1 || argv[1])
 	{
-		printf("Usage: ./minishell\nDoes not accept additional arguments.\n");
+		ft_putstr_fd("Usage: ./minishell\nDoes not accept additional arguments.\n", 2);
 		exit (1);
 	}
 	(void)argc;

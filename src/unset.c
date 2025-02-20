@@ -61,7 +61,9 @@ int	custom_unset(t_minishell *mini)
 		varlst = varlst->next;
 	if (varlst->token && varlst->token[0] == '-' && varlst->token[1])
 	{
-		printf("unset: %s: invalid option\n", varlst->token);
+		ft_putstr_fd("unset: ", 2);
+		ft_putstr_fd(varlst->token, 2);
+		ft_putstr_fd(": invalid option\n", 2);
 		return (2);
 	}
 	else if (varlst->token && varlst->token[0] == '-' && !(varlst->token[1]))
