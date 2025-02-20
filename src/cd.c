@@ -24,6 +24,12 @@ void	add_env_variable(t_minishell *mini, char *key, char *value)
 	if (value)
 		new_env->value = ft_strdup(value);
 	new_env->print = true;
+	if (!envvars)
+	{
+		new_env->next = NULL;
+		mini->envvars = new_env;
+		return ;
+	}
 	while (envvars->next)
 		envvars = envvars->next;
 	envvars->next = new_env;
@@ -40,7 +46,7 @@ void	has_found_env(t_env *found_env, char *key, char *dir)
 		new_value = ft_strdup(key);
 	if (!new_value)
 	{
-		printf("malloc error\n");
+		ft_putstr_fd("malloc error\n", 2);
 		return ;
 	}
 	replace_env_value(found_env, new_value);
@@ -56,7 +62,7 @@ int	update_pwd(t_minishell *mini, char *last_dir)
 	current_dir = getcwd(cwd, sizeof(cwd));
 	if (!current_dir)
 	{
-		printf("pwd error\n");
+		ft_putstr_fd("getcwd error\n", 2);
 		return (-1);
 	}
 	found_env = find_key(mini, "OLDPWD");
@@ -76,13 +82,13 @@ int	check_cd_args(t_node **node)
 {
 	if (!(*node)->next)
 	{
-		printf("cd: missing argument\n");
+		ft_putstr_fd("cd: missing argument\n", 2);
 		return (1);
 	}
 	(*node) = (*node)->next;
 	if ((*node)->next)
 	{
-		printf("cd: too many arguments\n");
+		ft_putstr_fd("cd: too many arguments\n", 2);
 		return (1);
 	}
 	return (0);
@@ -102,7 +108,9 @@ int	custom_cd(t_minishell *mini)
 	path = node->token;
 	if (chdir(path) == -1)
 	{
-		printf("cd: %s: No such file or directory\n", path);
+		ft_putstr_fd("cd: ", 2);
+		ft_putstr_fd(path, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		return (1);
 	}
 	update_pwd(mini, last_dir);

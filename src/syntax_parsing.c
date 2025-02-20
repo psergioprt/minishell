@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 08:44:13 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:11:31 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *
 		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
 		*j = 0;
 	}
+	if (ctx->input[(*i)] == '<' && ctx->input[(*i + 1)] == '<')
+		mini->is_heredoc = true;
 	if (ctx->input[(*i) + 1] == ctx->input[*i])
 		handle_double_redir(mini, ctx, i, &redir_token);
 	else
@@ -173,10 +175,11 @@ void	add_empty_token(t_minishell *mini)
 
 	new_token = malloc(sizeof(t_node));
 	check_malloc(new_token);
-	new_token->token = strdup("");
+	new_token->token = ft_strdup("");
 	check_malloc(new_token->token);
 	new_token->type = NONE;
 	new_token->next = NULL;
+	new_token->target = NULL;
 	add_token_to_list(mini, new_token);
 }
 
@@ -196,7 +199,7 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 		{
 			ctx->quote = ctx->input[*i];
 			(*i)++;
-			if (ctx->quote == '\'')
+			if (ctx->quote == '\'' || mini->is_heredoc)
 				mini->disable_expand = true;
 			else if (ctx->quote == '"')
 				mini->disable_expand = false;
@@ -208,10 +211,13 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 			if (ctx->input[*i] == ctx->quote)
 			{
 				ctx->quote = 0;
-				if (ctx->input[*i] == '"')
-					mini->disable_expand = false;
-				else if (ctx->input[*i] == '\'')
-					mini->disable_expand = true;
+				if (!mini->is_heredoc)
+				{
+					if (ctx->input[*i] == '"')
+						mini->disable_expand = false;
+					else if (ctx->input[*i] == '\'')
+						mini->disable_expand = true;
+				}
 			}
 			else
 			{

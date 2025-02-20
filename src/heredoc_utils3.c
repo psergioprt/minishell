@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:14:49 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 23:08:39 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:40:56 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	handle_heredoc_child(t_heredoc *tmp_hd, t_minishell *mini)
 	status = fill_fd_heredoc(tmp_hd, mini);
 	if (status == -1)
 		perror("Error handling heredoc");
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
 	exit (0);
 }
 
@@ -53,7 +55,7 @@ int	has_heredoc(t_minishell *mini)
 {
 	t_node	*tmp;
 
-	tmp = mini->tokenlst;
+	tmp = mini->commands->tokens;
 	while (tmp)
 	{
 		if (tmp->type == HEREDOC)
@@ -72,6 +74,7 @@ void	init_heredoc(t_minishell *mini)
 	mini->heredoc->count_hd = 0;
 	mini->heredoc->fd_heredoc_path = NULL;
 	mini->heredoc->eof = NULL;
+	mini->heredoc->eof = false;
 	mini->heredoc->eof_quote = false;
 	mini->heredoc->next = NULL;
 }

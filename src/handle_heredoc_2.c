@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 21:24:01 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:44:22 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,37 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		redir_fds(*prev_fd, STDIN_FILENO);
 	if (mini->commands->next)
 		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
+  	if (mini->heredoc->fd_heredoc)
+		close(mini->heredoc->fd_heredoc); 
+/* 	if (has_heredoc(mini))
+		heredoc(mini); */
+ 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
+	{
+		if (mini->commands->fd[0] != -1)
+			close(mini->commands->fd[0]);
+		if (mini->commands->fd[1] != -1)
+			close(mini->commands->fd[1]);
+		if (mini->heredoc->fd_heredoc != -1)
+			close(mini->heredoc->fd_heredoc);
+		close(mini->saved_stdin);
+		close(mini->saved_stdout);
+		exit(mini->exit_status);
+	}
+	skip_redirection_plus_target(mini);
+	
+	first_token(mini);
+	
 	if (mini->commands->fd[0] != -1)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]);
-	if (handle_redirections(mini) == -1)
+	if (mini->heredoc->fd_heredoc)
+		close(mini->heredoc->fd_heredoc);
+/*  	if (handle_redirections(mini) == -1) 
 		return ;
-	skip_redirection_plus_target(mini);
-	first_token(mini);
+	skip_redirection_plus_target(mini); */ //Comentar isto funciona cat Makefile | grep NAME > file mas estraga ls | grep a < Makefile
+/* 	remove_heredoc_token(mini);
+	first_token(mini); */
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
 	exit(mini->exit_status);
@@ -33,28 +56,19 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 
 void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
+	printf("ppid: %d\n", getpid());
 	if (close(tmp_hd->fd_heredoc) == -1)
 		perror("Failed to close heredoc file");
+	close(mini->heredoc->fd_heredoc);
 	close(mini->saved_stdout);
 	close(mini->saved_stdin);
-	close(STDIN_FILENO);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
+	/* 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
-	t_cmd *cmd = mini->commands;
-	while (cmd)
-	{
-		if (cmd->fd[0] != -1)
-		{
-			close(cmd->fd[0]);
-			cmd->fd[0] = -1;
-		}
-		if (cmd->fd[1] != -1)
-		{
-			close(cmd->fd[1]);
-			cmd->fd[1] = -1;
-		}
-		cmd = cmd->next;
-	}
+	close(STDERR_FILENO); */
 }
 
 int	open_heredoc(t_heredoc *tmp_hd)
@@ -68,28 +82,22 @@ int	open_heredoc(t_heredoc *tmp_hd)
 
 void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
 {
-	printf("Entered here\n");
 	free(line);
-	//close(tmp_hd->fd_heredoc);
-	//close(mini->heredoc->fd_heredoc);
-	if (tmp_hd && tmp_hd->fd_heredoc != -1)
-	{
-    		close(tmp_hd->fd_heredoc);
-    		tmp_hd->fd_heredoc = -1;
-	}
-	if (mini->heredoc && mini->heredoc->fd_heredoc != -1) 
-	{
-    		close(mini->heredoc->fd_heredoc);
-    		mini->heredoc->fd_heredoc = -1;
-	}
+	close(tmp_hd->fd_heredoc);
+	close(mini->heredoc->fd_heredoc);
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
 }
 
 int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
 	char	*line;
 
+	//set_signals_to_here_doc();
 	open_heredoc(tmp_hd);
 	while (1)
 	{
@@ -111,6 +119,7 @@ int	fill_fd_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 			perror("Error writing heredoc line");
 		free (line);
 	}
+	restore_default_signals();
 	support_fill_fr_heredoc(tmp_hd, mini);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc_3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/10 10:13:43 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:04:03 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	append_heredoc(t_minishell *mini, t_node *tmp)
 	tmp_hd->index = mini->heredoc->index + 1;
 	tmp_hd->eof = ft_strdup(tmp->next->token);
 	tmp_hd->eof_quote = false;
+	tmp_hd->done = false;
 	tmp_hd->fd_heredoc_path = NULL;
 	tmp_hd->count_hd = mini->heredoc->count_hd;
 	tmp_hd->next = NULL;
@@ -52,7 +53,8 @@ void	save_heredoc_info(t_minishell *mini)
 {
 	t_node	*tmp;
 
-	tmp = mini->tokenlst;
+	tmp = mini->commands->tokens; //trocar de mini->tokenlst passa de 3 heredocs para 2 em cat << 1 | ls MAS da segfault em cat << a | grep a | cat << b | grep b
+	printf("in save_heredoc_info\n"); //em cat << a | esta a entrar aqui no grep
 	while (tmp)
 	{
 		if (tmp->type == HEREDOC && tmp->next)

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/16 21:21:44 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:40:44 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 	{
 		close(mini->saved_stdout);
 		close(mini->saved_stdout);
+		close(mini->commands->fd[1]);
+		close(mini->commands->fd[0]);
 		close(mini->heredoc->fd_heredoc);
 		handle_ctrl_c_hd(mini);
 		return ;
@@ -34,7 +36,7 @@ void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 void	heredoc(t_minishell *mini)
 {
 	t_heredoc	*tmp_hd;
-	char		*num;
+	//char		*num;
 	char		cwd[1024];
 	char		*directory;
 
@@ -43,17 +45,30 @@ void	heredoc(t_minishell *mini)
 		tmp_hd = mini->heredoc->next;
 	else
 		tmp_hd = mini->heredoc;
+	
+/* 	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);	 */
+/* 	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]); */
+	
 	while (tmp_hd)
 	{
 		directory = getcwd(cwd, sizeof(cwd));
 		tmp_hd->fd_heredoc_path = ft_strjoin(directory, "/");
 		tmp_hd->fd_heredoc_path = ft_strjoin(tmp_hd->fd_heredoc_path, \
-				mini->heredoc->eof);
-		num = ft_itoa(tmp_hd->index);
-		free(num);
-		support_heredoc(tmp_hd, mini);
+		mini->heredoc->eof);
+		printf("mini->heredoc->eof: %s\n", tmp_hd->eof);
+		printf("tmp_hd->done: %d\n", tmp_hd->done);
+		/* 		num = ft_itoa(tmp_hd->index);
+			tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
+			free(num); */
+		
+		if (!tmp_hd->done)
+			support_heredoc(tmp_hd, mini);
+		tmp_hd->done = true;
+		
 		tmp_hd = tmp_hd->next;
 	}
 	include_hd_path(mini);
-	remove_heredoc_token(mini);
+	//remove_heredoc_token(mini);
 }

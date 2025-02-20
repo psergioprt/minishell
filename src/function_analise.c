@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:33:59 by marvin            #+#    #+#             */
-/*   Updated: 2025/02/13 23:49:25 by pauldos-         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:33:59 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,18 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 {
 	pid_t	pid;
 
-	if (has_heredoc(mini))
+ 	if (has_heredoc(mini))
 		heredoc(mini);
-	/* if (handle_redirections(mini) == -1)
-		return ;
-	skip_redirection_plus_target(mini); */
+	printf("After has_heredoc check\n");
+/* 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
+	{
+		//close(mini->commands->fd[0]);
+		//close(mini->commands->fd[1]);
+		close(mini->saved_stdin);
+		close(mini->saved_stdout); //TODO provavelmente o grep nao esta a reeber nada, mesmo quando da erro tem de mudar os fds
+		//return ;
+	}	 */
+	//skip_redirection_plus_target(mini); //Comentar esta linha especifica estraga cat << eof | ls | grep a
 	pid = create_pid();
 	if (pid == 0)
 		handle_child_process(mini, prev_fd);
@@ -63,7 +70,10 @@ void	exec_cmds(t_minishell *mini)
 	mini->prev_node = NULL;
 	split_commands(mini);
 	if (check_redirect_errors(mini))
+	{
+		mini->exit_status = 2;
 		return ;
+	}
 	if (mini->commands && !mini->commands->next)
 	{
 		if (has_heredoc(mini))

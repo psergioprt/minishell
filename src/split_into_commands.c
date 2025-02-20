@@ -38,8 +38,39 @@ static void	add_token_to_cmd(t_cmd *cmd, t_node *current)
 		return ;
 	(*token_tail)->token = ft_strdup(current->token);
 	(*token_tail)->type = current->type;
+	if (current->target != NULL)
+		(*token_tail)->target = ft_strdup(current->target);
+	else
+		(*token_tail)->target = NULL;
 	(*token_tail)->next = NULL;
 }
+/* 
+void	print_command_list(t_cmd *commands)
+{
+	t_cmd	*cmd;
+	t_node	*token;
+
+	cmd = commands;
+	while (cmd)
+	{
+		printf("Command:\n");
+		token = cmd->tokens;
+		while (token)
+		{
+			printf("  Token: %s (Type: %d)\n", token->token, token->type);
+			if (token->target == NULL)
+				printf("I wish I had a target...\n");
+			else
+			{
+				printf("WOW! I have a target!\n");
+				printf("%s\n", token->target);	
+			}
+			token = token->next;
+		}
+		printf("-----------\n");
+		cmd = cmd->next;
+	}
+} */
 
 void	split_commands(t_minishell *mini)
 {
@@ -57,6 +88,16 @@ void	split_commands(t_minishell *mini)
 			return ;
 		while (current && current->type != PIPE)
 		{
+			if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
+			{
+				add_token_to_cmd(new_cmd, current);
+				if (current->next)
+				{
+					current = current->next;
+					add_token_to_cmd(new_cmd, current);
+				}
+				break ;
+			}	
 			add_token_to_cmd(new_cmd, current);
 			current = current->next;
 		}
@@ -68,4 +109,6 @@ void	split_commands(t_minishell *mini)
 		if (current)
 			current = current->next;
 	}
+
+	//print_command_list(mini->commands);
 }

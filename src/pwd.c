@@ -20,7 +20,7 @@ int	pwd_execute(void)
 	directory = getcwd(cwd, sizeof(cwd));
 	if (!directory)
 	{
-		printf("pwd error\n");
+		ft_putstr_fd("pwd error\n", 2);
 		return (1);
 	}
 	printf("%s\n", directory);
@@ -37,7 +37,9 @@ int	custom_pwd(t_minishell *mini)
 		nodes = nodes->next;
 		if (nodes->token[0] == '-' && nodes->token[1])
 		{
-			printf("pwd: %s: invalid option\n", nodes->token);
+			ft_putstr_fd("pwd: ", 2);
+			ft_putstr_fd(nodes->token, 2);
+			ft_putstr_fd(": invalid option\n", 2);
 			return (2);
 		}
 		else

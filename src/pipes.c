@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 14:52:02 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/16 21:25:53 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/01/16 14:52:02 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	redir_fds(int redir, int local)
 	if (dup2(redir, local) < 0)
 	{
 		perror("dup2 failed");
-		printf("Failed to redirect %d -> %d\n", redir, local);
 		close(redir);
 		return ;
 	}
@@ -58,8 +57,8 @@ void	wait_childs(t_minishell *mini, int n_cmds)
 	{
 		pid = waitpid(mini->child[i], &mini->exit_status, 0);
 		if (pid == -1)
-			perror("waitpid failed");
-		else
+			ft_putstr_fd("waitpid error!\n", 2);
+ 		else
 		{
 			if (WIFEXITED(mini->exit_status))
 				mini->exit_status = WEXITSTATUS(mini->exit_status);
@@ -93,7 +92,7 @@ pid_t	create_pid(void)
 	child = fork();
 	if (child < 0)
 	{
-		printf("Fork error");
+		ft_putstr_fd("Fork error", 2);
 		exit(EXIT_FAILURE);
 	}
 	return (child);

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 17:50:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/16 14:08:52 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/09 17:50:35 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <readline/history.h>
 # include "../Libft/libft.h"
 # include <fcntl.h>
+
+#include <sys/ioctl.h>
 
 extern int	g_exit_code;
 
@@ -45,6 +47,7 @@ typedef struct s_heredoc
 	bool				eof_quote;
 	int					index;
 	int					count_hd;
+	bool				done;
 	struct s_heredoc	*next;
 }	t_heredoc;
 
@@ -69,6 +72,7 @@ typedef struct s_cmd
 	t_node			*tokens;
 	int				fd[2];
 	struct s_cmd	*next;
+	int				is_first_command;
 }	t_cmd;
 
 typedef struct s_minishell
@@ -92,6 +96,7 @@ typedef struct s_minishell
 	int				saved_stdin;
 	bool			unquoted;
 	int				interactive;
+	bool			is_heredoc;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -139,6 +144,7 @@ void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
 void		restore_default_signals(void);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
+
 void		add_empty_token(t_minishell *mini);
 
 //5/2 - Added
@@ -148,7 +154,7 @@ void		cleanup_fd(t_minishell *mini);
 
 //REDIRECTS_HANDLER
 int			handle_redirections(t_minishell *mini);
-int			open_file(const char *filename, t_type type);
+int			open_file(char *filename, t_type type);
 int			handle_redirection_action(int fd, t_node *current);
 int			identify_redirection_type(char *token);
 
@@ -182,11 +188,11 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
-void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
-			t_node **prev_token, bool *keep_next);
+void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
+	t_node **prev_token);
 void		support_heredoc_token_tokens(t_minishell *mini);
-void		process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
-			t_node **prev_cmd, bool *keep_next);
+void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+	t_node **prev_cmd);
 void		support_heredoc_token_commands(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
 void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini);

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/16 08:22:23 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/19 15:24:13 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	check_pipes_errors(t_minishell *mini, t_parse_context *ctx)
 				p--;
 			if (p < 0)
 			{
+				//ft_putstr_fd("OwO\n", 2);
 				print_pipes_errors(mini);
 				return ;
 			}
@@ -120,7 +121,7 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 			tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
 		(*tok_ctx->i)++;
 	}
-	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && mini->disable_expand)
+	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && mini->disable_expand && !mini->is_heredoc)
 	{
 		mini->disable_expand = false;
 		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
