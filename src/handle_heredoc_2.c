@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/19 14:44:22 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 17:07:25 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 	if (mini->commands->next)
 		redir_fds(mini->commands->fd[1], STDOUT_FILENO);
   	if (mini->heredoc->fd_heredoc)
-		close(mini->heredoc->fd_heredoc); 
+		close(mini->heredoc->fd_heredoc);
 /* 	if (has_heredoc(mini))
 		heredoc(mini); */
  	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
@@ -35,9 +35,7 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 		exit(mini->exit_status);
 	}
 	skip_redirection_plus_target(mini);
-	
 	first_token(mini);
-	
 	if (mini->commands->fd[0] != -1)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
@@ -56,7 +54,7 @@ void	handle_child_process(t_minishell *mini, int *prev_fd)
 
 void	support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini)
 {
-	printf("ppid: %d\n", getpid());
+	printf("ppid: %d\n", getpid()); //TODO appagar
 	if (close(tmp_hd->fd_heredoc) == -1)
 		perror("Failed to close heredoc file");
 	close(mini->heredoc->fd_heredoc);

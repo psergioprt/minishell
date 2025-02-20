@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/19 14:40:44 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 17:06:19 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	heredoc(t_minishell *mini)
 	else
 		tmp_hd = mini->heredoc;
 	
-/* 	if (mini->commands->fd[0] != -1)
-		close(mini->commands->fd[0]);	 */
+/*  	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]); */
 /* 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]); */
 	
@@ -57,8 +57,8 @@ void	heredoc(t_minishell *mini)
 		tmp_hd->fd_heredoc_path = ft_strjoin(directory, "/");
 		tmp_hd->fd_heredoc_path = ft_strjoin(tmp_hd->fd_heredoc_path, \
 		mini->heredoc->eof);
-		printf("mini->heredoc->eof: %s\n", tmp_hd->eof);
-		printf("tmp_hd->done: %d\n", tmp_hd->done);
+		printf("mini->heredoc->eof: %s\n", tmp_hd->eof);//TODO apagar
+		printf("tmp_hd->done: %d\n", tmp_hd->done); //TODO apagar
 		/* 		num = ft_itoa(tmp_hd->index);
 			tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", num);
 			free(num); */

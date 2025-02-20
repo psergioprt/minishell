@@ -44,7 +44,7 @@ static void	add_token_to_cmd(t_cmd *cmd, t_node *current)
 		(*token_tail)->target = NULL;
 	(*token_tail)->next = NULL;
 }
-/* 
+/* //TODO apagar
 void	print_command_list(t_cmd *commands)
 {
 	t_cmd	*cmd;

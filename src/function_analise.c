@@ -18,7 +18,7 @@ void	exec_commands(t_minishell *mini, int *prev_fd)
 
  	if (has_heredoc(mini))
 		heredoc(mini);
-	printf("After has_heredoc check\n");
+	printf("After has_heredoc check\n"); //TODO apagar
 /* 	if (handle_redirections(mini) == -1)//Comentar isto funciona ls | grep a < Makefile mas estraga cat Makefile | grep NAME > file
 	{
 		//close(mini->commands->fd[0]);
