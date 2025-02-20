@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/16 22:14:01 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 12:12:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ int	exec_child(t_minishell *mini, char **argv, char *pathname)
 	close(mini->saved_stdin);
 	close(mini->saved_stdout);
 	restore_default_signals();
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
 	if (execve(pathname, argv, mini->envp) == -1)
 		return (handle_execve_error(mini, argv, mini->command, 126));
 	return (mini->exit_status);
