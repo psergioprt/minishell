@@ -50,14 +50,14 @@ void	add_tokens_to_cmd(t_cmd *cmd, t_node **current)
 	while (*current && (*current)->type != PIPE)
 	{
 		add_token_to_cmd(cmd, *current);
-		if ((*current)->type == OUTPUT || (*current)->type == APPEND_OUTPUT)
+		if ((*current)->type == OUTPUT || (*current)->type == APPEND_OUTPUT
+			|| (*current)->type == INPUT || (*current)->type == HEREDOC)
 		{
 			if ((*current)->next)
 			{
 				*current = (*current)->next;
 				add_token_to_cmd(cmd, *current);
 			}
-			break ;
 		}
 		*current = (*current)->next;
 	}

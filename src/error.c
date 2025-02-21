@@ -12,8 +12,6 @@
 
 #include "../include/minishell.h"
 
-//TODO isto aqui tudo
-
 void	free_tokens(t_node *tokens)
 {
 	t_node	*tmp;

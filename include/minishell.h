@@ -81,7 +81,7 @@ typedef struct s_minishell
 	t_node			*tokenlst;
 	t_cmd			*commands;
 	t_env			*envvars;
-	int				exit_status; //TODO init
+	int				exit_status;
 	int				has_pipe;
 	pid_t			child[1024];
 	int				i;
