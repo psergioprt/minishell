@@ -6,23 +6,11 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 09:52:58 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 23:19:32 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 00:26:02 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-void	redir_error_close(t_minishell *mini)
-{
-	if (mini->commands->fd[0] != -1)
-		close(mini->commands->fd[0]);
-	if (mini->commands->fd[1] != -1)
-		close(mini->commands->fd[1]);
-	if (mini->heredoc->fd_heredoc != -1)
-		close(mini->heredoc->fd_heredoc);
-	close(mini->saved_stdin);
-	close(mini->saved_stdout);
-}
 
 void	handle_child_process(t_minishell *mini, int *prev_fd)
 {
@@ -70,19 +58,6 @@ int	open_heredoc(t_heredoc *tmp_hd)
 	if (tmp_hd->fd_heredoc == -1)
 		return (-1);
 	return (0);
-}
-
-void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
-{
-	free(line);
-	close(tmp_hd->fd_heredoc);
-	close(mini->heredoc->fd_heredoc);
-	close(mini->saved_stdin);
-	close(mini->saved_stdout);
-	if (mini->commands->fd[0] != -1)
-		close(mini->commands->fd[0]);
-	if (mini->commands->fd[1] != -1)
-		close(mini->commands->fd[1]);
 }
 
 void	write_heredoc(t_heredoc *tmp_hd, t_minishell *mini, char *line)

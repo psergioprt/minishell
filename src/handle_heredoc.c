@@ -6,11 +6,51 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 23:18:32 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 00:26:10 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+int	identify_redirection_type(char *token)
+{
+	if (!ft_strcmp(token, ">"))
+		return (OUTPUT);
+	if (!ft_strcmp(token, ">>"))
+		return (APPEND_OUTPUT);
+	if (!ft_strcmp(token, "<"))
+		return (INPUT);
+	if (!ft_strcmp(token, "<<"))
+		return (HEREDOC);
+	if (!ft_strcmp(token, "|"))
+		return (PIPE);
+	return (-1);
+}
+
+void	redir_error_close(t_minishell *mini)
+{
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
+	if (mini->heredoc->fd_heredoc != -1)
+		close(mini->heredoc->fd_heredoc);
+	close(mini->saved_stdin);
+	close(mini->saved_stdout);
+}
+
+void	close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line)
+{
+	free(line);
+	close(tmp_hd->fd_heredoc);
+	close(mini->heredoc->fd_heredoc);
+	close(mini->saved_stdin);
+	close(mini->saved_stdout);
+	if (mini->commands->fd[0] != -1)
+		close(mini->commands->fd[0]);
+	if (mini->commands->fd[1] != -1)
+		close(mini->commands->fd[1]);
+}
 
 void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini, int *prev_fd)
 {

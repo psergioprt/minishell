@@ -147,7 +147,6 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 void		add_empty_token(t_minishell *mini);
 
 //5/2 - Added
-int			identify_redirection_type(char *token);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
 
@@ -187,6 +186,8 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
+void		close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line);
+void		redir_error_close(t_minishell *mini);
 void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
 			t_node **prev_token);
 void		support_heredoc_token_tokens(t_minishell *mini);

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 18:08:03 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 23:52:42 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,31 @@ int	handle_redirection_action(int fd, t_node *current)
 	return (0);
 }
 
+void	free_heredoc(t_node **current, t_node **prev, t_minishell *mini)
+{
+	t_node	*to_free;
+
+	to_free = *current;
+	*current = (*current)->next;
+	if (*current && (*current)->type != HEREDOC)
+	{
+		free((*current)->token);
+		to_free->next = (*current)->next;
+		free(*current);
+		*current = to_free->next;
+	}
+	free(to_free->token);
+	free(to_free);
+	if (*prev)
+		(*prev)->next = *current;
+	else
+		mini->commands->tokens = *current;
+}
+
 void	skip_hds(t_minishell *mini)
 {
 	t_node	*current;
 	t_node	*prev;
-	t_node	*to_free;
-	t_node	*delimiter;
 	int		found_heredoc;
 
 	current = mini->commands->tokens;
@@ -74,30 +93,12 @@ void	skip_hds(t_minishell *mini)
 	found_heredoc = 0;
 	while (current)
 	{
-		if (current->type == HEREDOC)
+		if (current->type == HEREDOC && found_heredoc)
 		{
-			if (found_heredoc)
-			{
-				to_free = current; 
-				current = current->next;
-				if (current && current->type != HEREDOC) 
-				{
-					delimiter = current;
-					current = current->next;
-					free(delimiter->token);
-					free(delimiter);
-				}
-				free(to_free->token);
-				free(to_free);
-				if (prev)
-					prev->next = current;
-				else
-					mini->commands->tokens = current;
-				continue ;
-			}
-			else
-				found_heredoc = 1;
+			free_heredoc(&current, &prev, mini);
+			continue ;
 		}
+		found_heredoc |= (current->type == HEREDOC);
 		prev = current;
 		current = current->next;
 	}
@@ -127,19 +128,4 @@ int	handle_redirections(t_minishell *mini)
 		current = current->next;
 	}
 	return (0);
-}
-
-int	identify_redirection_type(char *token)
-{
-	if (!ft_strcmp(token, ">"))
-		return (OUTPUT);
-	if (!ft_strcmp(token, ">>"))
-		return (APPEND_OUTPUT);
-	if (!ft_strcmp(token, "<"))
-		return (INPUT);
-	if (!ft_strcmp(token, "<<"))
-		return (HEREDOC);
-	if (!ft_strcmp(token, "|"))
-		return (PIPE);
-	return (-1);
 }
