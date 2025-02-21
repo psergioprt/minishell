@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 17:50:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/21 08:37:43 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/21 19:55:38 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct s_minishell
 	bool			unquoted;
 	int				interactive;
 	bool			is_heredoc;
+	int			count;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -164,7 +165,7 @@ int			check_redirect_errors_support_1(t_minishell *mini);
 int			check_redirect_errors(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
 void		redirect_check_errors(t_minishell *mini);
-void		redirect_check_errors_2(t_minishell *mini);
+void		redirect_check_errors_2(t_minishell *mini, char *env_var_name);
 
 //REDIRECTS_SKIP_FUNCTIONS
 void		skip_redirection_plus_target_cmd_support(t_node **current, \

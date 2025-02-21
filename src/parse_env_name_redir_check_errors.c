@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 08:32:50 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 08:35:57 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/21 15:11:54 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ void	redirect_check_errors(t_minishell *mini)
 	add_empty_token(mini);
 }
 
-void	redirect_check_errors_2(t_minishell *mini)
+void	redirect_check_errors_2(t_minishell *mini, char *env_var_name)
 {
-	ft_putstr_fd("ambiguos redirect\n", 2);
+	ft_putstr_fd("$", 2);
+	ft_putstr_fd(env_var_name, 2);
+	ft_putstr_fd(": ambiguos redirect\n", 2);
 	mini->exit_status = 1;
 	mini->has_error = true;
 }

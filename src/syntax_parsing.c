@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:11:51 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 12:11:31 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 20:04:49 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,35 +57,16 @@ bool	redir_error_message_2(t_minishell *mini, char *redir)
 	return (true);
 }
 
-bool	check_redirection_errors(t_minishell *mini, t_parse_context *ctx, \
-		int *i)
+bool	validate_redir_syntax(t_minishell *mini, t_parse_context *ctx, \
+		int *i, char redir)
 {
-	int		start;
-	char	redir;
-	int		count;
-
-	start = *i;
-	count = 0;
-	if (ctx->input[*i] != '>' && ctx->input[*i] != '<')
-		return (false);
-	redir = ctx->input[*i];
-	while (ctx->input[*i] && (ctx->input[*i] == '>' || ctx->input[*i] == '<'))
-	{
-		if (ctx->input[*i] != redir)
-		{
-			redir_error_message_1(mini, ctx, i);
-			return (true);
-		}
-		count++;
-		(*i)++;
-	}
-	if (count > 2)
+	if (mini->count > 2)
 	{
 		redir_error_message_2(mini, &redir);
 		return (true);
 	}
-	while (ctx->input[*i] && (ctx->input[*i] == ' ' || (ctx->input[*i] >= 9 \
-					&& ctx->input[*i] <= 13)))
+	while (ctx->input[*i] && (ctx->input[*i] == ' ' || (ctx->input[*i] >= 9 && \
+					ctx->input[*i] <= 13)))
 		(*i)++;
 	if (ctx->input[*i] == '\0')
 	{
@@ -99,15 +80,63 @@ bool	check_redirection_errors(t_minishell *mini, t_parse_context *ctx, \
 		redir_error_message_1(mini, ctx, i);
 		return (true);
 	}
+	return (false);
+}
+
+bool	count_redir_chars(t_minishell *mini, t_parse_context *ctx, int *i, \
+		char redir)
+{
+	mini->count = 0;
+	while (ctx->input[*i] && (ctx->input[*i] == '>' || ctx->input[*i] == '<'))
+	{
+		if (ctx->input[*i] != redir)
+		{
+			redir_error_message_1(mini, ctx, i);
+			return (true);
+		}
+		mini->count++;
+		(*i)++;
+	}
+	return (validate_redir_syntax(mini, ctx, i, redir));
+}
+
+bool	check_redirection_errors(t_minishell *mini, t_parse_context *ctx, \
+		int *i)
+{
+	int		start;
+	char	redir;
+
+	start = *i;
+	if (ctx->input[*i] != '>' && ctx->input[*i] != '<')
+		return (false);
+	redir = ctx->input[*i];
+	if (count_redir_chars(mini, ctx, i, redir))
+		return (true);
 	*i = start;
 	return (false);
 }
 
-void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+void	identify_redir_type(t_minishell *mini, char *redir_token)
+{
+	int		redir_type;
+
+	if (!redir_token)
+	{
+		ft_putstr_fd("Error: Null redirection token\n", 2);
+		return ;
+	}
+	redir_type = identify_redirection_type(redir_token);
+	if (redir_type != -1)
+		add_command_node(mini, redir_token, redir_type, &(mini->prev_node));
+	else
+		ft_putstr_fd("Error: Invalid redirection operator\n", 2);
+}
+
+void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, \
+		int *j)
 {
 	char	single_op[2];
 	char	*redir_token;
-	int		redir_type;
 
 	if (check_redirection_errors(mini, ctx, i))
 		return ;
@@ -127,14 +156,11 @@ void	handle_redirectional(t_minishell *mini, t_parse_context *ctx, int *i, int *
 		single_op[1] = '\0';
 		redir_token = single_op;
 	}
-	redir_type = identify_redirection_type(redir_token);
-	if (redir_type != -1)
-		add_command_node(mini, redir_token, redir_type, &(mini->prev_node));
-	else
-		perror("Error: Invalid redirection operator\n");
+	identify_redir_type(mini, redir_token);
 }
 
-void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+void	process_quoted_content(t_minishell *mini, t_parse_context *ctx, int *i, \
+		int *j)
 {
 	if (mini->disable_expand == true && ctx->input[*i] == '$')
 		ctx->current_token[(*j)++] = ctx->input[*i];
@@ -183,7 +209,8 @@ void	add_empty_token(t_minishell *mini)
 	add_token_to_list(mini, new_token);
 }
 
-void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+void	initialize_quote_handling(t_minishell *mini, t_parse_context *ctx, \
+		int *i)
 {
 	mini->heredoc->eof_quote = true;
 	mini->unquoted = false;
@@ -195,38 +222,48 @@ void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, int *i, i
 			(*i) += 1;
 			return ;
 		}
-		else
+		ctx->quote = ctx->input[*i];
+		(*i)++;
+		if (ctx->quote == '\'' || mini->is_heredoc)
+			mini->disable_expand = true;
+		else if (ctx->quote == '"')
+			mini->disable_expand = false;
+	}
+}
+
+void	process_quotes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+{
+	while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
+	{
+		process_quoted_content(mini, ctx, i, j);
+		(*i)++;
+	}
+	if (ctx->input[*i] == ctx->quote)
+	{
+		ctx->quote = 0;
+		if (!mini->is_heredoc)
 		{
-			ctx->quote = ctx->input[*i];
-			(*i)++;
-			if (ctx->quote == '\'' || mini->is_heredoc)
-				mini->disable_expand = true;
-			else if (ctx->quote == '"')
+			if (ctx->input[*i] == '"')
 				mini->disable_expand = false;
-			while (ctx->input[*i] && ctx->input[*i] != ctx->quote)
-			{
-				process_quoted_content(mini, ctx, i, j);
-				(*i)++;
-			}
-			if (ctx->input[*i] == ctx->quote)
-			{
-				ctx->quote = 0;
-				if (!mini->is_heredoc)
-				{
-					if (ctx->input[*i] == '"')
-						mini->disable_expand = false;
-					else if (ctx->input[*i] == '\'')
-						mini->disable_expand = true;
-				}
-			}
-			else
-			{
-				ft_putstr_fd("syntax error near unexpected token 'open quote'\n", 2);
-				mini->has_error = true;
-				mini->exit_status = 2;
-			}
+			else if (ctx->input[*i] == '\'')
+				mini->disable_expand = true;
 		}
 	}
+	else
+	{
+		ft_putstr_fd("syntax error near unexpected token 'open quote'\n", 2);
+		mini->has_error = true;
+		mini->exit_status = 2;
+	}
+}
+
+void	handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
+		int *i, int *j)
+{
+	initialize_quote_handling(mini, ctx, i);
+	if (!ctx->quote)
+		return ;
+	process_quotes(mini, ctx, i, j);
 }
 
 void	handle_spaces_quotes(t_minishell *mini, const char *input, \
