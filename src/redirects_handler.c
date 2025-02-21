@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 23:52:42 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 12:45:03 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,9 @@ void	skip_hds(t_minishell *mini)
 			free_heredoc(&current, &prev, mini);
 			continue ;
 		}
-		found_heredoc |= (current->type == HEREDOC);
+		if (current->type == INPUT || current->type == OUTPUT || current->type == APPEND_OUTPUT)
+			break ;
+		found_heredoc = (current->type == HEREDOC);
 		prev = current;
 		current = current->next;
 	}
