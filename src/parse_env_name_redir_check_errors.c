@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_env_name_redir_check_errors.c                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/21 08:32:50 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 15:11:54 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/02/21 14:52:44 by jcavadas          #+#    #+#             */
+/*   Updated: 2025/02/21 14:52:44 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	redirect_check_errors_2(t_minishell *mini, char *env_var_name)
 {
 	ft_putstr_fd("$", 2);
 	ft_putstr_fd(env_var_name, 2);
-	ft_putstr_fd(": ambiguos redirect\n", 2);
+	ft_putstr_fd(": ambiguous redirect\n", 2);
 	mini->exit_status = 1;
 	mini->has_error = true;
 }

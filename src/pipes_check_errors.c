@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_check_errors.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/20 22:27:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 08:28:46 by pauldos-         ###   ########.fr       */
+/*   Created: 2025/02/21 14:58:28 by jcavadas          #+#    #+#             */
+/*   Updated: 2025/02/21 14:58:28 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:10:16 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/14 00:38:19 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 22:01:36 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,13 @@ void	handle_ctrl_c_hd(t_minishell *mini)
 
 void	handle_heredoc_signal(int signal)
 {
-	(void)signal;
-	write(STDOUT_FILENO, "\033[2K\r^C\n", 8);  // Clear line and print ^C inline
-	// TODO
-	// Stop readline and break out of heredoc loop
-	g_exit_code = 130;
-	close(STDIN_FILENO);
-}
-
-/* void	handle_heredoc_signal(int signal)
-{
 	if (signal == SIGINT)
 	{
 		printf("\n");
 		g_exit_code = SIGINT;
 		close(STDIN_FILENO);
 	}
-} */
+}
 
 void	set_signals_to_here_doc(void)
 {

@@ -23,7 +23,7 @@ void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
 		heredoc_token = *current_token;
 		*current_token = (*current_token)->next;
 		if (!*current_token)
-			break;
+			break ;
 		delim_token = *current_token;
 		*current_token = (*current_token)->next;
 		free(delim_token->token);
@@ -47,7 +47,7 @@ void	support_heredoc_token_tokens(t_minishell *mini)
 	while (current_token)
 	{
 		if (current_token->type == PIPE)
-			break;
+			break ;
 		if (current_token->type == HEREDOC)
 			process_heredoc_token(mini, &current_token, &prev_token);
 		else
@@ -69,7 +69,7 @@ void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
 		heredoc_cmd = *current_cmd;
 		*current_cmd = (*current_cmd)->next;
 		if (!*current_cmd)
-			break;
+			break ;
 		delim_cmd = *current_cmd;
 		*current_cmd = (*current_cmd)->next;
 		free(delim_cmd->token);
@@ -93,7 +93,7 @@ void	support_heredoc_token_commands(t_minishell *mini)
 	while (current_cmd)
 	{
 		if (current_cmd->type == PIPE)
-			break;
+			break ;
 		if (current_cmd->type == HEREDOC)
 			process_heredoc_command(mini, &current_cmd, &prev_cmd);
 		else

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/19 14:04:03 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/20 15:18:48 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	initialize_heredoc(t_minishell *mini, t_node *tmp)
 	mini->heredoc->eof_quote = false;
 	mini->heredoc->fd_heredoc_path = NULL;
 	mini->heredoc->count_hd = 0;
+	mini->heredoc->done = false;
 	mini->heredoc->next = NULL;
 	if (!mini->heredoc->eof)
 		perror("Error: HEREDOC delimiter is NULL");
@@ -53,8 +54,7 @@ void	save_heredoc_info(t_minishell *mini)
 {
 	t_node	*tmp;
 
-	tmp = mini->commands->tokens; //trocar de mini->tokenlst passa de 3 heredocs para 2 em cat << 1 | ls MAS da segfault em cat << a | grep a | cat << b | grep b
-	printf("in save_heredoc_info\n"); //em cat << a | esta a entrar aqui no grep
+	tmp = mini->commands->tokens;
 	while (tmp)
 	{
 		if (tmp->type == HEREDOC && tmp->next)

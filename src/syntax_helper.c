@@ -6,11 +6,28 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 00:09:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/10 00:09:35 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 21:55:15 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
+{
+	char	sep[2];
+	int		pipe_type;
+
+	pipe_type = identify_redirection_type((char []){ctx->input[*i], '\0'});
+	if (*j > 0)
+	{
+		ctx->current_token[*j] = '\0';
+		add_command_node(mini, ctx->current_token, NONE, &(mini->prev_node));
+		*j = 0;
+	}
+	sep[0] = ctx->input[*i];
+	sep[1] = '\0';
+	add_command_node(mini, sep, pipe_type, &(mini->prev_node));
+}
 
 void	handle_double_redir(t_minishell *mini, t_parse_context *ctx, \
 		int *i, char **redir_token)

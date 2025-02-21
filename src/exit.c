@@ -44,7 +44,7 @@ int	get_exit(t_minishell *mini, t_node *nodelst)
 		printf("exit\n");
 		ft_putstr_fd("exit: ", 2);
 		ft_putstr_fd(nodelst->token, 2);
-		ft_putstr_fd(": numeric argument required\n" , 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
 		do_exit(mini, 2);
 		return (2);
 	}

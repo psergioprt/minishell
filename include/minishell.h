@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 17:50:35 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/21 19:55:38 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/21 22:22:24 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@
 # include <readline/history.h>
 # include "../Libft/libft.h"
 # include <fcntl.h>
-
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 
 extern int	g_exit_code;
 
@@ -82,7 +81,7 @@ typedef struct s_minishell
 	t_node			*tokenlst;
 	t_cmd			*commands;
 	t_env			*envvars;
-	int				exit_status; //TODO init
+	int				exit_status;
 	int				has_pipe;
 	pid_t			child[1024];
 	int				i;
@@ -97,7 +96,7 @@ typedef struct s_minishell
 	bool			unquoted;
 	int				interactive;
 	bool			is_heredoc;
-	int			count;
+	int				count;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -147,9 +146,21 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 
 void		add_empty_token(t_minishell *mini);
+bool		redir_error_message_2(t_minishell *mini, char *redir);
+bool		redir_error_message_1(t_minishell *mini, t_parse_context *ctx, \
+		int *i);
+
+//PARSE_ENV_NAME_REDIR_CHECK_ERRORS
+void		redirect_check_errors_2(t_minishell *mini, char *env_var_name);
+void		redirect_check_errors(t_minishell *mini);
+
+//PIPES_CHECK_ERRORS
+void		print_pipes_errors(t_minishell *mini);
+bool		has_leading_pipe(t_parse_context *ctx);
+bool		has_trailing_or_double_pipe(t_parse_context *ctx);
+void		check_pipes_errors(t_minishell *mini, t_parse_context *ctx);
 
 //5/2 - Added
-int			identify_redirection_type(char *token);
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);
 
@@ -164,8 +175,6 @@ int			check_redirect_errors_support(t_minishell *mini);
 int			check_redirect_errors_support_1(t_minishell *mini);
 int			check_redirect_errors(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
-void		redirect_check_errors(t_minishell *mini);
-void		redirect_check_errors_2(t_minishell *mini, char *env_var_name);
 
 //REDIRECTS_SKIP_FUNCTIONS
 void		skip_redirection_plus_target_cmd_support(t_node **current, \
@@ -191,15 +200,17 @@ void		free_split(char **split);
 char		**split_by_ifs(const char *str);
 
 //HANDLE_HEREDOC
-void	process_heredoc_token(t_minishell *mini, t_node **current_token, \
-	t_node **prev_token);
+void		close_fds(t_minishell *mini, t_heredoc *tmp_hd, char *line);
+void		redir_error_close(t_minishell *mini);
+void		process_heredoc_token(t_minishell *mini, t_node **current_token, \
+			t_node **prev_token);
 void		support_heredoc_token_tokens(t_minishell *mini);
-void	process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
-	t_node **prev_cmd);
+void		process_heredoc_command(t_minishell *mini, t_node **current_cmd, \
+			t_node **prev_cmd);
 void		support_heredoc_token_commands(t_minishell *mini);
 void		remove_heredoc_token(t_minishell *mini);
-void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
-void		heredoc(t_minishell *mini);
+void		support_heredoc(t_heredoc *tmp_hd, t_minishell *mini, int *prev_fd);
+void		heredoc(t_minishell *mini, int *prev_fd);
 
 //HANDLE_HEREDOC2
 void		support_fill_fr_heredoc(t_heredoc *tmp_hd, t_minishell *mini);
@@ -311,6 +322,5 @@ void		redir_fds(int redir, int local);
 void		wait_childs(t_minishell *mshell, int n_cmds);
 int			get_ncmds(t_cmd *cmd);
 pid_t		create_pid(void);
-void		check_pipes_errors(t_minishell *mini, t_parse_context *ctx);
 
 #endif

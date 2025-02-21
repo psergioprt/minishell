@@ -1,0 +1,29 @@
+File syntax_parsing.c has been split into several files:
+
+function void    handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j) 
+was moved to file syntax_helper.c
+
+syntax_parsing.c (5 functions)
+add_empty_token.c (2 functions)
+redirects_parsing.c (5 functions)
+redir_error_funcs.c (2 functions)
+
+
+files to add to Makefile:
+add_empty_token.c
+redirects_parsing.c
+redir_error_funcs.c
+
+Update to minishell.h
+add new variable int count (line 99), to minishell struct, to reduce number of a function arguments
+
+ 96         bool                    unquoted;
+ 97         int                             interactive;
+ 98         bool                    is_heredoc;
+ 99         int                     count;
+100 }       t_minishell;
+
+functions: 
+void            add_empty_token(t_minishell *mini);
+bool    redir_error_message_2(t_minishell *mini, char *redir);
+bool    redir_error_message_1(t_minishell *mini, t_parse_context *ctx, int *i);

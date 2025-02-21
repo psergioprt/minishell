@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 14:46:14 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 14:47:06 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,7 @@ int	open_file(char *filename, t_type type)
 int	handle_redirection_action(int fd, t_node *current)
 {
 	if (fd == -1)
-	{
-		/* perror("Failed to open file"); */
 		return (-1);
-	}
 	if (current->type == OUTPUT || current->type == APPEND_OUTPUT)
 	{
 		if (dup2(fd, STDOUT_FILENO) == -1)
@@ -64,54 +61,47 @@ int	handle_redirection_action(int fd, t_node *current)
 	return (0);
 }
 
+void	free_heredoc(t_node **current, t_node **prev, t_minishell *mini)
+{
+	t_node	*to_free;
+
+	to_free = *current;
+	*current = (*current)->next;
+	if (*current && (*current)->type != HEREDOC)
+	{
+		free((*current)->token);
+		to_free->next = (*current)->next;
+		free(*current);
+		*current = to_free->next;
+	}
+	free(to_free->token);
+	free(to_free);
+	if (*prev)
+		(*prev)->next = *current;
+	else
+		mini->commands->tokens = *current;
+}
+
 void	skip_hds(t_minishell *mini)
 {
-	t_node *current;
-	t_node *prev;
-	t_node *to_free;
-	t_node *delimiter;
-	int found_heredoc;
+	t_node	*current;
+	t_node	*prev;
+	int		found_heredoc;
 
 	current = mini->commands->tokens;
 	prev = NULL;
 	found_heredoc = 0;
-
 	while (current)
 	{
-		if (current->type == HEREDOC)
+		if (current->type == HEREDOC && found_heredoc)
 		{
-			if (found_heredoc) // Skip this and the next token
-			{
-				to_free = current; 
-				current = current->next; // Move to the next node
-
-				// If there's a delimiter to remove (the next node), do so
-				if (current && current->type != HEREDOC) 
-				{
-					delimiter = current;
-					current = current->next; // Move to the next token after the delimiter
-					free(delimiter->token);
-					free(delimiter);
-				}
-
-				// Free the HEREDOC token
-				free(to_free->token);
-				free(to_free);
-
-				// If prev is NULL, we're deleting the first node, so update the head of the list
-				if (prev)
-					prev->next = current;
-				else
-					mini->commands->tokens = current; // Update head if we deleted the first node
-
-				continue; // Skip the next iteration for the current token (since we removed it)
-			}
-			else
-			{
-				found_heredoc = 1; // Keep the first HEREDOC
-			}
+			free_heredoc(&current, &prev, mini);
+			continue ;
 		}
-		// Move to the next node
+		if (current->type == INPUT || current->type == OUTPUT \
+			|| current->type == APPEND_OUTPUT)
+			break ;
+		found_heredoc = (current->type == HEREDOC);
 		prev = current;
 		current = current->next;
 	}
@@ -141,19 +131,4 @@ int	handle_redirections(t_minishell *mini)
 		current = current->next;
 	}
 	return (0);
-}
-
-int	identify_redirection_type(char *token)
-{
-	if (!ft_strcmp(token, ">"))
-		return (OUTPUT);
-	if (!ft_strcmp(token, ">>"))
-		return (APPEND_OUTPUT);
-	if (!ft_strcmp(token, "<"))
-		return (INPUT);
-	if (!ft_strcmp(token, "<<"))
-		return (HEREDOC);
-	if (!ft_strcmp(token, "|"))
-		return (PIPE);
-	return (-1);
 }
