@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 14:52:11 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 15:26:12 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	else if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || \
 				!ft_strcmp(mini->prev_node->token, "<") || \
 				!ft_strcmp(mini->prev_node->token, ">>")))
-		redirect_check_errors_2(mini);
+		redirect_check_errors_2(mini, env_var_name);
 }
 
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)

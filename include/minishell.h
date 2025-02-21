@@ -147,7 +147,7 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 void		add_empty_token(t_minishell *mini);
 
 //PARSE_ENV_NAME_REDIR_CHECK_ERRORS
-void		redirect_check_errors_2(t_minishell *mini);
+void		redirect_check_errors_2(t_minishell *mini, char *env_var_name);
 void		redirect_check_errors(t_minishell *mini);
 
 //PIPES_CHECK_ERRORS
