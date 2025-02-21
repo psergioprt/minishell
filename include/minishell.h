@@ -146,6 +146,16 @@ void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 
 void		add_empty_token(t_minishell *mini);
 
+//PARSE_ENV_NAME_REDIR_CHECK_ERRORS
+void		redirect_check_errors_2(t_minishell *mini);
+void		redirect_check_errors(t_minishell *mini);
+
+//PIPES_CHECK_ERRORS
+void		print_pipes_errors(t_minishell *mini);
+bool		has_leading_pipe(t_parse_context *ctx);
+bool		has_trailing_or_double_pipe(t_parse_context *ctx);
+void		check_pipes_errors(t_minishell *mini, t_parse_context *ctx);
+
 //5/2 - Added
 void		print_nodes(t_node *command_list);
 void		cleanup_fd(t_minishell *mini);

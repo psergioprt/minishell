@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/19 15:24:55 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/21 14:56:42 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void	handle_command_addition(t_minishell *mini, int *j)
 		if (expanded_token != mini->current_token)
 			free(expanded_token);
 		mini->disable_expand = false;
-		mini->is_heredoc = false;
 	}
 }
 
