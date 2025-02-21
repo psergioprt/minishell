@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 10:49:37 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 21:52:12 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/21 08:35:48 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,30 +57,6 @@ char	*expand_env_var(char *token, t_minishell *mini)
 	return (token);
 }
 
-void	redirect_check_errors(t_minishell *mini)
-{
-	if (mini->unquoted == false)
-	{
-		if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || \
-					!ft_strcmp(mini->prev_node->token, "<") || \
-					!ft_strcmp(mini->prev_node->token, ">>")))
-		{
-			ft_putstr_fd("No such file or directory\n", 2);
-			mini->exit_status = 1;
-			mini->has_error = true;
-		}
-		add_empty_token(mini);
-	}
-	else if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || \
-				!ft_strcmp(mini->prev_node->token, "<") || \
-				!ft_strcmp(mini->prev_node->token, ">>")))
-	{
-		ft_putstr_fd("ambiguos redirect\n", 2);
-		mini->exit_status = 1;
-		mini->has_error = true;
-	}
-}
-
 void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 {
 	int		k;
@@ -100,7 +76,12 @@ void	parse_env_name(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 		while (env_value[ctx->m])
 			ctx->current_token[(*j)++] = env_value[(ctx->m)++];
 	}
-	redirect_check_errors(mini);
+	else if (mini->unquoted == false)
+		redirect_check_errors(mini);
+	else if (mini->prev_node && (!ft_strcmp(mini->prev_node->token, ">") || \
+				!ft_strcmp(mini->prev_node->token, "<") || \
+				!ft_strcmp(mini->prev_node->token, ">>")))
+		redirect_check_errors_2(mini);
 }
 
 void	handle_env_var(t_minishell *mini, t_parse_context *ctx, int *i, int *j)

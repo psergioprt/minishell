@@ -1,0 +1,27 @@
+env_handler.c
+function parse_env_name add too many lines, add to split it.
+parse_env_name has been changed and redirect_check_errors and redirect_check_errors_2 have been created
+
+A new file was created: parse_env_name_redir_check_errors.c, and those two new functions were put there.
+Those two function must be called from minishell.h
+
+--------------------------------------------------------------------------
+nodes_handler.c
+Function: handle_command_addition
+Has 26 lines
+Removed line 102 -> mini->is_heredoc = false(redundant line). After reading a new line, the function init_variables is read again,
+ so variables are reset there. I have made tests after removing that line, just to make sure...
+
+---------------------------------------------------------------------------
+parser_handler.c
+handle_loop_parsers function had too many lines
+I've added function handle_loop_parsers_support function.
+
+I've moved check_pipes_errors and print_pipes_errors functions to a new file: pipes_check_errors.c
+
+---------------------------------------------------------------------------
+pipes_check_errors.c (new file)
+Has the function that must be called from minishell.h: check_pipes_errors
+That function add too many lines so it was split to two more functions:
+has_trailing_or double_pipe and has_leading_pipe
+the function print_pipes_errors came from function parser_handler.c

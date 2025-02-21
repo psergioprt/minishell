@@ -6,7 +6,7 @@
 /*   By: pauldos- <pauldos-@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 22:27:05 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 22:41:24 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/21 08:28:46 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,33 +22,33 @@ void	print_pipes_errors(t_minishell *mini)
 
 bool	has_leading_pipe(t_parse_context *ctx)
 {
-	int	p;
+	int	i;
 
-	p = 0;
-	while (ctx->input[p] && (ctx->input[p] == ' ' \
-				|| (ctx->input[p] >= 9 && ctx->input[p] <= 13)))
-		p++;
-	return (ctx->input[p] == '|');
+	i = 0;
+	while (ctx->input[i] && (ctx->input[i] == ' ' \
+				|| (ctx->input[i] >= 9 && ctx->input[i] <= 13)))
+		i++;
+	return (ctx->input[i] == '|');
 }
 
 bool	has_trailing_or_double_pipe(t_parse_context *ctx)
 {
-	int	k;
-	int	q;
+	int	i;
+	int	j;
 
-	k = 0;
-	while (ctx->input[k])
+	i = 0;
+	while (ctx->input[i])
 	{
-		if (ctx->input[k] == '|')
+		if (ctx->input[i] == '|')
 		{
-			q = k + 1;
-			while (ctx->input[q] && (ctx->input[q] == ' ' \
-						|| (ctx->input[q] >= 9 && ctx->input[q] <= 13)))
-				q++;
-			if (ctx->input[q] == '\0' || ctx->input[q] == '|')
+			j = i + 1;
+			while (ctx->input[j] && (ctx->input[j] == ' ' \
+						|| (ctx->input[j] >= 9 && ctx->input[j] <= 13)))
+				j++;
+			if (ctx->input[j] == '\0' || ctx->input[j] == '|')
 				return (true);
 		}
-		k++;
+		i++;
 	}
 	return (false);
 }

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 22:48:52 by pauldos-         ###   ########.fr       */
+/*   Updated: 2025/02/20 23:21:38 by pauldos-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,10 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 void	handle_loop_parsers_support(t_minishell *mini, const char *input, \
 		t_token_context *tok_ctx)
 {
-	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && \
-			mini->disable_expand && !mini->is_heredoc)
-	{
-		mini->disable_expand = false;
-		handle_env_var(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
-	}
+	mini->disable_expand = true;
+	if (input[*tok_ctx->i + 1])
+		tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
+	(*tok_ctx->i)++;
 }
 
 void	handle_loop_parsers(t_minishell *mini, const char *input, \
@@ -86,13 +84,7 @@ void	handle_loop_parsers(t_minishell *mini, const char *input, \
 	else if (input[*tok_ctx->i] == '"' || input[*tok_ctx->i] == '\'')
 		handle_open_close_quotes(mini, tok_ctx->ctx, tok_ctx->i, tok_ctx->j);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '\\')
-	{
-		mini->disable_expand = true;
-		if (input[*tok_ctx->i + 1])
-			tok_ctx->current_token[(*tok_ctx->j)++] = input[*tok_ctx->i + 1];
-		(*tok_ctx->i)++;
-	}
-	//handle_loop_parsers_support(mini, input, tok_ctx);
+		handle_loop_parsers_support(mini, input, tok_ctx);
 	else if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == '$' && \
 			mini->disable_expand && !mini->is_heredoc)
 	{
