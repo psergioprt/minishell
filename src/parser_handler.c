@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 00:19:39 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 14:57:32 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:25:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,43 @@ bool	check_malformed_operators(t_minishell *mini, t_parse_context *ctx)
 		if (ctx->input[i] == '>' || ctx->input[i] == '<')
 		{
 			i++;
-			if (ctx->input[i] == '>' || ctx->input[i] == '<')
+			if (ctx->input[i] && (ctx->input[i] == '>' || ctx->input[i] == '<'))
 				i++;
 			while (ctx->input[i] && (ctx->input[i] == ' ' || \
 						(ctx->input[i] >= 9 && ctx->input[i] <= 13)))
 				i++;
-			if (ctx->input[i] == '|')
+			if (ctx->input[i] && ctx->input[i] == '|')
 			{
 				ft_putstr_fd("syntax error near unexpected token `|`\n", 2);
 				mini->has_error = true;
 				mini->exit_status = 2;
 				return (true);
+			}
+		}
+		else if (ctx->input[i] == '|')
+		{
+			i++;
+			while (ctx->input[i] && (ctx->input[i] == ' ' || \
+						(ctx->input[i] >= 9 && ctx->input[i] <= 13)))
+				i++;
+			if (!ctx->input[i] || ctx->input[i] == '|')
+			{
+				ft_putstr_fd("syntax error near unexpected token `|`\n", 2);
+				mini->has_error = true;
+				mini->exit_status = 2;
+				return (true);
+			}
+			if ((ctx->input[i] == '<' || ctx->input[i] == '>'))
+			{
+				i++;
+				if (ctx->input[i] && (ctx->input[i] == '<' || ctx->input[i] == '>'))
+					i++;
+				if (!ctx->input[i])
+				{
+					mini->has_error = true;
+					mini->exit_status = 2;
+					return (true);
+				}
 			}
 		}
 		i++;
@@ -45,7 +71,11 @@ void	handle_pipes(t_minishell *mini, t_parse_context *ctx, int *i, int *j)
 	int	saved_index;
 
 	check_pipes_errors(mini, ctx);
+	if (mini->has_error)
+		return ;
 	check_malformed_operators(mini, ctx);
+	if (mini->has_error)
+		return ;
 	mini->has_pipe += 1;
 	saved_index = *i;
 	(*i)++;

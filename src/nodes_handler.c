@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 22:48:55 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/21 14:56:42 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:13:25 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,13 +119,13 @@ void	split_and_add_commands(t_minishell *mini, const char *input)
 	while (input[i] != '\0')
 	{
 		handle_loop_parsers(mini, input, &tok_ctx);
-		if (!mini->has_error)
-			i++;
 		if (mini->has_error)
 		{
 			mini->exit_status = 2;
 			return ;
 		}
+		if (!mini->has_error)
+			i++;
 	}
 	handle_command_addition(mini, &j);
 }
