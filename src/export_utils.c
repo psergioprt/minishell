@@ -23,7 +23,7 @@ char	*skip_plus(char *str)
 		i++;
 	if (str[i] != '+')
 		return (str);
-	new_str = malloc(ft_strlen(str));
+	new_str = malloc(ft_strlen(str) + 1);
 	if (!new_str)
 		return (NULL);
 	j = 0;
@@ -32,6 +32,8 @@ char	*skip_plus(char *str)
 		if (j == i)
 			j++;
 		new_str[j - (j > i)] = str[j];
+		if (str[j] == '\0')
+			break ;
 		j++;
 	}
 	new_str[j - 1] = '\0';

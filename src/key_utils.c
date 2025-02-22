@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:44:27 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/12 11:12:13 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/22 23:06:21 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int	check_valid_key(char *str, bool *cat)
 	while (str[i] != '=' && str[i])
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_' && str[i] != '+')
+			return (1);
+		if (str[i] == '+' && !str[i + 1])
 			return (1);
 		if (str[i] == '+' && *cat == false && has_char == true)
 			*cat = true;
