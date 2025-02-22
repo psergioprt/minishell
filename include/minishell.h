@@ -137,6 +137,9 @@ void		handle_loop_parsers(t_minishell *mini, const char *input, \
 			t_token_context *tok_ctx);
 void		restore_default_signals(void);
 
+//PARSE_MALFORMED_OPERATORS
+bool		check_malformed_operators(t_minishell *mini, t_parse_context *ctx);
+
 //REDIRECTS_PARSING
 bool		validate_redir_syntax(t_minishell *mini, t_parse_context *ctx, \
 			int *i, char redir);
