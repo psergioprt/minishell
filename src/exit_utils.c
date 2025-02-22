@@ -78,7 +78,9 @@ int	is_num(char *str)
 	{
 		if (*str == '-' && *(str + 1) == '-' && !*(str + 2))
 			return (1);
-		else if (*str == '-' || *str == '+')
+		else if ((*str == '-' || *str == '+') && !*(str + 1))
+			return (0);
+		else if (*str == '-' || *str == '+')	
 			str++;
 		while (*str)
 		{
