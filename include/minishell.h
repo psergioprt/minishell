@@ -96,6 +96,7 @@ typedef struct s_minishell
 	bool			unquoted;
 	int				interactive;
 	bool			is_heredoc;
+	int				count;
 }	t_minishell;
 
 typedef struct s_parse_context
@@ -134,17 +135,39 @@ void		handle_env_var(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 void		handle_loop_parsers(t_minishell *mini, const char *input, \
 			t_token_context *tok_ctx);
-void		handle_spaces_quotes(t_minishell *mini, const char *input, \
-			t_token_context *tok_ctx);
-void		handle_open_close_quotes(t_minishell *mini, \
-			t_parse_context *ctx, int *i, int *j);
-void		handle_sep(t_minishell *mini, t_parse_context *ctx, \
-			int *i, int *j);
 void		restore_default_signals(void);
+
+//REDIRECTS_PARSING
+bool		validate_redir_syntax(t_minishell *mini, t_parse_context *ctx, \
+			int *i, char redir);
+bool		count_redir_chars(t_minishell *mini, t_parse_context *ctx, int *i, \
+			char redir);
+bool		check_redirection_errors(t_minishell *mini, t_parse_context *ctx, \
+			int *i);
+void		identify_redir_type(t_minishell *mini, char *redir_token);
 void		handle_redirectional(t_minishell *mini, t_parse_context *ctx, \
 			int *i, int *j);
 
+//REDIR_ERROR_FUNCS
+bool		redir_error_message_1(t_minishell *mini, t_parse_context *ctx, \
+			int *i);
+bool		redir_error_message_2(t_minishell *mini, char *redir);
+
+//SYNTAX_PARSING
+void		handle_spaces_quotes(t_minishell *mini, const char *input, \
+			t_token_context *tok_ctx);
+void		handle_open_close_quotes(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
+void		process_quotes(t_minishell *mini, t_parse_context *ctx, int *i, \
+			int *j);
+void		initialize_quote_handling(t_minishell *mini, t_parse_context *ctx, \
+			int *i);
+void		process_quoted_content(t_minishell *mini, t_parse_context *ctx, \
+			int *i, int *j);
+
+//ADD_EMPTY_TOKEN
 void		add_empty_token(t_minishell *mini);
+void		add_token_to_list(t_minishell *mini, t_node *new_token);
 
 //PARSE_ENV_NAME_REDIR_CHECK_ERRORS
 void		redirect_check_errors_2(t_minishell *mini, char *env_var_name);
@@ -181,6 +204,7 @@ void		skip_redirection_plus_target_support(t_node **current, \
 void		skip_redirection_plus_target(t_minishell *mini);
 
 //SYNTAX_HELPER
+void		handle_sep(t_minishell *mini, t_parse_context *ctx, int *i, int *j);
 void		handle_spaces_helper(t_minishell *mini, char *expanded_token, \
 			t_token_context *tok_ctx);
 void		process_quoted_helper(t_minishell *mini, t_parse_context *ctx, \
