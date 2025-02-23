@@ -80,7 +80,7 @@ int	is_num(char *str)
 			return (1);
 		else if ((*str == '-' || *str == '+') && !*(str + 1))
 			return (0);
-		else if (*str == '-' || *str == '+')	
+		else if (*str == '-' || *str == '+')
 			str++;
 		while (*str)
 		{
