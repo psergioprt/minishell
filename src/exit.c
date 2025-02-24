@@ -28,7 +28,7 @@ void	calculate_exit(t_minishell *mini, t_node *nodelst)
 	if (ft_strcmp(nodelst->token, "--") == 0)
 	{
 		printf("exit\n");
-		do_exit(mini, 0);
+		do_exit(mini, mini->exit_status);
 	}
 	else if (ft_atoll(nodelst->token) < 0)
 	{
@@ -74,8 +74,8 @@ int	custom_exit(t_minishell *mini)
 	if (!nodelst->next)
 	{
 		printf("exit\n");
-		do_exit(mini, 0);
-		return (0);
+		do_exit(mini, mini->exit_status);
+		return (mini->exit_status);
 	}
 	else
 		return (get_exit(mini, nodelst));
