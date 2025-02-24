@@ -140,6 +140,7 @@ void		restore_default_signals(void);
 
 //REDIRECTS_UTILS
 void		change_targets(t_minishell *mini);
+int			check_access(t_minishell *mini, char *filename, t_type type);
 
 //PARSE_MALFORMED_OPERATORS
 bool		check_malformed_operators(t_minishell *mini, t_parse_context *ctx);

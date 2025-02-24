@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/24 15:37:19 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:45:31 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	append_heredoc(t_minishell *mini, t_node *tmp)
 	tmp_hd->next = malloc(sizeof(t_heredoc));
 	if (check_malloc(tmp_hd->next))
 		return ;
-
 	index = tmp_hd->index;
 	tmp_hd = tmp_hd->next;
 	tmp_hd->index = index + 1;
