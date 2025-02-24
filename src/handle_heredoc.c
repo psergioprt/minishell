@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/24 15:11:33 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:37:30 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,6 @@ void	heredoc(t_minishell *mini, int *prev_fd)
 		tmp_hd = mini->heredoc;
 	while (tmp_hd)
 	{
-
-		ft_putstr_fd("tmp_hd->index: ", 2);
-		ft_putnbr_fd(tmp_hd->index, 2);
-		ft_putstr_fd("\n", 2);
-
-
 		tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", \
 									ft_itoa(tmp_hd->index));
 		if (!tmp_hd->done)

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/24 15:06:09 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:37:41 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,19 +138,6 @@ int	handle_redirections(t_minishell *mini)
 		if ((current->type != NONE && current->type != PIPE) && \
 				current->target != NULL)
 		{
-			ft_putstr_fd("current->token: ", 2);
-			ft_putstr_fd(current->token, 2);
-			ft_putstr_fd("\n", 2);
-
-			ft_putstr_fd("current->next->token: ", 2);
-			ft_putstr_fd(current->next->token, 2);
-			ft_putstr_fd("\n", 2);
-
-			ft_putstr_fd("current->target: ", 2);
-			ft_putstr_fd(current->target, 2);
-			ft_putstr_fd("\n", 2);
-
-			
 			fd = open_file(current->target, current->type, mini);
 			if (fd == -1)
 				return (-1);

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/24 15:30:10 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:37:19 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	initialize_heredoc(t_minishell *mini, t_node *tmp)
 void	append_heredoc(t_minishell *mini, t_node *tmp)
 {
 	t_heredoc	*tmp_hd;
+	int			index;
 
 	tmp_hd = mini->heredoc;
 	while (tmp_hd->next)
@@ -39,11 +40,10 @@ void	append_heredoc(t_minishell *mini, t_node *tmp)
 	tmp_hd->next = malloc(sizeof(t_heredoc));
 	if (check_malloc(tmp_hd->next))
 		return ;
-	tmp_hd = tmp_hd->next;
-	tmp_hd->index = tmp_hd->index + 1;
 
-	ft_putstr_fd("I was in append_heredoc!\n", 2);
-	
+	index = tmp_hd->index;
+	tmp_hd = tmp_hd->next;
+	tmp_hd->index = index + 1;
 	tmp_hd->eof = ft_strdup(tmp->next->token);
 	tmp_hd->eof_quote = false;
 	tmp_hd->done = false;
