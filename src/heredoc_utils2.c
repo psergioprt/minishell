@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:12:26 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 17:57:28 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 11:48:57 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ void	clear_heredoc_list(t_minishell *mini)
 		tmp_hd = mini->heredoc;
 		mini->heredoc = mini->heredoc->next;
 		tmp_hd->done = false;
+		tmp_hd->targeted = false;
+		if (tmp_hd->fd_heredoc_path)
+			unlink(tmp_hd->fd_heredoc_path);
 		if (tmp_hd->fd_heredoc_path)
 			free(tmp_hd->fd_heredoc_path);
 		if (tmp_hd->eof)
@@ -41,9 +44,14 @@ void	include_hd_path(t_minishell *mini)
 	{
 		if (tmp_token->type == HEREDOC)
 		{
-			tmp_token->type = HEREDOC;
-			tmp_token->target = tmp_hd->fd_heredoc_path;
-			tmp_hd = tmp_hd->next;
+			while (tmp_hd)
+			{
+				tmp_token->type = HEREDOC;
+				if (!tmp_hd->targeted)
+					tmp_token->target = tmp_hd->fd_heredoc_path;
+				tmp_hd->targeted = true;
+				tmp_hd = tmp_hd->next;
+			}
 		}
 		tmp_token = tmp_token->next;
 	}

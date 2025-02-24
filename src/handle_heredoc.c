@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:08:46 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/21 00:26:10 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:11:33 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini, int *prev_fd)
 	pid = fork();
 	if (pid == 0)
 	{
+		g_exit_code = 0;
 		if (prev_fd != NULL && *prev_fd != -1)
 			close(*prev_fd);
 		handle_heredoc_child(tmp_hd, mini);
@@ -80,8 +81,6 @@ void	support_heredoc(t_heredoc *tmp_hd, t_minishell *mini, int *prev_fd)
 void	heredoc(t_minishell *mini, int *prev_fd)
 {
 	t_heredoc	*tmp_hd;
-	char		cwd[1024];
-	char		*directory;
 
 	save_heredoc_info(mini);
 	if (mini->heredoc && mini->heredoc->eof == NULL)
@@ -90,14 +89,19 @@ void	heredoc(t_minishell *mini, int *prev_fd)
 		tmp_hd = mini->heredoc;
 	while (tmp_hd)
 	{
-		directory = getcwd(cwd, sizeof(cwd));
-		tmp_hd->fd_heredoc_path = ft_strjoin(directory, "/");
-		tmp_hd->fd_heredoc_path = ft_strjoin(tmp_hd->fd_heredoc_path, \
-		mini->heredoc->eof);
+
+		ft_putstr_fd("tmp_hd->index: ", 2);
+		ft_putnbr_fd(tmp_hd->index, 2);
+		ft_putstr_fd("\n", 2);
+
+
+		tmp_hd->fd_heredoc_path = ft_strjoin("/tmp/tmp_heredoc", \
+									ft_itoa(tmp_hd->index));
 		if (!tmp_hd->done)
 			support_heredoc(tmp_hd, mini, prev_fd);
 		tmp_hd->done = true;
 		tmp_hd = tmp_hd->next;
 	}
+	change_targets(mini);
 	include_hd_path(mini);
 }

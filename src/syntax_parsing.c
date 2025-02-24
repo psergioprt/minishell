@@ -95,9 +95,11 @@ void	handle_spaces_quotes(t_minishell *mini, const char *input, \
 {
 	char	*expanded_token;
 
-	if (!tok_ctx->ctx->quote && input[*tok_ctx->i] == ' ')
+	if (!tok_ctx->ctx->quote && (input[*tok_ctx->i] == ' ' || \
+		(input[*tok_ctx->i] >= 9 && input[*tok_ctx->i] <= 13)))
 	{
-		while (input[*tok_ctx->i + 1] == ' ')
+		while (input[*tok_ctx->i + 1] == ' ' || \
+			(input[*tok_ctx->i + 1] >= 9 && input[*tok_ctx->i + 1] <= 13))
 			(*tok_ctx->i)++;
 		if (*tok_ctx->j > 0)
 		{

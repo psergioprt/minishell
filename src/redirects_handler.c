@@ -6,15 +6,30 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:31:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/21 14:47:06 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:06:09 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	open_file(char *filename, t_type type)
+int	open_file(char *filename, t_type type, t_minishell *mini)
 {
 	int	fd;
+
+	if (access(filename, F_OK) == 0 && access(filename, R_OK) < 0 && (type == INPUT || type == HEREDOC))
+	{
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(": Permission denied\n", 2);
+		mini->exit_status = 1;
+		return (-1)	;
+	}
+	if (access(filename, F_OK) == 0 && access(filename, W_OK) < 0 && (type == OUTPUT || type == APPEND_OUTPUT))
+	{
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(": Permission denied\n", 2);
+		mini->exit_status = 1;
+		return (-1)	;
+	}
 
 	if (type == OUTPUT)
 		fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -31,6 +46,7 @@ int	open_file(char *filename, t_type type)
 	{
 		ft_putstr_fd(filename, 2);
 		ft_putstr_fd(": no such file or directory\n", 2);
+		mini->exit_status = 1;
 	}
 	return (fd);
 }
@@ -116,13 +132,26 @@ int	handle_redirections(t_minishell *mini)
 	cmd = mini->commands;
 	current = cmd->tokens;
 	fd = -1;
-	skip_hds(mini);
+	//skip_hds(mini);
 	while (current)
 	{
 		if ((current->type != NONE && current->type != PIPE) && \
 				current->target != NULL)
 		{
-			fd = open_file(current->target, current->type);
+			ft_putstr_fd("current->token: ", 2);
+			ft_putstr_fd(current->token, 2);
+			ft_putstr_fd("\n", 2);
+
+			ft_putstr_fd("current->next->token: ", 2);
+			ft_putstr_fd(current->next->token, 2);
+			ft_putstr_fd("\n", 2);
+
+			ft_putstr_fd("current->target: ", 2);
+			ft_putstr_fd(current->target, 2);
+			ft_putstr_fd("\n", 2);
+
+			
+			fd = open_file(current->target, current->type, mini);
 			if (fd == -1)
 				return (-1);
 			if (handle_redirection_action(fd, current) == -1)

@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 22:55:20 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 21:57:00 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 11:50:24 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ void	do_commands(t_minishell *mini, char *read)
 	close(mini->saved_stdin);
 	free_commands(mini->commands);
 	free_list(mini);
-	if (mini->heredoc->fd_heredoc_path)
-		unlink(mini->heredoc->fd_heredoc_path);
 	clear_heredoc_list(mini);
 	mini->interactive = 1;
 	init_sigaction(mini->interactive);

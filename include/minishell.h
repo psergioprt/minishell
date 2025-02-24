@@ -47,6 +47,7 @@ typedef struct s_heredoc
 	int					index;
 	int					count_hd;
 	bool				done;
+	bool				targeted;
 	struct s_heredoc	*next;
 }	t_heredoc;
 
@@ -137,6 +138,9 @@ void		handle_loop_parsers(t_minishell *mini, const char *input, \
 			t_token_context *tok_ctx);
 void		restore_default_signals(void);
 
+//REDIRECTS_UTILS
+void		change_targets(t_minishell *mini);
+
 //PARSE_MALFORMED_OPERATORS
 bool		check_malformed_operators(t_minishell *mini, t_parse_context *ctx);
 
@@ -188,7 +192,7 @@ void		cleanup_fd(t_minishell *mini);
 
 //REDIRECTS_HANDLER
 int			handle_redirections(t_minishell *mini);
-int			open_file(char *filename, t_type type);
+int			open_file(char *filename, t_type type, t_minishell *mini);
 int			handle_redirection_action(int fd, t_node *current);
 int			identify_redirection_type(char *token);
 

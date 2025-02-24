@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 10:08:49 by pauldos-          #+#    #+#             */
-/*   Updated: 2025/02/20 15:18:48 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:30:10 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	initialize_heredoc(t_minishell *mini, t_node *tmp)
 	mini->heredoc->fd_heredoc_path = NULL;
 	mini->heredoc->count_hd = 0;
 	mini->heredoc->done = false;
+	mini->heredoc->targeted = false;
 	mini->heredoc->next = NULL;
 	if (!mini->heredoc->eof)
 		perror("Error: HEREDOC delimiter is NULL");
@@ -39,10 +40,14 @@ void	append_heredoc(t_minishell *mini, t_node *tmp)
 	if (check_malloc(tmp_hd->next))
 		return ;
 	tmp_hd = tmp_hd->next;
-	tmp_hd->index = mini->heredoc->index + 1;
+	tmp_hd->index = tmp_hd->index + 1;
+
+	ft_putstr_fd("I was in append_heredoc!\n", 2);
+	
 	tmp_hd->eof = ft_strdup(tmp->next->token);
 	tmp_hd->eof_quote = false;
 	tmp_hd->done = false;
+	tmp_hd->targeted = false;
 	tmp_hd->fd_heredoc_path = NULL;
 	tmp_hd->count_hd = mini->heredoc->count_hd;
 	tmp_hd->next = NULL;

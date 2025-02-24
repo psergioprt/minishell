@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 11:14:49 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 22:22:55 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 15:28:34 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	handle_heredoc_child(t_heredoc *tmp_hd, t_minishell *mini)
 {
 	int	status;
 
+	if (g_exit_code == 130)
+		exit(130);
 	set_signals_to_here_doc();
 	status = fill_fd_heredoc(tmp_hd, mini);
 	if (status == -1)
