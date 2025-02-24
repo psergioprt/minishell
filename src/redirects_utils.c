@@ -6,11 +6,23 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 14:55:03 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/24 15:47:54 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 16:39:26 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	redir_or_close_saved(t_minishell *mini)
+{
+	if (mini->saved_stdout != -1)
+		redir_fds(mini->saved_stdout, STDOUT_FILENO);
+	if (mini->saved_stdin != -1)
+		redir_fds(mini->saved_stdin, STDIN_FILENO);
+	if (mini->saved_stdout != -1)
+		close(mini->saved_stdout);
+	if (mini->saved_stdin != -1)
+		close(mini->saved_stdin);
+}
 
 void	change_targets(t_minishell *mini)
 {

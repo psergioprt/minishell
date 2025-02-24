@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:35:07 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/20 23:19:08 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 16:50:51 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,25 @@ static void	cleanup_execve_memory(char **argv, char *command, char *pathname)
 	int	i;
 
 	i = 0;
-	free(command);
-	free(pathname);
+	if (command)
+	{
+		free(command);
+		command = NULL;
+	}
+	if (pathname)
+	{
+		free(pathname);
+		pathname = NULL;
+	}
 	while (argv && argv[i])
 	{
-		free(argv[i]);
+		if (argv[i])
+			free(argv[i]);
+		argv[i] = NULL;
 		i++;
 	}
-	free(argv);
+	if (argv)
+		argv = NULL;
 }
 
 static int	handle_execve_error(t_minishell *mini, char **argv, \
@@ -58,14 +69,20 @@ static int	handle_path(t_minishell *mini, char **argv, char **pathname)
 int	exec_child(t_minishell *mini, char **argv, char *pathname)
 {
 	close(mini->saved_stdin);
+	mini->saved_stdin = -1;
 	close(mini->saved_stdout);
+	mini->saved_stdout = -1;
 	restore_default_signals();
 	if (mini->commands->fd[0] != -1)
 		close(mini->commands->fd[0]);
 	if (mini->commands->fd[1] != -1)
 		close(mini->commands->fd[1]);
 	if (execve(pathname, argv, mini->envp) == -1)
-		return (handle_execve_error(mini, argv, mini->command, 126));
+	{
+		handle_execve_error(mini, argv, mini->command, 126);
+		exit(mini->exit_status);
+		return (-1);
+	}
 	return (mini->exit_status);
 }
 
@@ -78,6 +95,7 @@ int	execute_execve(t_minishell *mini)
 	pid_t	pid;
 
 	pathname = NULL;
+	status = 0;
 	get_command(mini);
 	i = count_node(mini);
 	argv = get_argv(mini, i, mini->commands->tokens);
@@ -89,7 +107,8 @@ int	execute_execve(t_minishell *mini)
 		restore_default_signals();
 	pid = create_pid();
 	if (pid == 0)
-		exec_child(mini, argv, pathname);
+		if (exec_child(mini, argv, pathname) == -1)
+			return (mini->exit_status);
 	waitpid(pid, &status, 0);
 	feel_signals(mini, status);
 	cleanup_execve_memory(argv, mini->command, pathname);

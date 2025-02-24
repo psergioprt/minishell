@@ -6,7 +6,7 @@
 /*   By: jcavadas <jcavadas@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 22:55:20 by jcavadas          #+#    #+#             */
-/*   Updated: 2025/02/24 11:50:24 by jcavadas         ###   ########.fr       */
+/*   Updated: 2025/02/24 16:52:12 by jcavadas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,7 @@ void	do_commands(t_minishell *mini, char *read)
 	mini->saved_stdout = dup(STDOUT_FILENO);
 	mini->saved_stdin = dup(STDIN_FILENO);
 	exec_cmds(mini);
-	redir_fds(mini->saved_stdout, STDOUT_FILENO);
-	redir_fds(mini->saved_stdin, STDIN_FILENO);
-	close(mini->saved_stdout);
-	close(mini->saved_stdin);
+	redir_or_close_saved(mini);
 	free_commands(mini->commands);
 	free_list(mini);
 	clear_heredoc_list(mini);
